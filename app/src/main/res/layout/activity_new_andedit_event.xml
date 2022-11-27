@@ -128,19 +128,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
-    <ImageView
-        android:id="@+id/backArrow"
-        android:layout_width="59dp"
-        android:layout_height="55dp"
-        android:onClick="onClickBack"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.031"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
-        app:srcCompat="@drawable/backarrow" />
-
     <EditText
         android:id="@+id/nameInputText"
         android:layout_width="wrap_content"
@@ -172,4 +159,13 @@
         app:layout_constraintHorizontal_bias="0.563"
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arrowback" />
 </androidx.constraintlayout.widget.ConstraintLayout>

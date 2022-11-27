@@ -56,19 +56,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tabLayout"
         app:layout_constraintVertical_bias="0.5" />
 
-    <ImageView
-        android:id="@+id/threeDots"
-        android:layout_width="49dp"
-        android:layout_height="50dp"
-        android:onClick="onClickThreeDots"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.997"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.007"
-        app:srcCompat="@drawable/threeDots" />
-
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="50dp"
@@ -77,5 +64,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/hamburgermenu" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/threedots" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
