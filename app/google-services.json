@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1003891553877",
+    "project_id": "home-management-56342",
+    "storage_bucket": "home-management-56342.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003891553877:android:f63a134f4e198bb81046dc",
+        "android_client_info": {
+          "package_name": "com.example.familyschedulingapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1003891553877-3h4sjn390sjamkf76v5qu1segtsfh0mk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgCoELO0NFpCLS7bspOX-xzKG_uusge9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1003891553877-3h4sjn390sjamkf76v5qu1segtsfh0mk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

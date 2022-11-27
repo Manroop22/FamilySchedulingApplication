@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">FamilySchedulingApplication</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="home_management_icon">Home Management Icon</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="menu_item">Item</string>
+    <string name="mbs_menu_item_button">MBS Menu Item</string>
+    <string name="home">Home</string>
+    <string name="go_home">Go Home</string>
+    <string name="calendar">Calendar</string>
+    <string name="bills">Bills</string>
+    <string name="message_board">Message Board</string>
+    <string name="lists_activities"><![CDATA[Lists & Activities]]></string>
+    <string name="go_to_lists_and_activities">Go To Lists and Activities</string>
+    <string name="go_to_message_board">Go To Message Board</string>
+    <string name="go_to_bills">Go To Bills</string>
+    <string name="go_to_calendar">Go To Calendar</string>
+    <string name="log_out">Log Out</string>
+    <string name="logout">Logout</string>
+    <string-array name="menu_options">
+        <item>Home</item>
+        <item>Calendar</item>
+        <item>Bills</item>
+        <item>Board</item>
+        <item>Lists</item>
+    </string-array>
 </resources>

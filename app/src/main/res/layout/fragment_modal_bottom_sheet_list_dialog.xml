@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:elevation="1dp"
+    android:maxWidth="640dp"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/list_item_spacing_half"
+    android:paddingBottom="@dimen/list_item_spacing_half"
+    tools:context=".ModalBottomSheet" >
+
+    <LinearLayout
+        android:id="@+id/menuHomeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/go_home"
+            android:src="@drawable/ic_baseline_home_24"
+            tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck" />
+
+        <TextView
+            android:id="@+id/homeBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/home" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuCalendarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/calendarBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/go_to_calendar"
+            android:src="@drawable/ic_baseline_calendar_month_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/calendarBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/calendar" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuBillsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/billsBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/go_to_bills"
+            android:src="@drawable/ic_baseline_attach_money_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/billsBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/bills" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuBoardLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/boardBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/go_to_message_board"
+            android:src="@drawable/ic_baseline_space_dashboard_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/boardBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/message_board" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuListsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/listsBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/go_to_lists_and_activities"
+            android:src="@drawable/ic_baseline_checklist_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/listsBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/lists_activities" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/logoutLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/logoutBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/log_out"
+            android:src="@drawable/ic_baseline_logout_24"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/logoutBtnText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/logout" />
+    </LinearLayout>
+</LinearLayout>
