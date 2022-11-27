@@ -33,18 +33,6 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="65dp"
-        android:layout_height="61dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.002"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.001"
-        app:srcCompat="@drawable/hamburgMenu" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -80,5 +68,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.007"
         app:srcCompat="@drawable/threeDots" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hamburgermenu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -50,7 +50,7 @@ public class ModalBottomSheet extends BottomSheetDialogFragment {
         ImageButton logoutBtn = view.findViewById(R.id.logoutBtn);
         homeBtn.setOnClickListener(v -> goTo(MainActivity.class));
         logoutBtn.setOnClickListener(v -> MainActivity.signOut());
-
+        calendarBtn.setOnClickListener(v -> goTo(EventMainScreen.class));
         return view;
     }
 
