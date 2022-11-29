@@ -2,7 +2,9 @@ package com.example.familyschedulingapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -16,11 +18,13 @@ import com.skydoves.powermenu.PowerMenuItem;
 import java.util.ArrayList;
 
 public class EventMainScreen extends AppCompatActivity {
-
+    private RecyclerView RecyclerView;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_main_screen);
+        RecyclerView= findViewById(R.id.recyclerView);
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.eventsMenuBtn);
         ImageButton threeDotBtn= findViewById(R.id.threeDotBtn);
