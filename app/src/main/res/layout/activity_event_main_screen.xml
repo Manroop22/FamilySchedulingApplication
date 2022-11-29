@@ -57,16 +57,17 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/eventsMenuBtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#00FFFFFF"
+        android:contentDescription="Menu Button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/hamburgermenu" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/threeDotBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
