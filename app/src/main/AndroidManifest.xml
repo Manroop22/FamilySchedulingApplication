@@ -20,6 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilySchedulingApplication">
         <activity
+            android:name=".AddEvent"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".EventDescription"
             android:exported="false">
             <meta-data
@@ -34,7 +41,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".NewANDEditEvent"
+            android:name=".EditEvent"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

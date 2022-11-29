@@ -3,6 +3,7 @@ package com.example.familyschedulingapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -41,16 +42,19 @@ public class EventMainScreen extends AppCompatActivity {
                             .setMenuColor(Color.WHITE)
                             .setSelectedMenuColor(ContextCompat.getColor(this, R.color.purple_500)).build();
                     powerMenu.setOnMenuItemClickListener((position, item) -> {
-                       /* powerMenu.dismiss();
-                        if(position==0)
-                            sortingType = 0;
-                        if (position==1)
-                            sortingType = 1;
-                        if(position==2)
-                            sortingType=2;
-                        loadData();
+                        powerMenu.dismiss();
+                        if(position==0) {
+                            Intent intent=new Intent(this,AddEvent.class);
+                            startActivity(intent);
+                        }
+                        if (position==1) {
+                            Intent intent=new Intent(this,EditEvent.class);
+                            startActivity(intent);
+                        }
+                        if(position==2){
 
-                        */
+                        }
+                       // loadData();
                     });
                     powerMenu.showAsDropDown(view);
         }

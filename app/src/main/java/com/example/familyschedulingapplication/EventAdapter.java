@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder>{
+public class EventAdapter {/*extends RecyclerView.Adapter<EventAdapter.MyViewHolder>{
     private final ArrayList<Event> eventArrayList;
     private EventClickListener toDoClickListener;
 
@@ -77,4 +77,5 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             toDoClickListener.onTaskCreated(this, getAdapterPosition());
         }
     }
+    */
 }
