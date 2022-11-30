@@ -1,6 +1,7 @@
 package com.example.familyschedulingapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -26,26 +27,30 @@ import java.util.ArrayList;
 public class BillActivity extends AppCompatActivity {
     private static final String TAG = BillActivity.class.getName();
     private FirebaseFirestore db;
+    RecyclerView rv;
+    CustomAdapter rva;
     String[]data;
-    //RecyclerView rv;
-    //CustomAdapter ca;
-    ArrayList<Object> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill);
+        data=new String[]{"TSN BILL","PRIME BILL","NETFLIX BILL"};
         db=FirebaseFirestore.getInstance();
-        //rv=(RecyclerView) findViewById(R.id.recycleView);
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.imageButton);
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
+        rv=(RecyclerView) findViewById(R.id.recycleView);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rva=new CustomAdapter(this,data);
+        rv.setAdapter(rva);
 
     }
+
     public void next(View view){
         Intent intent=new Intent(this, NewBillActivity.class);
         startActivity(intent);
     }
-    public String[] getData(){
+  /*  public String[] getData(){
         db.collection("/bills")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -71,5 +76,5 @@ public class BillActivity extends AppCompatActivity {
         if(data.equals(""))
             Toast.makeText(BillActivity.this,"Failure reading documents",Toast.LENGTH_LONG).show();
         return data;
-    }
+    }*/
 }
