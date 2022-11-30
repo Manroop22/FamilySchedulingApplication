@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".AddEvent">
 
+    <EditText
+        android:id="@+id/dateInputText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/descriptionInputText"
+        app:layout_constraintTop_toTopOf="@+id/textView7" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -54,17 +63,6 @@
         app:layout_constraintStart_toStartOf="@+id/textView6"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.29" />
-
-    <EditText
-        android:id="@+id/editTextDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.652"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toTopOf="@+id/textView7" />
 
     <EditText
         android:id="@+id/notesMultiText"
@@ -139,7 +137,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView5" />
 
     <EditText
-        android:id="@+id/DescriptionInputText"
+        android:id="@+id/descriptionInputText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -149,7 +147,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView6" />
 
     <EditText
-        android:id="@+id/MembersInputText"
+        android:id="@+id/membersInputText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -173,6 +171,6 @@
         android:layout_width="73dp"
         android:layout_height="40dp"
         android:text="Add"
-        app:layout_constraintEnd_toEndOf="@+id/MembersInputText"
-        app:layout_constraintTop_toBottomOf="@+id/MembersInputText" />
+        app:layout_constraintEnd_toEndOf="@+id/membersInputText"
+        app:layout_constraintTop_toBottomOf="@+id/membersInputText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

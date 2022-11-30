@@ -139,7 +139,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView5" />
 
     <EditText
-        android:id="@+id/DescriptionInputText"
+        android:id="@+id/descriptionInputText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -149,7 +149,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView6" />
 
     <EditText
-        android:id="@+id/MembersInputText"
+        android:id="@+id/membersInputText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -173,6 +173,6 @@
         android:layout_width="73dp"
         android:layout_height="40dp"
         android:text="Add"
-        app:layout_constraintEnd_toEndOf="@+id/MembersInputText"
-        app:layout_constraintTop_toBottomOf="@+id/MembersInputText" />
+        app:layout_constraintEnd_toEndOf="@+id/membersInputText"
+        app:layout_constraintTop_toBottomOf="@+id/membersInputText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
