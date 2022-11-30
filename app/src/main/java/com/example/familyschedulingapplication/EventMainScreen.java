@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.ImageButton;
 import com.skydoves.powermenu.CustomPowerMenu;
@@ -25,6 +26,7 @@ public class EventMainScreen extends AppCompatActivity {
     private RecyclerView eventRecyclerView;
     private ArrayList<Event> eventList = new ArrayList<>();
     private EventAdapter adapter;
+    static String TAG="Number of events:";
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class EventMainScreen extends AppCompatActivity {
             Intent intent=new Intent(this,AddEvent.class);
             intent.putExtra("eventList",eventList);
             startActivity(intent);
-        });
+             // I dont know how to handle stuff coming back from the other activity and then use it to change the eventRecyclerView.
+            eventRecyclerView.getLayoutManager().onRestoreInstanceState(eventRecyclerView.getLayoutManager().onSaveInstanceState());        });
     }
 }

@@ -162,6 +162,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"
+        android:onClick="onBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrowback" />
@@ -170,6 +171,7 @@
         android:id="@+id/addMemberBtn"
         android:layout_width="73dp"
         android:layout_height="40dp"
+        android:onClick="addMember"
         android:text="Add"
         app:layout_constraintEnd_toEndOf="@+id/membersInputText"
         app:layout_constraintTop_toBottomOf="@+id/membersInputText" />
