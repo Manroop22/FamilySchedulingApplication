@@ -10,6 +10,10 @@ public class Event implements Serializable {
     private ArrayList<String> members=new ArrayList<>(); // This will be used to store the name of the members added.
     private String notes;
     private Date date;
+    private boolean done;
+    public Event() {
+
+    }
     public Event(String name){this.name=name;}
     public Event(String name, Date date) {
         this.name = name;
@@ -56,6 +60,14 @@ public class Event implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 
     @Override

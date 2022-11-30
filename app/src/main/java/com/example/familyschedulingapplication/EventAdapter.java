@@ -1,5 +1,6 @@
 package com.example.familyschedulingapplication;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,68 +15,47 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class EventAdapter {/*extends RecyclerView.Adapter<EventAdapter.MyViewHolder>{
-    private final ArrayList<Event> eventArrayList;
-    private EventClickListener toDoClickListener;
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
+    private static final String TAG = "EventAdapter";
+    private ArrayList<Event> eventList;
+    int count=0;
 
-    // constructor to initialize eventArrayList to values from eventList from the EventMainScreen
-    public EventAdapter(ArrayList<Event> eventArrayList) {
-        this.eventArrayList = eventArrayList;
+    public EventAdapter(ArrayList eventList) {
+        this.eventList = eventList;
     }
 
     @NonNull
     @Override
-
-    public EventAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // uses the event.xml as the template.
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.event, parent, false);
-        return new MyViewHolder(itemView);
+    public EventAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.i (TAG,  "onCreateViewHolder: "+ count++);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ()) ;
+        View view = layoutInflater.inflate (R.layout.event, parent, false) ;
+        ViewHolder viewHolder = new ViewHolder (view);
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventAdapter.MyViewHolder holder, int position) {
-        String eventName = eventArrayList.get(position).getName();
-        Date eventDate = eventArrayList.get(position).getDate();
-
-        String pattern = "EEE, MMM dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.US);
-
-        holder.checkBox.setText(toDoText);
-        if (toDoDate != null)
-            holder.dateView.setText(String.join("", "Due date: ", simpleDateFormat.format(toDoDate)));
-        holder.checkBox.setChecked(toDoList.get(position).isDone());
-        holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> toDoClickListener.onCheckClick(compoundButton, holder.getAdapterPosition()));
-
-        holder.onCreated();
+    public void onBindViewHolder(@NonNull EventAdapter.ViewHolder holder, int position) {
+        holder.nameView.setText(eventList.get(position).getName());
+        holder.dateView.setText(eventList.get(position).getDate().toString());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return eventList.size();
     }
-
-    // inner class responsible for managing to-do items
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // can access views (checkbox and dots image) contained in to-do item in here
-        private final CheckBox checkBox;
-        private final TextView dateView;
-
-        public MyViewHolder(final View view) {
-            super(view);
-            dateView = view.findViewById(R.id.dateView);
-            checkBox = view.findViewById(R.id.checkBox);
-            itemView.setOnClickListener(this);
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView nameView;
+        TextView dateView;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            nameView=itemView.findViewById(R.id.nameView);
+            dateView=itemView.findViewById(R.id.dateView);
         }
 
         @Override
         public void onClick(View view) {
-            if (toDoClickListener != null)
-                toDoClickListener.onEditClick(view, getAdapterPosition());
-        }
 
-        public void onCreated() {
-            toDoClickListener.onTaskCreated(this, getAdapterPosition());
         }
     }
-    */
 }
