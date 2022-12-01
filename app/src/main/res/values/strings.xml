@@ -28,6 +28,14 @@
     <string name="go_to_calendar">Go To Calendar</string>
     <string name="log_out">Log Out</string>
     <string name="logout">Logout</string>
+    <string name="welcome_text">Welcome</string>
+    <string name="todo">TODO</string>
+    <string name="create_home">Create Home</string>
+    <string name="join_home">Join Home</string>
+    <string name="access_code">Access Code</string>
+    <string name="or">OR</string>
+    <string name="home_name">Home Name</string>
+    <string name="back_button">Back Button</string>
     <string-array name="menu_options">
         <item>Home</item>
         <item>Calendar</item>
