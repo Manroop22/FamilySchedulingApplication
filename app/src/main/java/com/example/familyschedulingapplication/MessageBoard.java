@@ -17,11 +17,13 @@ public class MessageBoard extends AppCompatActivity {
     private static final String TAG = "MessageBoard";
     private ArrayList<Event> eventList = new ArrayList<>();
     private ArrayList<Bill> billList=new ArrayList<>();
+    private ArrayList<Message> messageList=new ArrayList<>();
     private EventAdapter eventAdapter;
     private BillAdapter billAdapter;
+    private MessageAdapter messageAdapter;
     RecyclerView eventRecycler;
     RecyclerView billRecycler;
-    RecyclerView msgRecycler;
+    RecyclerView messageRecycler;
     ImageButton addMsgBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class MessageBoard extends AppCompatActivity {
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
         eventRecycler=findViewById(R.id.eventsRecyclerView);
         billRecycler=findViewById(R.id.billsRecyclerView);
-        msgRecycler=findViewById(R.id.messageRecyclerView);
+        messageRecycler=findViewById(R.id.messageRecyclerView);
         addMsgBtn=findViewById(R.id.addMsgBtn);
         // This is the test case for the eventsRecycler view.
         eventList.add(new Event("Cosc310 project", new Date()));
@@ -57,6 +59,13 @@ public class MessageBoard extends AppCompatActivity {
         billRecycler.addItemDecoration(dividerItemDecoration);
 
         // This is the test case for for the Message.
+        messageList.add(new Message("Nancy","This is to say that i have dine the design.")); // default line to test the messageRecycler.
+        messageList.add(new Message("Nancy","This is to say that i have dine the design.")); // default line to test the messageRecycler.
+        messageList.add(new Message("Nancy","This is to say that i have dine the design.")); // default line to test the messageRecycler.
+        messageAdapter=new MessageAdapter(messageList);
+        messageRecycler.setLayoutManager(new LinearLayoutManager(this));
+        messageRecycler.setAdapter(messageAdapter);
+        messageRecycler.addItemDecoration(dividerItemDecoration);
 
         addMsgBtn.setOnClickListener(new View.OnClickListener() {
             @Override

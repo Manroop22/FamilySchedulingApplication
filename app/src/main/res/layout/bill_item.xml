@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/dateView"
+        android:id="@+id/msgTextView"
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:background="#FAFAFA"

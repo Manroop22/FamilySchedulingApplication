@@ -1,6 +1,5 @@
 package com.example.familyschedulingapplication;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.nameView);
-            dateView = itemView.findViewById(R.id.dateView);
+            dateView = itemView.findViewById(R.id.msgTextView);
             amountView=itemView.findViewById(R.id.billAmountView);
             nameView.setOnClickListener(this);
 

@@ -1,7 +1,6 @@
 package com.example.familyschedulingapplication;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -9,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,10 +18,7 @@ import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     private static final String TAG = "EventAdapter";
@@ -60,7 +55,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameView=itemView.findViewById(R.id.nameView);
-            dateView=itemView.findViewById(R.id.dateView);
+            dateView=itemView.findViewById(R.id.msgTextView);
             nameView.setOnClickListener(this);
             nameView.setOnClickListener(new View.OnClickListener() {
                 @Override

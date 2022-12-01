@@ -8,8 +8,8 @@
 
     <TextView
         android:id="@+id/nameView"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_width="405dp"
+        android:layout_height="31dp"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -23,8 +23,8 @@
 
     <TextView
         android:id="@+id/msgTextView"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
+        android:layout_width="415dp"
+        android:layout_height="42dp"
         android:background="#FAFAFA"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
