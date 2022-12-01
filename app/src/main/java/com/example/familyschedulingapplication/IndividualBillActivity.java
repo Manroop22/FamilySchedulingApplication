@@ -5,9 +5,11 @@ import static com.example.familyschedulingapplication.ModalBottomSheet.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +43,7 @@ public class IndividualBillActivity extends AppCompatActivity {
         TextView due=(TextView) findViewById(R.id.textView15);
         TextView occurrence=(TextView) findViewById(R.id.textView16);
         TextView note=(TextView) findViewById(R.id.textView19);
+        ImageView delete = findViewById(R.id.imageView4);
         DocumentReference docRef = db.collection("bills").document(name);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -54,6 +57,32 @@ public class IndividualBillActivity extends AppCompatActivity {
                         note.setText(data.get("note").toString());
                         occurrence.setText(data.get("occurrence").toString());
                         String url=data.get("link").toString();
+                        delete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                db.collection("bills").document(name)
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(IndividualBillActivity.this,"Bill Successfully Deleted",Toast.LENGTH_LONG).show();
+                                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                Intent newIntent = new Intent(IndividualBillActivity.this,BillActivity.class);
+                                                newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(newIntent);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(IndividualBillActivity.this,"Bill Deletion was unsuccessful",Toast.LENGTH_LONG).show();
+                                                Log.w(TAG, "Error deleting document", e);
+                                                finish();
+                                            }
+                                        });
+                            }
+                        });
                         //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d(TAG, "No such document");
@@ -64,35 +93,20 @@ public class IndividualBillActivity extends AppCompatActivity {
             }
         });
     }
-   /* public void payNow(){
+   public void payNow(){
         try{
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www."+url));
         startActivity(browserIntent);}
+
+
         catch(Exception e){
+            Toast.makeText(IndividualBillActivity.this,"uNsuccessful",Toast.LENGTH_LONG).show();
             Log.d(TAG, "payNow: "+e);
 
         }
-    }*/
+    }
     public void done(){
         finish();
     }
-   /* public void delete(){
-        db.collection("cities").document(name)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(IndividualBillActivity.this,"Bill Successfully Deleted",Toast.LENGTH_LONG).show();
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(IndividualBillActivity.this,"Bill Deletion was unsuccessful",Toast.LENGTH_LONG).show();
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
-    }*/
 
 }

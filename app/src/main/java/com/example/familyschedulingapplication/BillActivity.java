@@ -31,21 +31,46 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
     CustomAdapter rva;
     String[]data;
     ArrayList<String> list=new ArrayList<String>();
+    TextView noOfBills;
 
     BillActivity billingContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         billingContext = this;
         setContentView(R.layout.activity_bill);
         db = FirebaseFirestore.getInstance();
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.imageButton);
+        noOfBills = findViewById(R.id.textView14);
+        TextView upcoming = findViewById(R.id.textView17);
+        TextView past= findViewById(R.id.textView18);
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
+        getData();
+
+    }
 
 
+    public void next(View view){
+        Intent intent=new Intent(this, NewBillActivity.class);
+        startActivity(intent);
+    }
 
+    @Override
+    public void onClick(View view, TextView views) {
+        TextView rst= (TextView) views;
+        Scanner read = new Scanner(rst.getText().toString());
+        read.useDelimiter(":");
+        String name = read.next().trim();
+        Intent intent=new Intent(this, IndividualBillActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("name",name);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+
+    }
+    public void getData(){
         db.collection("/bills")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,6 +86,7 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
                             }
 
                             Log.d("testList",list.toString());
+                            noOfBills.setText("You have "+list.size()+" Upcoming Bills");
                             data = new String[list.size()];
                             for(int i=0;i<data.length;i++)
                             {
@@ -79,57 +105,5 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
 
                     }
                 });
-
-
     }
-
-
-    public void next(View view){
-        Intent intent=new Intent(this, NewBillActivity.class);
-        startActivity(intent);
-    }
-    public void individualBill(){
-
-    }
-
-    @Override
-    public void onClick(View view, TextView views) {
-        TextView rst= (TextView) views;
-        Scanner read = new Scanner(rst.getText().toString());
-        read.useDelimiter(":");
-        String name = read.next().trim();
-        Intent intent=new Intent(this, IndividualBillActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("name",name);
-        intent.putExtras(bundle);
-        startActivity(intent);
-
-
-    }
-   /* public String[] getData(){
-        db.collection("/bills")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Toast.makeText(BillActivity.this,"Failure reading documents",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        int i=0;
-        data=new String[list.size()];
-        for(Object o:list)
-        {
-            data[i]=o.toString();
-            i++;
-        }
-        if(data.equals(""))
-            Toast.makeText(BillActivity.this,"Failure reading documents",Toast.LENGTH_LONG).show();
-        return data;
-    }*/
 }

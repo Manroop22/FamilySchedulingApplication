@@ -3,6 +3,7 @@ package com.example.familyschedulingapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,7 +128,10 @@ public class NewBillActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(NewBillActivity.this,"Data Successfuly added",Toast.LENGTH_LONG).show();
-                            finish();
+                            Intent newIntent = new Intent(NewBillActivity.this,BillActivity.class);
+                            newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(newIntent);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
