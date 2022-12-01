@@ -8,12 +8,14 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Model.Member;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
@@ -89,6 +91,17 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             findViewById(R.id.login).setVisibility(android.view.View.GONE);
+            // check if member.findMember doesn't exist, if it doesn't, create it and go to main activity
+            // if it does, update the member and go to main activity
+
+            Member member = Member.getMemberByUserId(user.getUid());
+            if (member == null) {
+                member = new Member(user.getDisplayName(), user.getUid(), null, user.getEmail(), user.getPhoneNumber(), true, new Date());
+                member.Save();
+            } else {
+                member.setEmail(user.getEmail());
+                member.Save();
+            }
             // go back to main activity
             finish();
         } else {

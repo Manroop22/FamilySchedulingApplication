@@ -7,17 +7,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Model.Home;
+import com.example.familyschedulingapplication.Model.Member;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    public Member member;
+    public Home home;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,12 +34,63 @@ public class MainActivity extends AppCompatActivity {
         checkCurrentUser();
     }
 
+    public void homeInit() {
+        // toggle Home Views
+        // if member has homeId, show home views
+        TextView welcomeTitle = findViewById(R.id.welcomeTitle);
+        if (member.getHomeId() != null) {
+            home = Home.getHomeById(member.getHomeId());
+            if (home != null) {
+                if (home.getName() != null) {
+                    welcomeTitle.setText("Welcome to " + home.getName());
+                } else {
+                    welcomeTitle.setText("Welcome Home");
+                }
+
+            }
+        } else {
+            welcomeTitle.setText("Welcome");
+        }
+    }
+
     public void checkCurrentUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
             Log.d(TAG, "checkCurrentUser: user is signed in");
-            getUserProfile();
+            // user.getUid() == member.getUid()
+            // if member with uid does not exist, create member
+            // if member with uid exists, check if member has homeId
+            // if member has no homeId, go to NoHomeActivity
+            // if member has homeId, stay here
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("members").document(user.getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        Log.d(TAG, "checkCurrentUser: member exists");
+                        member = task.getResult().toObject(Member.class);
+                    } else {
+                        Log.d(TAG, "checkCurrentUser: member does not exist");
+                        member = new Member(user.getUid());
+                        member.Save();
+                    }
+                } else {
+                    Log.d(TAG, "checkCurrentUser: member does not exist");
+                    member = new Member(user.getUid());
+                    member.Save();
+                    homeInit();
+                }
+                if (member.getHomeId() == null) {
+                    Log.d(TAG, "checkCurrentUser: member has no home");
+                    Intent intent = new Intent(this, NoHomeActivity.class);
+                    startActivity(intent);
+                } else {
+                    Log.d(TAG, "checkCurrentUser: member has home");
+                    home = Home.getHomeById(member.getHomeId());
+                }
+                homeInit();
+                getUserProfile();
+            });
 
         } else {
             // No user is signed in
