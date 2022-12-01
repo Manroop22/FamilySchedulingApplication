@@ -35,6 +35,7 @@ public class NoHomeActivity extends AppCompatActivity {
 //            Intent intent = new Intent(this, LoginActivity.class);
 //            startActivity(intent);
 //        }
+        assert user != null;
         Member member = new Member(user.getUid());
         Button createHomeBtn = findViewById(R.id.createHomeBtn);
         Button joinHomebtn = findViewById(R.id.joinHomeBtn);
@@ -63,17 +64,11 @@ public class NoHomeActivity extends AppCompatActivity {
                     db.collection("homes").whereEqualTo("accessCode", code).get().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
-                                DocumentReference homeId = document.getDocumentReference("homeId");
-                                db.collection("homeInvites").whereEqualTo("homeId", homeId).whereEqualTo("invitedMember", member.getUserId()).get().addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        for (DocumentSnapshot document1 : task1.getResult()) {
-                                            document1.getReference().update("accepted", true);
-                                        }
-                                        Toast.makeText(this, "Home joined successfully", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                member.setHomeId(homeId);
+                                Home home = document.toObject(Home.class);
+                                assert home != null;
+                                member.setHomeId(home.getReference());
                                 member.Save();
+                                finish();
                             }
                         } else {
                             Toast.makeText(this, "Home not found", Toast.LENGTH_SHORT).show();

@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * name, description, location, notes, participants(array of members), createdAt, createdBy (references a member collection document), updatedAt
  */
-public class DBEvent {
+public class Event {
     private String name;
     private String description;
     private String location;
@@ -22,10 +22,10 @@ public class DBEvent {
     public static final String collection = "events";
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public DBEvent() {
+    public Event() {
     }
 
-    public DBEvent(String name, String description, String location, String notes, String[] participants, String createdAt, String createdBy, String updatedAt) {
+    public Event(String name, String description, String location, String notes, String[] participants, String createdAt, String createdBy, String updatedAt) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -108,27 +108,27 @@ public class DBEvent {
         return db;
     }
 
-    public static void createEvent(DBEvent dbEvent) {
-        db.collection(collection).add(dbEvent);
+    public static void createEvent(Event event) {
+        db.collection(collection).add(event);
     }
 
-    public static DBEvent getEvent(String id) {
-        final DBEvent[] dbEvent = new DBEvent[1];
+    public static Event getEvent(String id) {
+        final Event[] event = new Event[1];
         db.collection(collection).document(id).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    dbEvent[0] = document.toObject(DBEvent.class);
+                    event[0] = document.toObject(Event.class);
                 }
             } else {
-                dbEvent[0] = null;
+                event[0] = null;
             }
         });
-        return dbEvent[0];
+        return event[0];
     }
 
-    public static void updateEvent(DBEvent dbEvent) {
-        db.collection(collection).document(dbEvent.getCreatedBy()).set(dbEvent);
+    public static void updateEvent(Event event) {
+        db.collection(collection).document(event.getCreatedBy()).set(event);
     }
 
     public static void deleteEvent(String id) {

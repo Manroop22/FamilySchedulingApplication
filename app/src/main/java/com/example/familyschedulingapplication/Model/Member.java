@@ -40,12 +40,8 @@ public class Member {
 
     public Member(String userId) {
         this.userId = userId;
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            this.email = user.getEmail();
-            this.phone = user.getPhoneNumber();
-            this.name = user.getDisplayName();
-        }
+        // repopulate the member object from the database
+        getMemberByUserId(userId);
     }
     public Member(String name, String userId, DocumentReference homeId, String email, String phone, boolean active, Date joinedAt) {
         this.name = name;
@@ -127,24 +123,33 @@ public class Member {
         return members;
     }
 
-    public static Member getMemberByUserId(String userId) {
-        Member member = new Member();
-        db.collection(collection).whereEqualTo("userId", userId).get().addOnCompleteListener(task -> {
+    public static ArrayList<Member> getMembersByHome(DocumentReference home) {
+        ArrayList<Member> members = new ArrayList<>();
+        db.collection(collection).whereEqualTo("homeId", home).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
-                    member.setName(document.getString("name"));
-                    member.setUserId(document.getString("userId"));
-                    member.setHomeId(document.getDocumentReference("homeId"));
-                    member.setEmail(document.getString("email"));
-                    member.setPhone(document.getString("phone"));
-                    member.setActive(Boolean.TRUE.equals(document.getBoolean("active")));
-                    member.setJoinedAt(document.getDate("joinedAt"));
+                    members.add(document.toObject(Member.class));
                 }
             } else {
                 Log.d("Member", "Error getting documents: ", task.getException());
             }
         });
-        return member;
+        return members;
+    }
+
+    public static Member getMemberByUserId(String userId) {
+        final Member[] member = {new Member()};
+        // either member.userId = userId or member's collection reference = userId
+        db.collection(collection).whereEqualTo("userId", userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    member[0] = document.toObject(Member.class);
+                }
+            } else {
+                Log.d("Member", "Error getting documents: ", task.getException());
+            }
+        });
+        return member[0];
     }
 
     public static Member getMemberByMemberId(DocumentReference memberReference) {
@@ -235,5 +240,14 @@ public class Member {
             return null;
         }
         return db.collection(collection).document(userId);
+    }
+
+    public String toString() {
+        // build a string with all the member's info
+        return "Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Phone: " + phone + "\n" +
+                "Active: " + active + "\n" +
+                "Joined At: " + joinedAt + "\n";
     }
 }
