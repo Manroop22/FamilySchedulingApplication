@@ -13,28 +13,34 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     private String[] localDataSet;
     private LayoutInflater mInflater;
+    static ItemClickListener clickListener;
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.clickListener = itemClickListener;
+    }
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
             textView = (TextView) view.findViewById(R.id.bill);
+            itemView.setOnClickListener(this);
+        }
+        @Override
+        public void onClick(View view) {
+            //Toast.makeText(view.getContext(), "position : " + getLayoutPosition() + " text : " + this.textView.getText(), Toast.LENGTH_SHORT).show();
+            if(clickListener!=null)
+             clickListener.onClick(view,getTextView());
         }
 
         public TextView getTextView() {
             return textView;
         }
 
-        @Override
-        public void onClick(View v) {
-
-        }
     }
 
     /**
