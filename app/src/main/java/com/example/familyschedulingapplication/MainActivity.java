@@ -22,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // The following line has just been added for testing cuz could not implement the menu bar on the MessageBoard.
+        // CLEMENT ATTN------------------------------------------------------------------------------------------------
+        Intent intent=new Intent(this,MessageBoard.class);
+        startActivity(intent);
+        // the lines above
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.menuBtn);
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
