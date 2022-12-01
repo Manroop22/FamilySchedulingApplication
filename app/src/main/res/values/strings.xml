@@ -28,6 +28,7 @@
     <string name="go_to_calendar">Go To Calendar</string>
     <string name="log_out">Log Out</string>
     <string name="logout">Logout</string>
+    <string name="textview">This the event textView</string>
     <string-array name="menu_options">
         <item>Home</item>
         <item>Calendar</item>
