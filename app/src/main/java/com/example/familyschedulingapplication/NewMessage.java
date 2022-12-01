@@ -19,6 +19,9 @@ public class NewMessage extends AppCompatActivity {
     CheckBox smsCheckBox;
     CheckBox emailCheckBox;
     CheckBox pushCheckBox;
+    String title;
+    String msgText;
+    String notificationType;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +44,35 @@ public class NewMessage extends AppCompatActivity {
         saveMsgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String title=titleInput.getText().toString();
-                String msgText=msgInput.getText().toString();
+                title=titleInput.getText().toString();
+                msgText=msgInput.getText().toString();
+                if(notificationType.equals(""))
+                    notificationType="PUSH"; // The default type is no checkBox is selected.
+                Message msg=new Message(title,msgText,notificationType);
 
             }
         });
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
     }
-
+    public void onCheckBoxClicked(View view){
+        // If the user does not select any of the the notificationTypes then the default notification type shall be the default.
+        boolean checked=((CheckBox)view).isChecked();
+        switch (view.getId()) {
+            case R.id.smsCheckBox:
+                if (checked)
+                    notificationType="SMS";
+                break;
+            case R.id.emailCheckBox:
+                if (checked)
+                    notificationType="EMAIL";
+                break;
+            case R.id.pushCheckBox:
+                if(checked)
+                    notificationType="PUSH";
+                break;
+            default:
+                notificationType="PUSH";
+        }
+    }
 }

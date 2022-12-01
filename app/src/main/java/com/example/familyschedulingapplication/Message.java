@@ -5,6 +5,12 @@ public class Message {
     private String msgText;
     private String NotificationType;
 
+    public Message(String title, String msgText, String notificationType) {
+        this.title = title;
+        this.msgText = msgText;
+        NotificationType = notificationType;
+    }
+
     public Message(String title) {
         this.title = title;
     }
