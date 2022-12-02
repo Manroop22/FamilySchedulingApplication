@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -23,11 +26,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class NewBillActivity extends AppCompatActivity {
     EditText dateText;
@@ -98,7 +103,6 @@ public class NewBillActivity extends AppCompatActivity {
         CheckBox email = findViewById(R.id.checkBox);
         CheckBox sms = findViewById(R.id.checkBox2);
         CheckBox push = findViewById(R.id.checkBox3);
-        Boolean save = false;
 
         if(name.getText().equals(""))
             Toast.makeText(NewBillActivity.this,"Please enter name of Bill", LENGTH_LONG).show();
@@ -110,8 +114,8 @@ public class NewBillActivity extends AppCompatActivity {
             Toast.makeText(NewBillActivity.this,"Please number of occurrence", LENGTH_LONG).show();
         else if(note.getText().equals(""))
             Toast.makeText(NewBillActivity.this,"Please enter note", LENGTH_LONG).show();
-        else if(link.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter link to payment website", LENGTH_LONG).show();
+        else if(link.getText().equals("")&&!URLUtil.isValidUrl(link.getText().toString()))
+            Toast.makeText(NewBillActivity.this,"Please enter a valid link to payment website", LENGTH_LONG).show();
         else if(email.isChecked()==false&sms.isChecked()==false&push.isChecked()==false)
             Toast.makeText(NewBillActivity.this,"Please check atleast one notification option", LENGTH_LONG).show();
         else {

@@ -69,7 +69,7 @@ public class IndividualBillActivity extends AppCompatActivity {
                         due.setText(data.get("due").toString());
                         note.setText(data.get("note").toString());
                         occurrence.setText(data.get("occurrence").toString());
-                        String url=data.get("link").toString();
+                        url=data.get("link").toString();
                         delete.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -109,10 +109,12 @@ public class IndividualBillActivity extends AppCompatActivity {
     }
    public void payNow(){
         try{
+        if(!url.startsWith("http"))
+            url="https://"+url;
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(browserIntent);}
         catch(Exception e){
-            Toast.makeText(IndividualBillActivity.this,"uNsuccessful",Toast.LENGTH_LONG).show();
+            Toast.makeText(IndividualBillActivity.this,url+"",Toast.LENGTH_LONG).show();
             Log.d(TAG, "payNow: "+e);
 
         }
