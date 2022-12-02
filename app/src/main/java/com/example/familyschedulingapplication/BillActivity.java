@@ -1,14 +1,18 @@
 package com.example.familyschedulingapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-public class BillActivity  extends AppCompatActivity implements ItemClickListener {
+public class BillActivity  extends AppCompatActivity implements ItemClickListener, PopupMenu.OnMenuItemClickListener {
     private static final String TAG = BillActivity.class.getName();
     private FirebaseFirestore db;
     RecyclerView rv;
@@ -60,7 +64,8 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
     public void onClick(View view, TextView views) {
         TextView rst= (TextView) views;
         Scanner read = new Scanner(rst.getText().toString());
-        read.useDelimiter(":");
+        read.next();
+        read.next();
         String name = read.next().trim();
         Intent intent=new Intent(this, IndividualBillActivity.class);
         Bundle bundle = new Bundle();
@@ -81,7 +86,7 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
                                 Map<String, Object> data = document.getData();
-                                list.add(data.get("name").toString()+":" + " " + data.get("due").toString());
+                                list.add("Bill Name: "+data.get("name").toString()+"  " +"Due Date: " +data.get("due").toString());
 //                                Log.d("test",list.toString());
                             }
 
@@ -95,6 +100,8 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
 
                             rv = (RecyclerView) findViewById(R.id.recycleView);
                             rv.setLayoutManager(new LinearLayoutManager(billingContext));
+                            rv.addItemDecoration(new DividerItemDecoration(billingContext,
+                                    DividerItemDecoration.VERTICAL));
                             rva = new CustomAdapter(billingContext,data);
                             rv.setAdapter(rva);
                             rva.setClickListener(billingContext);
@@ -105,5 +112,26 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
 
                     }
                 });
+    }
+
+    public void showMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) this);
+        popup.inflate(R.menu.bill_menu);
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_bill:
+                Intent intent=new Intent(this, NewBillActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return false;
+        }
     }
 }

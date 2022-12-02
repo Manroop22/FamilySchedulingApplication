@@ -1,9 +1,11 @@
 package com.example.familyschedulingapplication;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static com.example.familyschedulingapplication.ModalBottomSheet.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,12 +33,14 @@ import java.util.Map;
 public class IndividualBillActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     String url;
-    String name="";
+    String name;
+    IndividualBillActivity view;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_individual_bill);
         db = FirebaseFirestore.getInstance();
+        view=this;
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         name= bundle.getString("name");
@@ -52,7 +57,7 @@ public class IndividualBillActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
-                        billName.setText(data.get("name").toString());
+                        billName.setText(data.get("name").toString().toUpperCase()+" BILL");
                         due.setText(data.get("due").toString());
                         note.setText(data.get("note").toString());
                         occurrence.setText(data.get("occurrence").toString());
@@ -65,6 +70,7 @@ public class IndividualBillActivity extends AppCompatActivity {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                //Snackbar mySnackbar = Snackbar.make(,"Bill Successfully Created",LENGTH_LONG);
                                                 Toast.makeText(IndividualBillActivity.this,"Bill Successfully Deleted",Toast.LENGTH_LONG).show();
                                                 Log.d(TAG, "DocumentSnapshot successfully deleted!");
                                                 Intent newIntent = new Intent(IndividualBillActivity.this,BillActivity.class);
@@ -95,10 +101,8 @@ public class IndividualBillActivity extends AppCompatActivity {
     }
    public void payNow(){
         try{
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www."+url));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://account.bellmedia.ca/login/"));
         startActivity(browserIntent);}
-
-
         catch(Exception e){
             Toast.makeText(IndividualBillActivity.this,"uNsuccessful",Toast.LENGTH_LONG).show();
             Log.d(TAG, "payNow: "+e);

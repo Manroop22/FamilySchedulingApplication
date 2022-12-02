@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -15,11 +17,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +38,7 @@ public class NewBillActivity extends AppCompatActivity {
     private int date2,month2,year2;
     private static final String TAG = "MyActivity";
     private FirebaseFirestore db;
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,19 +101,19 @@ public class NewBillActivity extends AppCompatActivity {
         Boolean save = false;
 
         if(name.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter name of Bill",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please enter name of Bill", LENGTH_LONG).show();
         else if(dateText.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter date",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please enter date", LENGTH_LONG).show();
         else if(dateText2.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter due date",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please enter due date", LENGTH_LONG).show();
         else if(occurrence.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please number of occurrence",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please number of occurrence", LENGTH_LONG).show();
         else if(note.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter note",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please enter note", LENGTH_LONG).show();
         else if(link.getText().equals(""))
-            Toast.makeText(NewBillActivity.this,"Please enter link to payment website",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please enter link to payment website", LENGTH_LONG).show();
         else if(email.isChecked()==false&sms.isChecked()==false&push.isChecked()==false)
-            Toast.makeText(NewBillActivity.this,"Please check atleast one notification option",Toast.LENGTH_LONG).show();
+            Toast.makeText(NewBillActivity.this,"Please check atleast one notification option", LENGTH_LONG).show();
         else {
             //Create a new bill
             Map<String, Object> bill = new HashMap<>();
@@ -137,7 +142,7 @@ public class NewBillActivity extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(NewBillActivity.this,e+"",Toast.LENGTH_LONG).show();
+                            Toast.makeText(NewBillActivity.this,e+"", LENGTH_LONG).show();
                         }
                     });
         }
