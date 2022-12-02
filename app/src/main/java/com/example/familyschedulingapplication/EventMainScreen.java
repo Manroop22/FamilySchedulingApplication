@@ -6,11 +6,11 @@ import android.util.Log;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.Model.Event;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,7 +47,8 @@ public class EventMainScreen extends AppCompatActivity {
         updateEventList(Objects.requireNonNull(tab.getText()).toString());
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.eventsMenuBtn);
-        ImageButton eventAddBtn= findViewById(R.id.eventAddBtn);
+//        ImageButton eventAddBtn= findViewById(R.id.eventAddBtn);
+        FloatingActionButton eventAddBtn = findViewById(R.id.eventAddBtn);
         updateEventList(currentTab);
 //        adapter = new EventAdapter(eventList);
 //        tabLayout.selectTab(tabLayout.getTabAt(0));

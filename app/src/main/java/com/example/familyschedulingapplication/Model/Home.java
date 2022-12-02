@@ -167,6 +167,23 @@ public class Home {
         return home[0];
     }
 
+    public static Home getHomeById(DocumentSnapshot snap) {
+        if (snap == null) {
+            return null;
+        } else {
+            Home home = new Home();
+            home.setName(snap.getString("name"));
+            home.setAccessCode(snap.getString("accessCode"));
+            home.setAddress(snap.getGeoPoint("address"));
+            home.setActive(Boolean.TRUE.equals(snap.getBoolean("active")));
+            home.setCreatedBy(snap.getDocumentReference("createdBy"));
+            home.setCreatedAt(snap.getDate("createdAt"));
+            home.setDescription(snap.getString("description"));
+            home.setLocation(snap.getString("location"));
+            return home;
+        }
+    }
+
     public static ArrayList<Home> getHomesByMember(String memberId) {
         ArrayList<Home> homes = new ArrayList<>();
         QuerySnapshot querySnapshot = db.collection(collection).whereEqualTo("createdBy", memberId).get().getResult();

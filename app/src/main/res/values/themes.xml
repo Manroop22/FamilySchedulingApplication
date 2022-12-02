@@ -41,7 +41,7 @@
         <item name="appWidgetPadding">16dp</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.Material3.Dark">
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
 <!--        <item name="bottomSheetDialogTheme">@style/ModalBottomSheetDialog</item>-->
