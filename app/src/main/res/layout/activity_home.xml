@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"
-        android:tint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_baseline_menu_24" />
+        app:srcCompat="@drawable/ic_baseline_menu_24"
+        app:tint="#000000" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -77,9 +77,12 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view"
-        android:layout_width="434dp"
-        android:layout_height="550dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="146dp" />
+        android:layout_width="401dp"
+        android:layout_height="500dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.601" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
