@@ -4,26 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class activity_desc extends AppCompatActivity {
         EditText e1,e2,e3,e4;
@@ -35,20 +29,18 @@ public class activity_desc extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_desc);
-        e1=(EditText)findViewById(R.id.editTextTextPersonName);
-        e2=(EditText)findViewById(R.id.editTextTextMultiLine);
-        e3=(EditText)findViewById(R.id.editTextTextPersonName4);
-        e4=(EditText)findViewById(R.id.editTextTextMultiLine3);
+        e1=(EditText)findViewById(R.id.editTextTextPersonName10);
+        e2=(EditText)findViewById(R.id.editTextTextMultiLine10);
+        e3=(EditText)findViewById(R.id.editTextTextPersonName40);
+        e4=(EditText)findViewById(R.id.editTextTextMultiLine30);
         b1=(Button) findViewById(R.id.button);
-        b2=(Button) findViewById(R.id.button2);
-        s1=(Spinner) findViewById(R.id.spinner);
-        c1=(CheckBox)findViewById(R.id.checkBox);
-        c2=(CheckBox)findViewById(R.id.checkBox2);
-        c3=(CheckBox)findViewById(R.id.checkBox3);
-        i1=(ImageButton)findViewById(R.id.imageButton2);
-        i1=(ImageButton)findViewById(R.id.imageButton3);
+        b2=(Button) findViewById(R.id.button20);
+        s1=(Spinner) findViewById(R.id.spinner2);
+        c1=(CheckBox)findViewById(R.id.checkBox10);
+        c2=(CheckBox)findViewById(R.id.checkBox20);
+        c3=(CheckBox)findViewById(R.id.checkBox30);
+        i1=(ImageButton)findViewById(R.id.imageButton20);
         ArrayList<String> spin=new ArrayList<String>();
-        // added values in the spinner when chosing number of questions in the quiz
         spin.add("URGENT");
         spin.add("FAMILY");
         spin.add("CASUAL");
