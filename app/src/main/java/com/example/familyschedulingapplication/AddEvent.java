@@ -15,8 +15,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.familyschedulingapplication.Model.Event;
-import com.example.familyschedulingapplication.Model.Member;
+import com.example.familyschedulingapplication.Models.Event;
+import com.example.familyschedulingapplication.Models.Member;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

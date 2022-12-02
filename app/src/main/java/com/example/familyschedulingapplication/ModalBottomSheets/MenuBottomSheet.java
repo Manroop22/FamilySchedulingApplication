@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.ModalBottomSheets;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,10 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.example.familyschedulingapplication.EventMainScreen;
+import com.example.familyschedulingapplication.MainActivity;
+import com.example.familyschedulingapplication.R;
+import com.example.familyschedulingapplication.ListAndActivityMainScreen;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,15 +27,15 @@ import android.widget.TextView;
  *     ModalBottomSheet.newInstance(30).show(getSupportFragmentManager(), "dialog");
  * </pre>
  */
-public class ModalBottomSheet extends BottomSheetDialogFragment {
+public class MenuBottomSheet extends BottomSheetDialogFragment {
 
-    public static final String TAG = "ModalBottomSheet";
+    public static final String TAG = "MenuBottomSheet";
     // TODO: Customize parameter argument names
     private static final String ARG_ITEM_COUNT = "item_count";
 
     // TODO: Customize parameters
-    public static ModalBottomSheet newInstance(int itemCount) {
-        final ModalBottomSheet fragment = new ModalBottomSheet();
+    public static MenuBottomSheet newInstance(int itemCount) {
+        final MenuBottomSheet fragment = new MenuBottomSheet();
         final Bundle args = new Bundle();
         args.putInt(ARG_ITEM_COUNT, itemCount);
         fragment.setArguments(args);
@@ -62,6 +65,8 @@ public class ModalBottomSheet extends BottomSheetDialogFragment {
         logoutBtnText.setOnClickListener(v -> MainActivity.signOut());
         calendarBtn.setOnClickListener(v -> goTo(EventMainScreen.class));
         calendarBtnText.setOnClickListener(v -> goTo(EventMainScreen.class));
+        listsBtn.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
+        listsBtnText.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
         return view;
     }
 

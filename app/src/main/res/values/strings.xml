@@ -65,4 +65,37 @@
     <string name="all">All</string>
     <string name="textview">TextView</string>
     <string name="event_details">Event Details</string>
+    <string name="back">BACK</string>
+    <string name="push">Push Notifications</string>
+    <string name="mobile">SMS Notifications</string>
+    <string name="email">Email Notifications</string>
+    <string name="invite">Invite:</string>
+    <string name="category">Category:</string>
+    <string name="new_activity">New Activity</string>
+    <string name="activity_name">Activity Name</string>
+    <string name="back_upper">Back</string>
+    <string name="notification_type">Notification Type</string>
+    <string name="go_back">Go Back</string>
+    <string name="select_a_category">Select a Category</string>
+    <string name="invite_activity_members">Invite Activity Members</string>
+    <string name="create_a_custom_category">Create a Custom Category</string>
+    <string name="category_name">Category Name</string>
+    <string name="view_cateogory_bottom_sheet">View Cateogory Bottom Sheet</string>
+    <string name="member_name">Member Name</string>
+    <string name="activities">Activities</string>
+    <string name="lists">Lists</string>
+    <string name="lists_and_activities">Lists and Activities</string>
+    <string name="open_menu">Open Menu Bottom Sheet Dialog</string>
+    <string name="add_new_act_list">Create New Activity or List</string>
+    <string name="select_a_color">Select a Color:</string>
+    <string name="click_to_select_a_color">Click to select a color</string>
+    <string name="activity">Activity</string>
+    <string name="edit_curernt_activity">Edit Curernt Activity</string>
+    <string name="delete_current_activity">Delete Current Activity</string>
+    <string name="go_back_to_lists_activities"><![CDATA[Go Back to Lists & Activities]]></string>
+    <string-array name="notificationType">
+        <item>Email</item>
+        <item>Push</item>
+        <item>SMS</item>
+    </string-array>
 </resources>

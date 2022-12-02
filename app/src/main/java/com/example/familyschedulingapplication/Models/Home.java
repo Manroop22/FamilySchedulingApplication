@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication.Model;
+package com.example.familyschedulingapplication.Models;
 
 /**
  * properties: name, createdAt, createdBy (references a member collection document), accessCode, description, location (address string from google maps), active, address (lat, long)

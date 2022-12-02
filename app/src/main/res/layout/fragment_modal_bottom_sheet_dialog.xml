@@ -5,8 +5,8 @@
     android:id="@+id/list"
     style="@style/ModalBottomSheetDialog"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:layout_height="wrap_content"
+    android:background="@drawable/topround"
     android:clipToPadding="true"
     android:elevation="1dp"
     android:orientation="vertical"
@@ -14,7 +14,7 @@
     android:paddingBottom="8dp"
     android:theme="@style/AppTheme"
     app:behavior_peekHeight="56dp"
-    tools:context=".ModalBottomSheet">
+    tools:context=".ModalBottomSheets.MenuBottomSheet">
 
     <LinearLayout
         android:id="@+id/menuHomeLayout"

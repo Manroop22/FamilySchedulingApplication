@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication.Model;
+package com.example.familyschedulingapplication.Models;
 
 import android.util.Log;
 

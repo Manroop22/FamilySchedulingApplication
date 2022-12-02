@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.familyschedulingapplication.Model.Event;
+import com.example.familyschedulingapplication.Adapters.EventAdapter;
+import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
+import com.example.familyschedulingapplication.Models.Event;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,7 +47,7 @@ public class EventMainScreen extends AppCompatActivity {
         }
         Objects.requireNonNull(tab).select();
         updateEventList(Objects.requireNonNull(tab.getText()).toString());
-        ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
+        MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         ImageButton menuBtn = findViewById(R.id.eventsMenuBtn);
 //        ImageButton eventAddBtn= findViewById(R.id.eventAddBtn);
         FloatingActionButton eventAddBtn = findViewById(R.id.eventAddBtn);
@@ -69,7 +71,7 @@ public class EventMainScreen extends AppCompatActivity {
                 updateEventList(currentTab.toLowerCase(Locale.ROOT));
             }
         });
-        menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
+        menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
         eventAddBtn.setOnClickListener(view -> {
             Intent intent = new Intent(EventMainScreen.this, AddEvent.class);
             startActivity(intent);

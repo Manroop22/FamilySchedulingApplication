@@ -55,14 +55,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".createActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".myadapter"
+            android:name=".CreateActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -83,7 +76,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activity_home"
+            android:name=".ListAndActivityMainScreen"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

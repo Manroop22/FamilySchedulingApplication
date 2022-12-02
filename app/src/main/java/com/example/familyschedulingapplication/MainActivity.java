@@ -5,14 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.familyschedulingapplication.Model.Home;
-import com.example.familyschedulingapplication.Model.Member;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
+import com.example.familyschedulingapplication.Models.Home;
+import com.example.familyschedulingapplication.Models.Member;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -32,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         welcomeTitle = findViewById(R.id.welcomeTitle);
-        ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
+        MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         ImageButton menuBtn = findViewById(R.id.menuBtn);
-        menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
+        menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
         checkCurrentUser();
     }
 

@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.Adapters;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -18,12 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.familyschedulingapplication.Model.Event;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.example.familyschedulingapplication.EventDetailsActivity;
+import com.example.familyschedulingapplication.Models.Event;
+import com.example.familyschedulingapplication.R;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;

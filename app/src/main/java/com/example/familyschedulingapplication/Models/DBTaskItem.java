@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication.Model;
+package com.example.familyschedulingapplication.Models;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
