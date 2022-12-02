@@ -3,6 +3,7 @@ package com.example.familyschedulingapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,11 +11,14 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class createActivity extends AppCompatActivity {
     CheckBox chkIos, chkAndroid, chkWindows;
     Button btnDisplay, btn_add;
     String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-
+    DatePickerDialog.OnDateSetListener setListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +34,10 @@ public class createActivity extends AppCompatActivity {
 
         ll.addView(cb, new LinearLayout.LayoutParams(lHeight, lWidth));
         setContentView(ll);
-
+        Calendar calendar=Calendar.getInstance();
+        final int year = calendar.get (Calendar. YEAR);
+        final int month = calendar.get (Calendar. MONTH);
+        final int day = calendar.get (Calendar. DAY_OF_MONTH);
     }
 
     public void addListenerOnButton() {

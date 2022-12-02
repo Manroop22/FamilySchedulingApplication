@@ -20,6 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilySchedulingApplication">
         <activity
+            android:name=".lists_desc"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activity_desc"
             android:exported="false">
             <meta-data
@@ -28,13 +35,6 @@
         </activity>
         <activity
             android:name=".List_create"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".createlist"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

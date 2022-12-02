@@ -6,17 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".createActivity">
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="cancel"
+        tools:layout_editor_absoluteX="284dp"
+        tools:layout_editor_absoluteY="16dp" />
+
     <requestFocus />
 
 
     <LinearLayout
         android:id="@+id/linearlayout"
-        android:layout_width="390dp"
-        android:layout_height="491dp"
+        android:layout_width="385dp"
+        android:layout_height="420dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="237dp"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="45dp"
+        tools:layout_editor_absoluteY="403dp">
 
         <CheckBox
             android:id="@+id/chkIos"
@@ -32,36 +40,6 @@
             android:text="c3"
             tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/btn_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="b1"
-            tools:ignore="MissingConstraints" />
-
-        <Button
-            android:id="@+id/btnDisplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="alfkja"
-            tools:ignore="MissingConstraints" />
-
-        <EditText
-
-            android:id="@+id/edit_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="sasdh"
-            tools:ignore="MissingConstraints" />
-
-        <CheckBox
-            android:id="@+id/chkAndroid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="c2"
-            tools:ignore="MissingConstraints" />
     </LinearLayout>
 
     <TextView
@@ -69,17 +47,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name:"
-        tools:layout_editor_absoluteX="4dp"
-        tools:layout_editor_absoluteY="86dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="84dp" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:text="Note:"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="148dp" />
+        tools:layout_editor_absoluteY="187dp" />
 
     <EditText
         android:id="@+id/editTextTextPersonName3"
@@ -92,21 +70,48 @@
 
     <EditText
         android:id="@+id/editTextTextMultiLine2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="214dp"
+        android:layout_height="138dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
-        tools:layout_editor_absoluteX="166dp"
-        tools:layout_editor_absoluteY="122dp" />
+        tools:layout_editor_absoluteX="165dp"
+        tools:layout_editor_absoluteY="161dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        app:backgroundTint="#FFFFFF"
+        app:rippleColor="#FFFFFF"
         app:srcCompat="@android:drawable/ic_input_add"
-        tools:layout_editor_absoluteX="331dp"
-        tools:layout_editor_absoluteY="171dp"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="386dp"
+        tools:layout_editor_absoluteY="326dp" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"
+        tools:layout_editor_absoluteX="386dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List Items:"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="340dp" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="337dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
