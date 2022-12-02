@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddEvent">
+    tools:context=".EventDetailsActivity">
 
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -23,7 +23,7 @@
             android:contentDescription="@string/back_button"
             android:onClick="onBack"
             app:srcCompat="@drawable/ic_baseline_arrow_back_ios_new_24"
-            tools:ignore="ImageContrastCheck,RedundantDescriptionCheck" />
+            tools:ignore="ImageContrastCheck,RedundantDescriptionCheck,DuplicateSpeakableTextCheck" />
 
         <TextView
             android:id="@+id/eventDetailsTitle"
@@ -33,9 +33,29 @@
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:text="@string/new_event"
+            android:text="@string/event_details"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/editBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:backgroundTint="#00FFFFFF"
+            android:contentDescription="@string/back_button"
+            android:onClick="onBack"
+            app:srcCompat="@drawable/ic_baseline_edit_24"
+            tools:ignore="ImageContrastCheck,RedundantDescriptionCheck" />
+
+        <ImageButton
+            android:id="@+id/deleteBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:backgroundTint="#00FFFFFF"
+            android:contentDescription="@string/back_button"
+            android:onClick="onBack"
+            app:srcCompat="@drawable/ic_baseline_delete_24"
+            tools:ignore="ImageContrastCheck,RedundantDescriptionCheck" />
     </LinearLayout>
 
     <LinearLayout
@@ -191,6 +211,7 @@
             android:id="@+id/notesMultiText"
             android:layout_width="match_parent"
             android:layout_height="228dp"
+            android:layout_margin="8dp"
             android:gravity="start|top"
             android:hint="@string/write_your_notes_here"
             android:importantForAutofill="no"
@@ -201,7 +222,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/cancelButton"
+        android:id="@+id/cancelButtonDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onCancel"
@@ -214,7 +235,7 @@
         app:layout_constraintVertical_bias="0.913" />
 
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/saveButtonDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onSave"
@@ -225,5 +246,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.914" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

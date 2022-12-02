@@ -1,6 +1,5 @@
 package com.example.familyschedulingapplication;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +10,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.familyschedulingapplication.Model.Event;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,28 +26,37 @@ import java.util.Objects;
 
 public class EventMainScreen extends AppCompatActivity {
     private RecyclerView eventRecyclerView;
-    static String TAG="Number of events:";
-    public String currentTab = "Upcoming";
-    @SuppressLint("MissingInflatedId")
+    static final String TAG="EventMainScreen";
+    public String currentTab = "upcoming";
+    EventAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_main_screen);
         eventRecyclerView = findViewById(R.id.recyclerView);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
+        TabLayout.Tab tab = tabLayout.getTabAt(0);
+        if (tab != null) {
+            tab.select();
+            currentTab = Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
+        } else {
+            currentTab = "upcoming";
+        }
+        Objects.requireNonNull(tab).select();
+        updateEventList(Objects.requireNonNull(tab.getText()).toString());
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.eventsMenuBtn);
         ImageButton eventAddBtn= findViewById(R.id.eventAddBtn);
         updateEventList(currentTab);
 //        adapter = new EventAdapter(eventList);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);
-        eventRecyclerView.addItemDecoration(dividerItemDecoration);
+//        tabLayout.selectTab(tabLayout.getTabAt(0));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentTab = Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
                 Log.d("Current Tab", currentTab);
-                updateEventRecyclerView();
+                updateEventList(currentTab.toLowerCase(Locale.ROOT));
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -55,82 +65,69 @@ public class EventMainScreen extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
                 currentTab = Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
                 Log.d("Current Tab", currentTab);
-                updateEventRecyclerView();
+                updateEventList(currentTab.toLowerCase(Locale.ROOT));
             }
         });
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
         eventAddBtn.setOnClickListener(view -> {
             Intent intent = new Intent(EventMainScreen.this, AddEvent.class);
             startActivity(intent);
-            // I don't know how to handle stuff coming back from the other activity and then use it to change the eventRecyclerView.
-            updateEventRecyclerView();
+            updateEventList(currentTab.toLowerCase(Locale.ROOT));
         });
     }
 
-    public void updateEventList(final String tab) {
-        // This will be used to test the EventAdapter that was just created. *************************************
-//        eventList = Event.getEventsByDate(new Date());
-        // past events
-        // upcoming events
-        ArrayList<Event> tempEvents = new ArrayList<>();
+    public void updateEventList(String tab) {
+        // list events, sort by upcoming, past, and all, return list of events
+        // update event list and notify adapter
+        // get current user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        assert user != null;
+        // get user's events
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference memRef = db.collection("members").document(user.getUid());
-        ArrayList<DocumentSnapshot> allEvents = new ArrayList<>();
         db.collection("events").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                // populate all events
-                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-//                    Log.d(TAG, document.getId() + " => " + document.getData());
-                    allEvents.add(document);
-                }
-
-                Log.d(TAG, "All Events: " + allEvents);
-                ArrayList<Event> eventList;
-                switch (tab) {
-                    case "upcoming":
-                        for(DocumentSnapshot event : allEvents) {
-                            if (event.get("eventDate") != null) {
-                                Date eventDate = event.getDate("eventDate");
-                                assert eventDate != null;
-                                if (eventDate.after(new Date())) {
-                                    tempEvents.add(Event.getEvent(event));
+                QuerySnapshot document = task.getResult();
+                ArrayList<Event> eventList = new ArrayList<>();
+                for(DocumentSnapshot doc : Objects.requireNonNull(document).getDocuments()) {
+                    // if doc's createdBy is current user, add to list
+                    // if doc's partcipants contains memRef, add to list
+                    ArrayList<DocumentReference> people = new ArrayList<>();
+                    for (String s : Objects.requireNonNull(doc.get("participants")).toString().split(",")) {
+                        people.add(db.collection("participants").document(s));
+                    }
+                    if (Objects.equals(doc.get("createdBy"), memRef) || Objects.requireNonNull(people).contains(memRef)) {
+                        Event currEvent = Event.getEvent(doc);
+                        switch(tab) {
+                            case "upcoming":
+                                if (Objects.requireNonNull(doc.getDate("eventDate")).after(new Date())) {
+                                    eventList.add(currEvent);
                                 }
-                            }
-                        }
-                        break;
-                    case "past":
-                        for(DocumentSnapshot event : allEvents) {
-                            if (event.get("eventDate") != null) {
-                                Date eventDate = event.getDate("eventDate");
-                                assert eventDate != null;
-                                if (eventDate.before(new Date())) {
-                                    tempEvents.add(Event.getEvent(event));
+                                break;
+                            case "past":
+                                if (Objects.requireNonNull(doc.getDate("eventDate")).before(new Date())) {
+                                    eventList.add(currEvent);
                                 }
-                            }
+                                break;
+                            case "all":
+                                eventList.add(currEvent);
+                                break;
                         }
-                        break;
-                    case "all":
-                        for(DocumentSnapshot event : allEvents) {
-                            tempEvents.add(Event.getEvent(event));
-                        }
-                        break;
+                    }
                 }
-                eventList = tempEvents;
-                EventAdapter adapter = new EventAdapter(eventList);
-//        adapter.notifyDataSetChanged();
-//        eventRecyclerView.setAdapter(adapter);
-                eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                Log.d(TAG, String.valueOf(eventList.size()));
+                adapter = new EventAdapter(eventList);
                 eventRecyclerView.setAdapter(adapter);
+                eventRecyclerView.setLayoutManager(new LinearLayoutManager(EventMainScreen.this));
+//                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);
+//                eventRecyclerView.addItemDecoration(dividerItemDecoration);
+                Objects.requireNonNull(eventRecyclerView.getLayoutManager()).onRestoreInstanceState(eventRecyclerView.getLayoutManager().onSaveInstanceState());
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());
             }
         });
     }
 
-    public void updateEventRecyclerView(){
-        updateEventList(currentTab);
-        Objects.requireNonNull(eventRecyclerView.getLayoutManager()).onRestoreInstanceState(eventRecyclerView.getLayoutManager().onSaveInstanceState());
-    }
+//    public void updateEventRecyclerView(){
+//        updateEventList(currentTab);
+//    }
 }

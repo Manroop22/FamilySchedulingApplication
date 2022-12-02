@@ -3,8 +3,6 @@ package com.example.familyschedulingapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Model.Event;
 import com.example.familyschedulingapplication.Model.Member;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,12 +26,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 public class AddEvent extends AppCompatActivity {
     EditText nameInput;
     EditText descriptionInput;
-    EditText membersInput;
     EditText notesInput;
     TextView dateInput;
     Button cancelBtn;
@@ -42,6 +39,8 @@ public class AddEvent extends AppCompatActivity {
     Member member;
     Spinner membersSpinner;
     Date dateRes;
+    ArrayList<Member> members;
+    ArrayAdapter<Member> adapter;
     ArrayList<DocumentReference> memberList = new ArrayList<>();
 
     @SuppressLint("MissingInflatedId")
@@ -57,14 +56,13 @@ public class AddEvent extends AppCompatActivity {
         member = Member.getMemberByMemberId(memberRef);
         nameInput=findViewById(R.id.nameInputText);
         descriptionInput=findViewById(R.id.descriptionInputText);
-        membersInput=findViewById(R.id.membersInputText);
         dateInput=findViewById(R.id.dateInputText);
         notesInput=findViewById(R.id.notesMultiText);
         cancelBtn=findViewById(R.id.cancelButton);
         saveBtn=findViewById(R.id.saveButton);
         saveBtn.setOnClickListener(this::onSave);
         cancelBtn.setOnClickListener(this::onCancel);
-        backBtn=findViewById(R.id.backBtnNewEvent);
+        backBtn=findViewById(R.id.backBtnDetails);
         backBtn.setOnClickListener(this::onBack);
         membersSpinner = findViewById(R.id.membersSpinner);
         spinnerAdapter();
@@ -73,16 +71,13 @@ public class AddEvent extends AppCompatActivity {
         int year = calendar.get (Calendar.YEAR);
         int month = calendar.get (Calendar.MONTH);
         int day = calendar.get (Calendar.DAY_OF_MONTH);
-        dateInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
-                datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-                datePicker.addOnPositiveButtonClickListener(selection -> {
-                    dateInput.setText(datePicker.getHeaderText());
-                    dateRes = new Date(selection);
-                });
-            }
+        dateInput.setOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
+            datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                dateInput.setText(datePicker.getHeaderText());
+                dateRes = new Date(selection);
+            });
         });
         membersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -97,8 +92,8 @@ public class AddEvent extends AppCompatActivity {
         });
     }
     public void spinnerAdapter() {
-        ArrayList<Member> members = Member.getMembersByHome(member.getHomeId());
-        ArrayAdapter<Member> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, members);
+        members = Member.getMembersByHome(member.getHomeId());
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, members);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         membersSpinner.setAdapter(adapter);
         adapter.notifyDataSetChanged();

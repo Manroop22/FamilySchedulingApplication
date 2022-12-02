@@ -10,43 +10,42 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.familyschedulingapplication.Model.Event;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
-    private static final String TAG = "EventAdapter";
-    private final ArrayList<Event> eventList;
+    public static final String TAG = "EventAdapter";
+    public final ArrayList<Event> eventList;
     int count=0;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public EventAdapter(ArrayList<Event> eventList) {
         this.eventList = eventList;
-        Log.d(TAG, "EventAdapter: " + eventList.size());
-        // print all event names in eventList
-        for (Event event : eventList) {
-            Log.d(TAG, "EventAdapter: " + event.getName());
-        }
     }
 
     @NonNull
     @Override
     public EventAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i (TAG,  "onCreateViewHolder: "+ count++);
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ()) ;
-        View view = layoutInflater.inflate (R.layout.event, parent, false) ;
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
+        View view = layoutInflater.inflate (R.layout.event_item, parent, false);
         return new ViewHolder (view);
     }
 
@@ -81,7 +80,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                         .setMenuRadius(10f) // sets the corner radius.
                         .setMenuShadow(10f) // sets the shadow.
                         .setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.black))
-                        .setTextGravity(Gravity.CENTER)
+                        .setTextGravity(Gravity.START)
+                        .setTextSize(16)
                         .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
                         .setSelectedTextColor(Color.WHITE)
                         .setMenuColor(Color.WHITE)
@@ -89,31 +89,35 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle eventBundle = new Bundle();
+                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAdapterPosition()).getReference());
+                    eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
+                    eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
+                    eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getReference().getId());
+                    // print reference
                     Class<?> destination = null;
                     switch (position){
                         case 0:
-                            eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
-                            eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
-                            eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getReference().getId());
                             eventBundle.putString("mode", "view");
-                            destination = EventDescription.class;
+                            destination = EventDetailsActivity.class;
                             break;
                         case 1:
-                            eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
-                            eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
-                            eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getReference().getId());
                             eventBundle.putString("mode", "edit");
-                            destination = EventDescription.class;
+                            destination = EventDetailsActivity.class;
                             break;
                         case 2:
                             AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
                             builder.setTitle("Delete Event");
                             builder.setMessage("Are you sure you want to delete this event?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                eventList.get(getAdapterPosition()).deleteEvent(task -> {
-                                    if(task.isSuccessful()){
+                                // get event from db based on reference
+                                String eventId = eventList.get(getAdapterPosition()).getReference().getId();
+                                db.collection("events").document(eventId).delete().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(itemView.getContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
                                         eventList.remove(getAdapterPosition());
-                                        notifyDataSetChanged();
+                                        notifyItemRemoved(getAdapterPosition());
+                                    } else {
+                                        Toast.makeText(itemView.getContext(), "Error deleting event", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             });
@@ -122,9 +126,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                             builder.show();
                             break;
                     }
-                    Intent intent = new Intent(itemView.getContext(), destination);
-                    intent.putExtras(eventBundle);
-                    itemView.getContext().startActivity(intent);
+                    if (destination != null) {
+                        Intent intent = new Intent(itemView.getContext(), destination);
+                        intent.putExtras(eventBundle);
+                        itemView.getContext().startActivity(intent);
+                    }
                 });
                 powerMenu.showAsDropDown(view);
             });
@@ -132,7 +138,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-
+            Log.d(TAG, "onClick: " + getAdapterPosition());
         }
     }
 }

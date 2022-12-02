@@ -26,13 +26,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".EventDescription"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".NoHomeActivity"
             android:exported="false">
             <meta-data
@@ -47,7 +40,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".EditEvent"
+            android:name=".EventDetailsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -56,15 +49,6 @@
         <activity
             android:name=".EventMainScreen"
             android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".EventHomeScreen"
-            android:exported="false"
-            android:label="@string/title_activity_event_home_screen"
-            android:theme="@style/Theme.FamilySchedulingApplication.NoActionBar">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
