@@ -69,8 +69,6 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.imageButton);
         noOfBills = findViewById(R.id.textView14);
-        TextView upcoming = findViewById(R.id.textView17);
-        TextView past= findViewById(R.id.textView18);
         menuBtn.setOnClickListener(v -> modalBottomSheet.show(getSupportFragmentManager(), ModalBottomSheet.TAG));
         getData();
 
