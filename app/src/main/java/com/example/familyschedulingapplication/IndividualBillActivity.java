@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,13 @@ public class IndividualBillActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         view=this;
         Intent intent = getIntent();
+        Button pay = findViewById(R.id.button4);
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                payNow();
+            }
+        });
         Bundle bundle = intent.getExtras();
         name= bundle.getString("name");
         TextView billName =(TextView) findViewById(R.id.textView9);
@@ -101,7 +109,7 @@ public class IndividualBillActivity extends AppCompatActivity {
     }
    public void payNow(){
         try{
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://account.bellmedia.ca/login/"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(browserIntent);}
         catch(Exception e){
             Toast.makeText(IndividualBillActivity.this,"uNsuccessful",Toast.LENGTH_LONG).show();

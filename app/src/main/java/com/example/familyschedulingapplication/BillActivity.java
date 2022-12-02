@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,17 +25,20 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class BillActivity  extends AppCompatActivity implements ItemClickListener, PopupMenu.OnMenuItemClickListener {
     private static final String TAG = BillActivity.class.getName();
     private FirebaseFirestore db;
     RecyclerView rv;
-    CustomAdapter rva;
+    BillAdapter rva;
     String[]data;
     ArrayList<String> list=new ArrayList<String>();
     TextView noOfBills;
+    String currentTab="upcoming";
 
     BillActivity billingContext;
     @Override
@@ -44,6 +47,25 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
         billingContext = this;
         setContentView(R.layout.activity_bill);
         db = FirebaseFirestore.getInstance();
+        TabLayout tabLayout = findViewById(R.id.tab);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                currentTab= Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
+
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         ModalBottomSheet modalBottomSheet = new ModalBottomSheet();
         ImageButton menuBtn = findViewById(R.id.imageButton);
         noOfBills = findViewById(R.id.textView14);
@@ -102,7 +124,7 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
                             rv.setLayoutManager(new LinearLayoutManager(billingContext));
                             rv.addItemDecoration(new DividerItemDecoration(billingContext,
                                     DividerItemDecoration.VERTICAL));
-                            rva = new CustomAdapter(billingContext,data);
+                            rva = new BillAdapter(billingContext,data);
                             rv.setAdapter(rva);
                             rva.setClickListener(billingContext);
                         } else {

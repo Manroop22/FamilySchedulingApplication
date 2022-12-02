@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
 
     private String[] localDataSet;
     private LayoutInflater mInflater;
@@ -49,7 +49,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public CustomAdapter(Context context, String[] dataSet) {
+    public BillAdapter(Context context, String[] dataSet) {
         this.mInflater=LayoutInflater.from(context);
         localDataSet = dataSet;
     }
