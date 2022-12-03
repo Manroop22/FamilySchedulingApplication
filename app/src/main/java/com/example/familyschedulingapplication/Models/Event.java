@@ -19,6 +19,7 @@ import java.util.Date;
  */
 public class Event {
     private String name;
+    private String eventId;
     private Date createdAt;
     private DocumentReference createdBy;
     private String description;
@@ -52,6 +53,14 @@ public class Event {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public Date getCreatedAt() {

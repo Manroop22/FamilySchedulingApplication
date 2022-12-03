@@ -15,6 +15,43 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/categoryMode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:minWidth="120dp"
+            android:text="@string/mode_category"
+            android:textColor="#757575"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/editCategoryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/edit_category"
+            android:minWidth="48dp"
+            app:srcCompat="@drawable/ic_baseline_edit_24"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageButton
+            android:id="@+id/deleteCategoryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/delete_category"
+            android:minWidth="48dp"
+            app:srcCompat="@drawable/ic_baseline_delete_24"
+            tools:ignore="ImageContrastCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <TextView
             android:id="@+id/categoryTextModal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -37,40 +74,67 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/selectColorText"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:minWidth="120dp"
+            android:text="@string/select_a_color"
+            android:textColor="#757575"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/selectColorText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:minWidth="120dp"
-                android:text="@string/select_a_color"
+            <EditText
+                android:id="@+id/colorInput"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:text="@string/pick_a_color"
                 android:textColor="#757575"
                 android:textSize="14sp" />
 
-            <ImageButton
-                android:id="@+id/selectColorBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="#00FFFFFF"
-                android:contentDescription="@string/click_to_select_a_color"
-                android:minWidth="48dp"
-                app:srcCompat="@drawable/ic_baseline_edit_24"
-                tools:ignore="RedundantDescriptionCheck,ImageContrastCheck" />
+            <com.skydoves.colorpickerview.ColorPickerView
+                android:id="@+id/categoryColor"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="true" />
+
         </LinearLayout>
 
-        <com.skydoves.colorpickerview.ColorPickerView
-            android:id="@+id/categoryColor"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelCategoryBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="#5C6BC0" />
+
+        <Button
+            android:id="@+id/saveCategoryBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save"
+            android:textColor="#5C6BC0" />
     </LinearLayout>
 
 </LinearLayout>

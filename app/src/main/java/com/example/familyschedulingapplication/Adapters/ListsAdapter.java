@@ -18,7 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.familyschedulingapplication.Models.DBTask;
+import com.example.familyschedulingapplication.ListDetails;
+import com.example.familyschedulingapplication.Models.List;
 import com.example.familyschedulingapplication.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skydoves.powermenu.MenuAnimation;
@@ -29,11 +30,11 @@ import java.util.ArrayList;
 
 public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
     public static final String TAG = "ListsAdapter";
-    public final ArrayList<DBTask> myLists;
+    public final ArrayList<List> myLists;
     int count=0;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public ListsAdapter(ArrayList<DBTask> myLists) {
+    public ListsAdapter(ArrayList<List> myLists) {
         this.myLists = myLists;
     }
 
@@ -42,14 +43,13 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
     public ListsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i (TAG,  "onCreateViewHolder: "+ count++);
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
-        View view = layoutInflater.inflate (R.layout.event_item, parent, false);
+        View view = layoutInflater.inflate (R.layout.list_array_item, parent, false);
         return new ListsAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListsAdapter.ViewHolder holder, int position) {
-//        holder.nameView.setText(eventList.get(position).getName());
-//        holder.dateView.setText(eventList.get(position).getEventDate().toString());
+        holder.listName.setText(myLists.get(position).getName());
     }
 
     @Override
@@ -57,16 +57,13 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
         return myLists.size();
     }
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView nameView;
-        TextView dateView;
-        ImageButton moreView;
+        TextView listName;
+        ImageButton listOptions;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameView=itemView.findViewById(R.id.nameView);
-            dateView=itemView.findViewById(R.id.dateView);
-            moreView=itemView.findViewById(R.id.moreView);
-//            nameView.setOnClickListener(this);
-            moreView.setOnClickListener(view -> {
+            listName=itemView.findViewById(R.id.listName);
+            listOptions=itemView.findViewById(R.id.listOptions);
+            listOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));
                 list.add(new PowerMenuItem("Edit",false));
@@ -87,33 +84,34 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                     powerMenu.dismiss();
                     Bundle listBundle = new Bundle();
                     listBundle.putString("name", myLists.get(getAdapterPosition()).getName());
-//                    listBundle.putString("taskId", myLists.get(getAdapterPosition()).getReference().getId());
+                    listBundle.putString("taskId", myLists.get(getAdapterPosition()).getReference().getId());
+                    listBundle.putString("listId", myLists.get(getAdapterPosition()).getReference().getId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){
                         case 0:
                             listBundle.putString("mode", "view");
-//                            destination = EventDetailsActivity.class;
+                            destination = ListDetails.class;
                             break;
                         case 1:
                             listBundle.putString("mode", "edit");
-//                            destination = EventDetailsActivity.class;
+                            destination = ListDetails.class;
                             break;
                         case 2:
                             AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
                             builder.setTitle("Delete List");
                             builder.setMessage("Are you sure you want to delete this list?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-//                                String taskId = myLists.get(getAdapterPosition()).getReference().getId();
-//                                db.collection("tasks").document(taskId).delete().addOnCompleteListener(task -> {
-//                                    if (task.isSuccessful()) {
-//                                        Toast.makeText(itemView.getContext(), "List deleted successfully", Toast.LENGTH_SHORT).show();
-//                                        myLists.remove(getAdapterPosition());
-//                                        notifyItemRemoved(getAdapterPosition());
-//                                    } else {
-//                                        Toast.makeText(itemView.getContext(), "Error deleting list", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
+                                String taskId = myLists.get(getAdapterPosition()).getReference().getId();
+                                db.collection("tasks").document(taskId).delete().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(itemView.getContext(), "List deleted successfully", Toast.LENGTH_SHORT).show();
+                                        myLists.remove(getAdapterPosition());
+                                        notifyItemRemoved(getAdapterPosition());
+                                    } else {
+                                        Toast.makeText(itemView.getContext(), "Error deleting list", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             });
                             builder.setNegativeButton("No", (dialog, which) -> {
                             });

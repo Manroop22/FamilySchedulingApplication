@@ -1,48 +1,28 @@
 package com.example.familyschedulingapplication.Adapters;
 
 import android.content.Context;
-import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomSheet;
 import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.R;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 
 public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAdapter {
-    private final ArrayList<Category> categories;
+    public static ArrayList<Category> categories = new ArrayList<>();
     public static final String TAG = "CategoryAdapter";
     int count=0;
-    public CategoryAdapter(Context context, ArrayList<Category> categories) {
+    public CategoryAdapter(Context context) {
         super(context, 0, categories);
-        this.categories = categories;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public int getCount() {
-        return 0;
     }
 
     @Override
@@ -51,18 +31,20 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
     }
 
     @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
     public View getView(int pos, View convertView, android.view.ViewGroup parent) {
         return getCustomView(pos, convertView, parent);
+    }
+
+    public int getPosition(DocumentReference cat) {
+        // get position where cat.getReference() == item.getReference()
+        int res = 0;
+        for (int i = 0; i < categories.size(); i++) {
+            if (categories.get(i).getReference().equals(cat)) {
+                res = i;
+                break;
+            }
+        }
+        return res;
     }
 
     public View getCustomView(int pos, View convertView, android.view.ViewGroup parent) {
@@ -70,28 +52,13 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
         if (convertView == null) {
             convertView = View.inflate(parent.getContext(), R.layout.category_array_item, null);
         }
-        TextView categoryName = convertView.findViewById(R.id.categoryName);
-        ImageButton categoryOptions = convertView.findViewById(R.id.categoryOptions);
+        TextView categoryName = convertView.findViewById(R.id.listName);
+        ImageButton categoryOptions = convertView.findViewById(R.id.listOptions);
         categoryName.setText(category.getName());
 
         CategoryBottomSheet categoryBottomSheet = new CategoryBottomSheet();
-//        categoryOptions.setOnClickListener(v -> categoryBottomSheet.show(getSupportFragmentManager(), CategoryBottomSheet.TAG));
+        categoryOptions.setOnClickListener(v -> categoryBottomSheet.show(((FragmentActivity)getContext()).getSupportFragmentManager(), CategoryBottomSheet.TAG));
         return convertView;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 
     public View getDropDownView(int pos, View convertView, @NonNull android.view.ViewGroup parent) {

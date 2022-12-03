@@ -34,21 +34,21 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".lists_desc"
+            android:name=".ListDetails"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".activity_desc"
+            android:name=".ActivityDetails"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".List_create"
+            android:name=".CreateList"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -56,20 +56,6 @@
         </activity>
         <activity
             android:name=".CreateActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".lists"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".activities"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

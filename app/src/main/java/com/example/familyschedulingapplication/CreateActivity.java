@@ -7,7 +7,6 @@ import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -58,16 +57,16 @@ public class CreateActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
         member = Member.getMemberByUserId(user.getUid());
-        memberRef = member.getReference();
+        memberRef = db.collection("members").document(user.getUid());
         nameInput = findViewById(R.id.nameInput);
         dateInput = findViewById(R.id.dateInput);
         categorySpinner = findViewById(R.id.categorySpinner);
         notesInput = findViewById(R.id.notesInput);
         invitesSpinner = findViewById(R.id.inviteSpinner);
-        backBtn = findViewById(R.id.backBtnNewActivity);
+        backBtn = findViewById(R.id.exitList);
         newCategoryBtn = findViewById(R.id.newCategoryButton);
-        saveBtn = findViewById(R.id.saveBtnNewActivity);
-        cancelBtn = findViewById(R.id.cancelBtnNewActivity);
+        saveBtn = findViewById(R.id.saveBtnNL);
+        cancelBtn = findViewById(R.id.cancelBtnNL);
         smsCheckbox = findViewById(R.id.smsCheckBox);
         pushCheckbox = findViewById(R.id.pushCheckBox);
         emailCheckbox = findViewById(R.id.emailCheckBox);
@@ -87,13 +86,12 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
         newCategoryBtn.setOnClickListener(v -> {
-            CategoryBottomSheet categoryBottomSheet = new CategoryBottomSheet();
-            categoryBottomSheet.show(getSupportFragmentManager(), "CategoryBottomSheet");
+            CategoryBottomSheet.newInstance("add", null).show(getSupportFragmentManager(), "CreateCategory");
         });
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBtn.setOnClickListener(v -> saveActivity());
         cancelBtn.setOnClickListener(v -> finish());
-//        updateCategoryAdapter();
+        updateCategoryAdapter();
 //        updateInvitesAdapter();
     }
 
@@ -115,27 +113,33 @@ public class CreateActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 categoryList = new ArrayList<>();
                 // define urgent color, important color, and normal color
-                Color urgentColor = Color.valueOf(Color.RED);
-                Color importantColor = Color.valueOf(Color.YELLOW);
-                Color normalColor = Color.valueOf(Color.GREEN);
-                categoryList.add(new Category("Urgent", urgentColor));
-                categoryList.add(new Category("Family", importantColor));
-                categoryList.add(new Category("Casual", normalColor));
+                categoryList.add(new Category("Urgent", Color.parseColor("#FF0000")));
+                categoryList.add(new Category("Family", Color.parseColor("#FFA500")));
+                categoryList.add(new Category("Casual", Color.parseColor("#0000FF")));
+                for (Category cat : categoryList) {
+                    if (!CategoryAdapter.categories.contains(cat)) {
+                        CategoryAdapter.categories.add(cat);
+                    }
+                }
                 if (task.getResult() != null) {
                     for (DocumentSnapshot document : task.getResult()) {
                         if (document.exists()) {
                             Category category = Category.getCategory(document);
                             if (category != null) {
-                                if (category.getCreatedBy().equals(memberRef)) {
+                                if (category.getCreatedBy() != null && category.getCreatedBy().equals(memberRef)) {
                                     if (category.getCreatedForType().contains("activity") || category.getCreatedForType().contains("all") || category.getCreatedForType().contains("both")) {
-                                        categoryList.add(category);
+                                        if (!CategoryAdapter.categories.contains(category)) {
+                                            CategoryAdapter.categories.add(category);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                } else {
+                    Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                categoryAdapter = new CategoryAdapter(this, categoryList);
+                categoryAdapter = new CategoryAdapter(this);
                 categoryAdapter.setDropDownViewResource(R.layout.category_array_item);
                 categorySpinner.setAdapter(categoryAdapter);
             }
@@ -192,7 +196,25 @@ public class CreateActivity extends AppCompatActivity {
                 notificationTypes.add("email");
             }
             activity.setNotificationMethod(notificationTypes);
-            activity.setInvites(invitesAdapter.selectedMembers);
+//            activity.setInvites(invitesAdapter.selectedMembers);
+            db.collection("activities").add(activity).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult() != null) {
+                        DocumentReference activityRef = task.getResult();
+                        activity.setReference(activityRef);
+                        activityRef.set(activity).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                Toast.makeText(this, "Activity created successfully", Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(this, "Error: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

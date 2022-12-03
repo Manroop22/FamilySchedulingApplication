@@ -18,6 +18,7 @@ import java.util.Date;
 
 public class Home {
     private String name;
+    private String homeId;
     private Date createdAt;
     private DocumentReference createdBy;
     private String accessCode;
@@ -53,6 +54,14 @@ public class Home {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getHomeId() {
+        return homeId;
+    }
+
+    public void setHomeId(String homeId) {
+        this.homeId = homeId;
     }
 
     public Date getCreatedAt() {

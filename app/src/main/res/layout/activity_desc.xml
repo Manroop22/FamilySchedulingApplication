@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_desc">
+    tools:context=".ActivityDetails">
 
     <LinearLayout
-        android:id="@+id/headerLayoutNE"
+        android:id="@+id/headerLayoutNL"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backBtnNewActivity"
+            android:id="@+id/exitList"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
@@ -23,7 +23,7 @@
             android:src="@drawable/ic_baseline_arrow_back_ios_new_24" />
 
         <TextView
-            android:id="@+id/createActivityTitle"
+            android:id="@+id/listMode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -58,7 +58,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerLayoutNE">
+        app:layout_constraintTop_toBottomOf="@+id/headerLayoutNL">
 
         <LinearLayout
             android:id="@+id/nameLayout"
@@ -212,7 +212,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/notificationLayout"
+        android:id="@+id/taskLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -223,7 +223,7 @@
         app:layout_constraintTop_toBottomOf="@+id/contentLayout">
 
         <TextView
-            android:id="@+id/notifyTypeTitle"
+            android:id="@+id/taskListTitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -259,26 +259,26 @@
         android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notificationLayout">
+        app:layout_constraintTop_toBottomOf="@+id/taskLayout">
 
         <Button
-            android:id="@+id/cancelBtnNewActivity"
+            android:id="@+id/cancelBtnNL"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="@string/back_upper"
+            android:text="@string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/saveBtnNewActivity"
+            app:layout_constraintEnd_toStartOf="@+id/saveBtnNL"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/saveBtnNewActivity"
+            android:id="@+id/saveBtnNL"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cancelBtnNewActivity"
+            app:layout_constraintStart_toEndOf="@+id/cancelBtnNL"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

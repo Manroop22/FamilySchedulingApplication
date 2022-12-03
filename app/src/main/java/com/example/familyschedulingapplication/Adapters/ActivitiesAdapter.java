@@ -20,12 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.Models.Activity;
 import com.example.familyschedulingapplication.R;
+import com.example.familyschedulingapplication.ActivityDetails;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.ViewHolder>{
     public static final String TAG = "ActivitiesAdapter";
@@ -42,7 +45,7 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     public ActivitiesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i (TAG,  "onCreateViewHolder: "+ count++);
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
-        View view = layoutInflater.inflate (R.layout.event_item, parent, false);
+        View view = layoutInflater.inflate (R.layout.category_array_item, parent, false);
         return new ActivitiesAdapter.ViewHolder(view);
     }
 
@@ -50,6 +53,7 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     public void onBindViewHolder(@NonNull ActivitiesAdapter.ViewHolder holder, int position) {
 //        holder.nameView.setText(eventList.get(position).getName());
 //        holder.dateView.setText(eventList.get(position).getEventDate().toString());
+        holder.categoryName.setText(activityList.get(position).getName());
     }
 
     @Override
@@ -57,16 +61,14 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
         return activityList.size();
     }
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView nameView;
-        TextView dateView;
-        ImageButton moreView;
+        TextView categoryName;
+        ImageButton categoryOptions;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameView=itemView.findViewById(R.id.nameView);
-            dateView=itemView.findViewById(R.id.dateView);
-            moreView=itemView.findViewById(R.id.moreView);
+            categoryName=itemView.findViewById(R.id.listName);
+            categoryOptions=itemView.findViewById(R.id.listOptions);
 //            nameView.setOnClickListener(this);
-            moreView.setOnClickListener(view -> {
+            categoryOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));
                 list.add(new PowerMenuItem("Edit",false));
@@ -88,34 +90,39 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
                     Bundle activityBundle = new Bundle();
 //                    Log.d(TAG, "onBindViewHolder: " + activityList.get(getAdapterPosition()).getReference());
                     activityBundle.putString("name", activityList.get(getAdapterPosition()).getName());
-//                    activityBundle.putString("activityId", activityList.get(getAdapterPosition()).getReference().getId());
+                    activityBundle.putString("createdBy", activityList.get(getAdapterPosition()).getCreatedBy().toString());
                     // print reference
                     Class<?> destination = null;
                     switch (position){
                         case 0:
                             activityBundle.putString("mode", "view");
-//                            destination = EventDetailsActivity.class;
+                            destination = ActivityDetails.class;
                             break;
                         case 1:
                             activityBundle.putString("mode", "edit");
-//                            destination = EventDetailsActivity.class;
+                            destination = ActivityDetails.class;
                             break;
                         case 2:
                             AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
                             builder.setTitle("Delete Activity");
                             builder.setMessage("Are you sure you want to delete this activity?");
-                            builder.setPositiveButton("Yes", (dialog, which) -> {
-//                                String activityId = activityList.get(getAdapterPosition()).getReference().getId();
-//                                db.collection("activities").document(activityId).delete().addOnCompleteListener(task -> {
-//                                    if (task.isSuccessful()) {
-//                                        Toast.makeText(itemView.getContext(), "Activity deleted successfully", Toast.LENGTH_SHORT).show();
-//                                        activityList.remove(getAdapterPosition());
-//                                        notifyItemRemoved(getAdapterPosition());
-//                                    } else {
-//                                        Toast.makeText(itemView.getContext(), "Error deleting activity", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-                            });
+                            builder.setPositiveButton("Yes", (dialog, which) -> db.collection("activities").get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    for (DocumentSnapshot document : task.getResult()) {
+                                        if (Objects.equals(document.getString("name"), activityList.get(getAdapterPosition()).getName()) && Objects.equals(document.getDocumentReference("createdBy"), activityList.get(getAdapterPosition()).getCreatedBy())) {
+                                            db.collection("activities").document(document.getId()).delete().addOnCompleteListener(task1 -> {
+                                                if (task1.isSuccessful()) {
+                                                    Toast.makeText(itemView.getContext(), "Activity deleted successfully", Toast.LENGTH_SHORT).show();
+                                                    activityList.remove(getAdapterPosition());
+                                                    notifyItemRemoved(getAdapterPosition());
+                                                } else {
+                                                    Toast.makeText(itemView.getContext(), "Activity deletion failed", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }));
                             builder.setNegativeButton("No", (dialog, which) -> {
                             });
                             builder.show();

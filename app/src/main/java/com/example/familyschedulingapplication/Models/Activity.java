@@ -3,19 +3,21 @@ package com.example.familyschedulingapplication.Models;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import org.checkerframework.checker.units.qual.A;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Activity {
+public class Activity implements Serializable {
     private String name;
+    private String activityId;
     private DocumentReference category;
     private String notes;
     private ArrayList<DocumentReference> invites;
     private ArrayList<String> notificationMethod;
     private DocumentReference createdBy;
+    private DocumentReference reference;
     private Date createdAt;
     private Date updatedAt;
     private Date activityDate;
@@ -42,6 +44,14 @@ public class Activity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
     }
 
     public DocumentReference getCategory() {
@@ -117,17 +127,27 @@ public class Activity {
     }
 
     public static Activity getActivity(DocumentSnapshot document) {
+        Activity activity = document.toObject(Activity.class);
+        assert activity != null;
+        activity.setReference(document.getReference());
+        return activity;
+    }
+
+    public static Activity getActivityByCreatorAndName(DocumentReference createdBy, String name) {
         Activity act = new Activity();
-        act.setName(document.getString("name"));
-        act.setCategory(document.getDocumentReference("category"));
-        act.setNotes(document.getString("notes"));
-        act.setInvites((ArrayList<DocumentReference>) document.get("invites"));
-        act.setNotificationMethod((ArrayList<String>) document.get("notificationMethod"));
-        act.setCreatedBy(document.getDocumentReference("createdBy"));
-        act.setCreatedAt(document.getDate("createdAt"));
-        act.setUpdatedAt(document.getDate("updatedAt"));
-        act.setActivityDate(document.getDate("activityDate"));
+        try {
+            QuerySnapshot query = db.collection(collection).whereEqualTo("createdBy", createdBy).whereEqualTo("name", name).get().getResult();
+            if (query.getDocuments().size() > 0) {
+                act = getActivity(query.getDocuments().get(0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return act;
+    }
+
+    public static QuerySnapshot getActivitiesByMember(DocumentReference memRef) {
+        return db.collection(collection).whereArrayContains("invites", memRef).whereEqualTo("createdBy", memRef).get().getResult();
     }
 
     public static Activity getActivityById(String actId) {
@@ -166,5 +186,9 @@ public class Activity {
             }
         });
         return docRef[0];
+    }
+
+    public void setReference(DocumentReference docRef) {
+        this.reference = docRef;
     }
 }

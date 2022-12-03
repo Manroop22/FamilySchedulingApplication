@@ -14,8 +14,10 @@ import java.util.Objects;
 
 public class Category {
     private String name;
+    private String categoryId;
     private int color; // hexadecimal
     private DocumentReference createdBy;
+    private DocumentReference reference;
     private Date createdAt;
     private Date updatedAt;
     private DocumentReference createdFor; // document reference
@@ -34,30 +36,27 @@ public class Category {
 
     public Category(String name, Color color) {
         this.name = name;
-        setColor(color);
+        setColor(Color.parseColor(color.toString()));
     }
 
-    public Category(String name, String color) {
-        this.name = name;
-        setColor(color);
-    }
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public int getColor() {
         return this.color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color.toArgb();
-    }
-
-    public void setColor(String color) {
-        this.color = Color.parseColor(color);
     }
 
     public void setColor(int color) {
@@ -110,7 +109,7 @@ public class Category {
             if (task.isSuccessful()) {
                 QuerySnapshot query = task.getResult();
                 for (DocumentSnapshot dSnap : query) {
-                    if (Objects.equals(dSnap.getDocumentReference("createdBy"), this.getCreatedBy()) && dSnap.getString("name").equals(this.getName()) && dSnap.getDocumentReference("createdFor").equals(this.getCreatedFor())) {
+                    if (Objects.equals(dSnap.getDocumentReference("createdBy"), this.getCreatedBy()) && Objects.equals(dSnap.getString("name"), this.getName())) {
                         docRef[0] = dSnap.getReference();
                         break;
                     }
@@ -152,7 +151,13 @@ public class Category {
 
     public static void addCategory(Category cat) {
         try {
-            db.collection(collection).add(cat);
+            db.collection(collection).add(cat).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "addCategory: Category added successfully");
+                } else {
+                    Log.d(TAG, "addCategory: " + task.getException().getMessage());
+                }
+            });
         } catch (Exception e) {
             Log.d(TAG, "addCategory: " + e.getMessage());
         }
@@ -160,7 +165,13 @@ public class Category {
 
     public static void updateCategory(Category cat) {
         try {
-            db.collection(collection).document(cat.getName()).set(cat);
+            db.collection(collection).document(cat.getName()).set(cat).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "updateCategory: " + cat.getName() + " updated successfully");
+                } else {
+                    Log.d(TAG, "updateCategory: " + cat.getName() + " failed to update");
+                }
+            });
         } catch (Exception e) {
             Log.d(TAG, "updateCategory: " + e.getMessage());
         }
@@ -168,7 +179,13 @@ public class Category {
 
     public static void deleteCategory(Category cat) {
         try {
-            db.collection(collection).document(cat.getName()).delete();
+            db.collection(collection).document(cat.getName()).delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "deleteCategory: Category deleted successfully");
+                } else {
+                    Log.d(TAG, "deleteCategory: " + task.getException().getMessage());
+                }
+            });
         } catch (Exception e) {
             Log.d(TAG, "deleteCategory: " + e.getMessage());
         }
@@ -183,5 +200,9 @@ public class Category {
         } catch (Exception e) {
             Log.d(TAG, "deleteCategoryByUser: " + e.getMessage());
         }
+    }
+
+    public void setReference(DocumentReference reference) {
+        this.reference = reference;
     }
 }

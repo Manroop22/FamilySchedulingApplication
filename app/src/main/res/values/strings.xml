@@ -93,6 +93,19 @@
     <string name="edit_curernt_activity">Edit Curernt Activity</string>
     <string name="delete_current_activity">Delete Current Activity</string>
     <string name="go_back_to_lists_activities"><![CDATA[Go Back to Lists & Activities]]></string>
+    <string name="pick_a_color">Pick a Color</string>
+    <string name="delete_category">Delete Category</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="mode_category">Mode Category</string>
+    <string name="list_item_name">List Item Name</string>
+    <string name="mode_task">Mode Task</string>
+    <string name="task_items">Task Items</string>
+    <string name="list_name">List Name</string>
+    <string name="items">Items</string>
+    <string name="delete_current_list">Delete Current List</string>
+    <string name="mode_list">Mode List</string>
+    <string name="edit_list_item">Edit List item</string>
+    <string name="delete_list_item">Delete List item</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>
