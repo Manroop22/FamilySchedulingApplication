@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -67,7 +68,7 @@ public class NewBillActivity extends AppCompatActivity {
                             dateText.setText(year+"-"+month+"-"+date);
                         }
                     },year,month,date);
-                    datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()-1000);
+                    datePickerDialog.getDatePicker(); //setMaxDate(System.currentTimeMillis()-1000);
                     datePickerDialog.show();
                 }
 
@@ -87,14 +88,14 @@ public class NewBillActivity extends AppCompatActivity {
                             dateText2.setText(year+"-"+month+"-"+date);
                         }
                     },year2,month2,date2);
-                    datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+                    datePickerDialog.getDatePicker();//setMinDate(System.currentTimeMillis()-1000);
                     datePickerDialog.show();
                 }
 
             }
         });
     }
-    public void save(View view){
+    public void save(View view) throws ParseException {
 
         EditText name = findViewById(R.id.editTextTextPassword);
         EditText occurrence = findViewById(R.id.editTextTextPersonName3);
@@ -122,8 +123,8 @@ public class NewBillActivity extends AppCompatActivity {
             //Create a new bill
             Map<String, Object> bill = new HashMap<>();
             bill.put("name", name.getText().toString());
-            bill.put("date", dateText.getText().toString());
-            bill.put("due", dateText2.getText().toString());
+            bill.put("date",sd.parse(dateText.getText().toString()));
+            bill.put("due", sd.parse(dateText2.getText().toString()));
             bill.put("occurrence", occurrence.getText().toString());
             bill.put("note", note.getText().toString());
             bill.put("link", link.getText().toString());

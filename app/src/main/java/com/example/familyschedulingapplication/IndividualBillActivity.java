@@ -29,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class IndividualBillActivity extends AppCompatActivity {
@@ -65,8 +67,9 @@ public class IndividualBillActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
+                        Date date = document.getDate("due");
                         billName.setText(data.get("name").toString().toUpperCase()+" BILL");
-                        due.setText(data.get("due").toString());
+                        due.setText(new SimpleDateFormat("dd MMMM yyyy").format(date));
                         note.setText(data.get("note").toString());
                         occurrence.setText(data.get("occurrence").toString());
                         url=data.get("link").toString();
