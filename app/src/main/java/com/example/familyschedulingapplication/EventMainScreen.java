@@ -73,7 +73,7 @@ public class EventMainScreen extends AppCompatActivity {
         });
         menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
         eventAddBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(EventMainScreen.this, AddEvent.class);
+            Intent intent = new Intent(EventMainScreen.this, CreateEvent.class);
             startActivity(intent);
             updateEventList(currentTab.toLowerCase(Locale.ROOT));
         });
@@ -118,7 +118,7 @@ public class EventMainScreen extends AppCompatActivity {
                     }
                 }
                 Log.d(TAG, String.valueOf(eventList.size()));
-                adapter = new EventAdapter(eventList);
+                adapter = new EventAdapter(eventList, R.layout.event_item);
                 eventRecyclerView.setAdapter(adapter);
                 eventRecyclerView.setLayoutManager(new LinearLayoutManager(EventMainScreen.this));
 //                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);

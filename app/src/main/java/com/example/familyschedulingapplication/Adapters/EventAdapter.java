@@ -31,11 +31,13 @@ import java.util.ArrayList;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     public static final String TAG = "EventAdapter";
     public final ArrayList<Event> eventList;
+    public int layoutId;
     int count=0;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public EventAdapter(ArrayList<Event> eventList) {
+    public EventAdapter(ArrayList<Event> eventList, int layout) {
         this.eventList = eventList;
+        this.layoutId = layout;
     }
 
     @NonNull
@@ -43,7 +45,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     public EventAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i (TAG,  "onCreateViewHolder: "+ count++);
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
-        View view = layoutInflater.inflate (R.layout.event_item, parent, false);
+        View view = layoutInflater.inflate (layoutId, parent, false);
         return new ViewHolder (view);
     }
 
@@ -90,7 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                     Log.d(TAG, "onBindViewHolder: " + eventList.get(getAdapterPosition()).getReference());
                     eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
                     eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
-                    eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getReference().getId());
+                    eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getEventId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){

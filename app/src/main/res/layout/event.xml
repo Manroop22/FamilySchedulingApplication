@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="74dp"
-    android:background="@color/white">
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/allround"
+    android:elevation="1dp"
+    android:paddingBottom="4dp">
 
     <TextView
         android:id="@+id/nameView"
@@ -15,14 +18,14 @@
         android:paddingEnd="16dp"
         android:text="@string/textview"
         android:textColor="#78909C"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/msgTextView"
+        android:id="@+id/dateView"
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:background="#FAFAFA"
@@ -35,5 +38,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameView" />
+
+    <ImageButton
+        android:id="@+id/moreView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/todo"
+        android:minWidth="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/nameView"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_baseline_more_vert_24"
+        tools:ignore="ImageContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,6 +47,11 @@ public class Event {
         this.eventDate = eventDate;
     }
 
+    public Event(String name, Date date) {
+        this.name = name;
+        this.eventDate = date;
+    }
+
     public String getName() {
         return name;
     }

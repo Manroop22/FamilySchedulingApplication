@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.Models;
 
 import java.util.Date;
 

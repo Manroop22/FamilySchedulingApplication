@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".NewMessage"
+            android:name=".CreateMessage"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -33,7 +33,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".AddEvent"
+            android:name=".CreateEvent"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

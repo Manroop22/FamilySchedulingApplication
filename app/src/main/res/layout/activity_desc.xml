@@ -7,7 +7,7 @@
     tools:context=".ActivityDetails">
 
     <LinearLayout
-        android:id="@+id/headerLayoutNL"
+        android:id="@+id/msgHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/exitList"
+            android:id="@+id/createMsgMenuBtn"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
@@ -58,10 +58,10 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerLayoutNL">
+        app:layout_constraintTop_toBottomOf="@+id/msgHeaderLayout">
 
         <LinearLayout
-            android:id="@+id/nameLayout"
+            android:id="@+id/msgTitleLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
@@ -78,7 +78,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/nameInput"
+                android:id="@+id/msgTitleInput"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -197,7 +197,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/notesInput"
+                android:id="@+id/msgMultiInput"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:ems="10"
@@ -262,23 +262,23 @@
         app:layout_constraintTop_toBottomOf="@+id/taskLayout">
 
         <Button
-            android:id="@+id/cancelBtnNL"
+            android:id="@+id/cancelMsgBtn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/saveBtnNL"
+            app:layout_constraintEnd_toStartOf="@+id/saveMsgBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/saveBtnNL"
+            android:id="@+id/saveMsgBtn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cancelBtnNL"
+            app:layout_constraintStart_toEndOf="@+id/cancelMsgBtn"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

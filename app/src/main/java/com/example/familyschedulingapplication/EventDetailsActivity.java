@@ -51,6 +51,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
         eventId = getIntent().getExtras().getString("eventId");
+        if (eventId == null) {
+            eventId = getIntent().getExtras().getString("eventRefId");
+        }
         mode = getIntent().getExtras().getString("mode");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
@@ -70,12 +73,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         switchMode(mode);
         Log.d("EventDetailsActivity", "onCreate: " + eventId);
         // if eventRef from intent is not null get the event
-        String ref = getIntent().getExtras().getString("eventRef");
-        if (ref != null) {
-            eventRef = db.document(ref);
-        } else {
-            eventRef = db.collection("events").document(eventId);
-        }
+//        String ref = getIntent().getExtras().getString("eventRef");
+//        if (ref != null) {
+//            eventRef = db.document(ref);
+//        } else {
+//            eventRef = db.collection("events").document(eventId);
+//        }
         dateInput.setOnClickListener(v -> {
             MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
             builder.setTitleText("Select a date");
@@ -116,22 +119,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-//                    event = Event.getEventByEventId(eventId);
-                    Event.getEventByEventId(eventId).addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
-                            event = (task1.getResult().toObject(Event.class));
-                            nameInput.setText(event.getName());
-                            descriptionInput.setText(event.getDescription());
-                            notesInput.setText(event.getNotes());
-                            dateInput.setText(event.getEventDate().toString());
-                            spinnerAdapter(event.getParticipants());
-                        }
-                    });
-//                    nameInput.setText(event.getName());
-//                    descriptionInput.setText(event.getDescription());
-//                    notesInput.setText(event.getNotes());
-//                    dateInput.setText(event.getEventDate().toString());
-//                    spinnerAdapter(event.getParticipants());
+                    event = (task.getResult().toObject(Event.class));
+                    nameInput.setText(event.getName());
+                    descriptionInput.setText(event.getDescription());
+                    notesInput.setText(event.getNotes());
+                    dateInput.setText(event.getEventDate().toString());
+                    spinnerAdapter(event.getParticipants());
                 } else {
                     Log.d("EventDetailsActivity", "No such document");
                 }

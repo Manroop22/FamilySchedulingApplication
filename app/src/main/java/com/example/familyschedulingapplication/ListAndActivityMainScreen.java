@@ -67,6 +67,7 @@ public class ListAndActivityMainScreen extends AppCompatActivity {
         addBtn.setOnClickListener(v -> {
             Bundle lacBundle = new Bundle();
             lacBundle.putString("mode", "add");
+            lacBundle.putString("listId", null);
             Intent intent;
             if (currentTab.equals("activities")) {
                 intent = new Intent(ListAndActivityMainScreen.this, CreateActivity.class);

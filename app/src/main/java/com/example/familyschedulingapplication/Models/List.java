@@ -4,6 +4,7 @@ import static java.util.UUID.*;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -275,7 +276,12 @@ public class List {
                     list.get().setCreatedBy(document.getDocumentReference("createdBy"));
                     list.get().setNotes(document.getString("notes"));
                     list.get().setType(document.getString("type"));
-                    list.get().setListItems((ArrayList<ListItem>) document.get("listItems"));
+//                    list.get().setListItems((ArrayList<ListItem>) document.get("listItems"));
+                    ArrayList<ListItem> listItems = new ArrayList<>();
+                    for (Map<String, Object> listItem : (ArrayList<Map<String, Object>>) document.get("listItems")) {
+                        listItems.add(new ListItem(listItem));
+                    }
+                    list.get().setListItems(listItems);
                     list.get().setCategory(document.getDocumentReference("category"));
                 }
             } else {
@@ -283,6 +289,10 @@ public class List {
             }
         });
         return list.get();
+    }
+
+    public static void getListByListId(String listId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(collection).document(listId).get().addOnCompleteListener(onCompleteListener);
     }
 
     public static List getTaskByReference(DocumentSnapshot taskRef) {

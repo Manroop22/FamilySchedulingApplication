@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.familyschedulingapplication.Models.Bill;
+import com.example.familyschedulingapplication.R;
 
 import java.util.ArrayList;
 
@@ -46,7 +49,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.nameView);
-            dateView = itemView.findViewById(R.id.msgTextView);
+            dateView = itemView.findViewById(R.id.msgText);
             amountView=itemView.findViewById(R.id.billAmountView);
             nameView.setOnClickListener(this);
 

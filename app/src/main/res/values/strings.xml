@@ -57,7 +57,7 @@
     <string name="description">Description:</string>
     <string name="name">Name:</string>
     <string name="new_event">New Event</string>
-    <string name="write_your_notes_here">Write your notes here...</string>
+    <string name="write_your_notes_here">Write your notes here…</string>
     <string name="event_name">Event Name</string>
     <string name="event_description">Event Description</string>
     <string name="select_a_date">Select a Date</string>
@@ -106,6 +106,20 @@
     <string name="mode_list">Mode List</string>
     <string name="edit_list_item">Edit List item</string>
     <string name="delete_list_item">Delete List item</string>
+    <string name="add_message">Add Message</string>
+    <string name="messages">Messages</string>
+    <string name="create_message">Create Message</string>
+    <string name="title">Title</string>
+    <string name="write_message">Write Message</string>
+    <string name="notify_via">Notify Via:</string>
+    <string name="title_colon">Title:</string>
+    <string name="message_colon">Message:</string>
+    <string name="sync_updates">Sync Updates</string>
+    <string name="message_title">Message Title</string>
+    <string name="this_is_default_message_content">This is default message content</string>
+    <string name="clement_on_today">\@clement on Today</string>
+    <string name="v_e_d">View, Edit, or Delete</string>
+    <string name="default_price">$100</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

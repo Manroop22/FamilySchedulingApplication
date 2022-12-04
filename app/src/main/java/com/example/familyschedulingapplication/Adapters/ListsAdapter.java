@@ -85,7 +85,7 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                     Bundle listBundle = new Bundle();
                     listBundle.putString("name", myLists.get(getAdapterPosition()).getName());
                     listBundle.putString("taskId", myLists.get(getAdapterPosition()).getReference().getId());
-                    listBundle.putString("listId", myLists.get(getAdapterPosition()).getReference().getId());
+                    listBundle.putString("listId", myLists.get(getAdapterPosition()).getTaskId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){

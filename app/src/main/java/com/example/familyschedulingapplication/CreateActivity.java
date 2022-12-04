@@ -3,11 +3,9 @@ package com.example.familyschedulingapplication;
 import static java.util.UUID.randomUUID;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,17 +22,19 @@ import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomS
 import com.example.familyschedulingapplication.Models.Activity;
 import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.UUID;
+import java.util.Locale;
 
 public class CreateActivity extends AppCompatActivity {
     EditText nameInput, dateInput, notesInput;
@@ -64,15 +64,15 @@ public class CreateActivity extends AppCompatActivity {
         assert user != null;
         member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
-        nameInput = findViewById(R.id.nameInput);
+        nameInput = findViewById(R.id.msgTitleInput);
         dateInput = findViewById(R.id.dateInput);
         categorySpinner = findViewById(R.id.categorySpinner);
-        notesInput = findViewById(R.id.notesInput);
+        notesInput = findViewById(R.id.msgMultiInput);
         invitesSpinner = findViewById(R.id.inviteSpinner);
-        backBtn = findViewById(R.id.exitList);
+        backBtn = findViewById(R.id.createMsgMenuBtn);
         newCategoryBtn = findViewById(R.id.newCategoryButton);
-        saveBtn = findViewById(R.id.saveBtnNL);
-        cancelBtn = findViewById(R.id.cancelBtnNL);
+        saveBtn = findViewById(R.id.saveMsgBtn);
+        cancelBtn = findViewById(R.id.cancelMsgBtn);
         smsCheckbox = findViewById(R.id.smsCheckBox);
         pushCheckbox = findViewById(R.id.pushCheckBox);
         emailCheckbox = findViewById(R.id.emailCheckBox);
@@ -155,12 +155,12 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void showDatePickerDialog(View v) {
-        datePickerDialog = new DatePickerDialog(this, (DatePickerDialog.OnDateSetListener) (view, year, month, dayOfMonth) -> {
-            month = month + 1;
-            dateString = dayOfMonth + "/" + month + "/" + year;
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
+        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selection);
             dateInput.setText(dateString);
-        }, year, month, day);
-        datePickerDialog.show();
+        });
     }
 
     public void saveActivity() {

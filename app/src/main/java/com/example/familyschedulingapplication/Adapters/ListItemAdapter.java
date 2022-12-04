@@ -49,7 +49,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
         return listItems;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         EditText listItemName;
         CheckBox isCompleted;
         ImageButton editItem;
@@ -67,17 +67,15 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
             } else {
                 item = listItems.get(getAdapterPosition());
             }
+            switchMode(mode);
 //            setValues(item);
             editItem.setOnClickListener(view -> {
                 if (mode.equals("view")) {
-                    listItemName.setEnabled(true);
-                    isCompleted.setEnabled(true);
                     mode = "edit";
                 } else {
-                    listItemName.setEnabled(false);
-                    isCompleted.setEnabled(false);
                     mode = "view";
                 }
+                switchMode(mode);
             });
             deleteItem.setOnClickListener(view -> {
                 listItems.remove(getAdapterPosition());
@@ -91,13 +89,11 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
 
         public void switchMode(String mmode) {
             if (mmode.equals("view")) {
-                listItemName.setEnabled(true);
-                isCompleted.setEnabled(true);
-                mode = "edit";
-            } else {
-                mode = "view";
                 listItemName.setEnabled(false);
                 isCompleted.setEnabled(false);
+            } else {
+                listItemName.setEnabled(true);
+                isCompleted.setEnabled(true);
             }
         }
 

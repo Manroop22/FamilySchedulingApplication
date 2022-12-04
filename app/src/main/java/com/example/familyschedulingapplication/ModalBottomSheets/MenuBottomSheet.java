@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.ModalBottomSheets;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.familyschedulingapplication.EventMainScreen;
 import com.example.familyschedulingapplication.MainActivity;
+import com.example.familyschedulingapplication.MessageBoard;
 import com.example.familyschedulingapplication.R;
 import com.example.familyschedulingapplication.ListAndActivityMainScreen;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -62,6 +63,7 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
         homeBtn.setOnClickListener(v -> goTo(MainActivity.class));
         homeBtnText.setOnClickListener(v -> goTo(MainActivity.class));
         boardBtn.setOnClickListener(v -> goTo(MessageBoard.class));
+        boardBtnText.setOnClickListener(v -> goTo(MessageBoard.class));
         logoutBtn.setOnClickListener(v -> MainActivity.signOut());
         logoutBtnText.setOnClickListener(v -> MainActivity.signOut());
         calendarBtn.setOnClickListener(v -> goTo(EventMainScreen.class));

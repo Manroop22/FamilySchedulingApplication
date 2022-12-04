@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication;
 
+import static java.util.UUID.randomUUID;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -27,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AddEvent extends AppCompatActivity {
+public class CreateEvent extends AppCompatActivity {
     EditText nameInput;
     EditText descriptionInput;
     EditText notesInput;
@@ -115,12 +117,14 @@ public class AddEvent extends AppCompatActivity {
             event.setCreatedBy(member.getReference());
             event.setParticipants(memberList);
             event.setCreatedBy(member.getReference());
-            Event.addEvent(event, task -> {
+            event.setEventId(randomUUID().toString());
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("events").document(event.getEventId()).set(event).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEvent.this, "Event Created", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(this, "Event failed to add", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEvent.this, "Event Creation Failed", Toast.LENGTH_SHORT).show();
                 }
             });
         }

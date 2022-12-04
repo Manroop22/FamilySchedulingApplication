@@ -2,6 +2,7 @@ package com.example.familyschedulingapplication;
 
 import static java.util.UUID.randomUUID;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
@@ -23,6 +26,8 @@ import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomS
 import com.example.familyschedulingapplication.Models.List;
 import com.example.familyschedulingapplication.Models.ListItem;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -65,28 +70,31 @@ public class ListDetails extends AppCompatActivity {
         member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
         listId = getIntent().getStringExtra("listId");
-        backBtn = findViewById(R.id.exitList);
+        backBtn = findViewById(R.id.createMsgMenuBtn);
         editBtn = findViewById(R.id.editList);
         deleteBtn = findViewById(R.id.deleteList);
         addListItemBtn = findViewById(R.id.addListItem);
         addCategoryBtn = findViewById(R.id.newCategoryButton);
-        saveBtn = findViewById(R.id.saveBtnNL);
-        cancelBtn = findViewById(R.id.cancelBtnNL);
-        nameInput = findViewById(R.id.nameInput);
-        notesInput = findViewById(R.id.notesInput);
+        saveBtn = findViewById(R.id.saveMsgBtn);
+        cancelBtn = findViewById(R.id.cancelMsgBtn);
+        nameInput = findViewById(R.id.msgTitleInput);
+        notesInput = findViewById(R.id.msgMultiInput);
         categorySpinner = findViewById(R.id.categorySpinner);
         listItemsRecyclerView = findViewById(R.id.listItemsRecyclerView);
         scrollView = findViewById(R.id.itemScroller);
         if (listId == null) {
             listItems = new ArrayList<>();
-            switchMode("add");
+            mode = "add";
+            init();
         } else {
-            list = List.getListByTaskId(listId);
-            if (list == null) {
-                finish();
-            }
-            listItems = list.getListItems();
+            List.getListByListId(listId, task -> {
+                list = task.getResult().toObject(List.class);
+                init();
+            });
         }
+    }
+
+    public void init() {
         switchMode(mode);
         saveBtn.setOnClickListener(v -> saveList());
         cancelBtn.setOnClickListener(v -> switchMode("view"));
@@ -131,6 +139,14 @@ public class ListDetails extends AppCompatActivity {
                 cancelBtn.setEnabled(false);
                 editBtn.setVisibility(ImageButton.VISIBLE);
                 deleteBtn.setVisibility(ImageButton.VISIBLE);
+                // set also for the items in the listItemAdapter
+                for (int i = 0; i < listItemsRecyclerView.getChildCount(); i++) {
+                    View view = listItemsRecyclerView.getChildAt(i);
+                    RecyclerView.ViewHolder rvvh = listItemsRecyclerView.getChildViewHolder(view);
+                    if (rvvh instanceof ListItemAdapter.ViewHolder) {
+                        ((ListItemAdapter.ViewHolder) rvvh).switchMode("view");
+                    }
+                }
                 break;
             case "edit":
                 nameInput.setEnabled(true);
@@ -144,6 +160,13 @@ public class ListDetails extends AppCompatActivity {
                 cancelBtn.setEnabled(true);
                 editBtn.setVisibility(ImageButton.GONE);
                 deleteBtn.setVisibility(ImageButton.VISIBLE);
+                for (int i = 0; i < listItemsRecyclerView.getChildCount(); i++) {
+                    View view = listItemsRecyclerView.getChildAt(i);
+                    RecyclerView.ViewHolder rvvh = listItemsRecyclerView.getChildViewHolder(view);
+                    if (rvvh instanceof ListItemAdapter.ViewHolder) {
+                        ((ListItemAdapter.ViewHolder) rvvh).switchMode("edit");
+                    }
+                }
                 break;
             case "add":
             case "create":
@@ -201,8 +224,14 @@ public class ListDetails extends AppCompatActivity {
     }
 
     public void updateListItems() {
-        // set list items to list item adapter
-        // if mode is add, empty list items, else set to list items from db
+        if (listId == null) {
+            listItems.clear();
+            listItemAdapter = new ListItemAdapter(listItems);
+            listItemsRecyclerView.setAdapter(listItemAdapter);
+            listItemsRecyclerView.setLayoutManager(new LinearLayoutManager(ListDetails.this));
+            Objects.requireNonNull(listItemsRecyclerView.getLayoutManager()).onRestoreInstanceState(listItemsRecyclerView.getLayoutManager().onSaveInstanceState());
+            return;
+        }
         db.collection("tasks").document(listId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -210,11 +239,6 @@ public class ListDetails extends AppCompatActivity {
                 if (document.exists()) {
                     list = List.getTaskByReference(document);
                     switch(mode) {
-                        case "add":
-                        case "create":
-                        case "new":
-                            listItems.clear();
-                            break;
                         case "view":
                         case "edit":
                             listItems.clear();
