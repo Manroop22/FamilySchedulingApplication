@@ -1,11 +1,15 @@
 package com.example.familyschedulingapplication;
 
+import static java.util.UUID.randomUUID;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,6 +33,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class CreateActivity extends AppCompatActivity {
     EditText nameInput, dateInput, notesInput;
@@ -85,13 +91,14 @@ public class CreateActivity extends AppCompatActivity {
                 finish();
             }
         });
+        updateCategoryAdapter();
         newCategoryBtn.setOnClickListener(v -> {
+            Log.d("CreateActivity", CategoryAdapter.categories.toString());
             CategoryBottomSheet.newInstance("add", null).show(getSupportFragmentManager(), "CreateCategory");
         });
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBtn.setOnClickListener(v -> saveActivity());
         cancelBtn.setOnClickListener(v -> finish());
-        updateCategoryAdapter();
 //        updateInvitesAdapter();
     }
 
@@ -109,41 +116,23 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void updateCategoryAdapter() {
-        db.collection("categories").get().addOnCompleteListener(task -> {
+        db.collection("categories").whereEqualTo("createdBy", memberRef).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                categoryList = new ArrayList<>();
-                // define urgent color, important color, and normal color
-                categoryList.add(new Category("Urgent", Color.parseColor("#FF0000")));
-                categoryList.add(new Category("Family", Color.parseColor("#FFA500")));
-                categoryList.add(new Category("Casual", Color.parseColor("#0000FF")));
-                for (Category cat : categoryList) {
+                for (DocumentSnapshot doc : task.getResult()) {
+                    Category cat = doc.toObject(Category.class);
                     if (!CategoryAdapter.categories.contains(cat)) {
                         CategoryAdapter.categories.add(cat);
                     }
                 }
-                if (task.getResult() != null) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        if (document.exists()) {
-                            Category category = Category.getCategory(document);
-                            if (category != null) {
-                                if (category.getCreatedBy() != null && category.getCreatedBy().equals(memberRef)) {
-                                    if (category.getCreatedForType().contains("activity") || category.getCreatedForType().contains("all") || category.getCreatedForType().contains("both")) {
-                                        if (!CategoryAdapter.categories.contains(category)) {
-                                            CategoryAdapter.categories.add(category);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-                categoryAdapter = new CategoryAdapter(this);
-                categoryAdapter.setDropDownViewResource(R.layout.category_array_item);
+                CategoryAdapter.categories = new ArrayList<>(new HashSet<>(CategoryAdapter.categories));
+                categoryAdapter = new CategoryAdapter(CreateActivity.this, R.layout.category_array_item, CategoryAdapter.categories);
+                categoryAdapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
                 categorySpinner.setAdapter(categoryAdapter);
+            } else {
+                Log.d("CreateActivity", "Error getting categories", task.getException());
             }
         });
+        Log.d("CreateActivity", CategoryAdapter.categories.toString());
     }
 
     public boolean validateInputs(boolean required) {
@@ -180,7 +169,9 @@ public class CreateActivity extends AppCompatActivity {
             activity.setName(nameInput.getText().toString());
             activity.setActivityDate(new Date(dateInput.getText().toString()));
             // get spinner selected item
-            activity.setCategory(categoryList.get(categorySpinner.getSelectedItemPosition()).getReference());
+            Log.d("CreateActivity", categorySpinner.getSelectedItem().toString());
+            DocumentReference catRef = db.collection("categories").document(categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()).getCategoryId());
+            activity.setCategory(catRef);
             activity.setNotes(notesInput.getText().toString());
             activity.setCreatedBy(memberRef);
             activity.setCreatedAt(new Date());
@@ -196,23 +187,13 @@ public class CreateActivity extends AppCompatActivity {
                 notificationTypes.add("email");
             }
             activity.setNotificationMethod(notificationTypes);
-//            activity.setInvites(invitesAdapter.selectedMembers);
-            db.collection("activities").add(activity).addOnCompleteListener(task -> {
+            activity.setActivityId(randomUUID().toString());
+            db.collection("activities").document(activity.getActivityId()).set(activity).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    if (task.getResult() != null) {
-                        DocumentReference activityRef = task.getResult();
-                        activity.setReference(activityRef);
-                        activityRef.set(activity).addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
-                                Toast.makeText(this, "Activity created successfully", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else {
-                                Toast.makeText(this, "Error: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    Toast.makeText(this, "Activity created successfully", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("CreateActivity", "Error creating activity", task.getException());
                 }
             });
         }

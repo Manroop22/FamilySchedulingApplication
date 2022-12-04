@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication.ModalBottomSheets;
 
+import static java.util.UUID.randomUUID;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import com.skydoves.colorpickerview.listeners.ColorListener;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class CategoryBottomSheet extends BottomSheetDialogFragment {
     public static final String TAG = "CategoryBottomSheet";
@@ -36,7 +39,6 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
     private static final String MODE = "view";
     private Category category;
     public FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CategoryAdapter adapter;
 
     public static CategoryBottomSheet newInstance(String mode, Category category) {
         final CategoryBottomSheet fragment = new CategoryBottomSheet();
@@ -49,6 +51,7 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
             args.putSerializable("category", (Serializable) category);
         }
         fragment.setArguments(args);
+//        adapter = new CategoryAdapter(fragment.getContext(), R.layout.category_array_item, CategoryAdapter.categories);
         return fragment;
     }
 
@@ -60,7 +63,6 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        adapter = new CategoryAdapter(getContext());
         // set draggable to false, set peekable to true
         BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from((View) view.getParent());
         bottomSheetBehavior.setDraggable(true);
@@ -71,7 +73,6 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
         EditText categoryName = view.findViewById(R.id.categoryNameModal);
         categoryName.setEnabled(false);
         TextView categoryMode = view.findViewById(R.id.categoryMode);
-        assert getArguments() != null;
         String firstUpper = getArguments().getString(MODE).substring(0, 1).toUpperCase() + getArguments().getString(MODE).substring(1);
         categoryMode.setText(String.format("%s Category", firstUpper));
         ColorPickerView colorPickerView = view.findViewById(R.id.categoryColor);
@@ -144,13 +145,12 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
         if (getArguments().getString(MODE).equals("add") || getArguments().getString(MODE).equals("create")) {
             // if activity is CreateActivity, set createdForType to "activity"
             category.setCreatedForType("activity");
+            category.setCategoryId(randomUUID().toString());
             db.collection("categories").add(category).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "DocumentSnapshot added with ID: " + task.getResult().getId());
 //                    category.setId(task.getResult().getId());
                     CategoryAdapter.categories.add(category);
-                    adapter.notifyDataSetChanged();
-                    dismiss();
                 } else {
                     Log.w(TAG, "Error adding document", task.getException());
                 }
@@ -161,7 +161,6 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
             for (int i = 0; i < CategoryAdapter.categories.size(); i++) {
                 if (CategoryAdapter.categories.get(i).getReference().equals(category.getReference())) {
                     CategoryAdapter.categories.set(i, category);
-                    adapter.notifyDataSetChanged();
                 }
             }
         }

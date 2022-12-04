@@ -1,5 +1,6 @@
 package com.example.familyschedulingapplication.Models;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -150,9 +151,14 @@ public class Activity implements Serializable {
         return db.collection(collection).whereArrayContains("invites", memRef).whereEqualTo("createdBy", memRef).get().getResult();
     }
 
-    public static Activity getActivityById(String actId) {
-        DocumentSnapshot document = db.collection(collection).document(actId).get().getResult();
-        return getActivity(document);
+    public static Activity getActivityById(String actId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        Activity act = new Activity();
+        try {
+            db.collection(collection).document(actId).get().addOnCompleteListener(onCompleteListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return act;
     }
 
     public static void addActivity(Activity act) {

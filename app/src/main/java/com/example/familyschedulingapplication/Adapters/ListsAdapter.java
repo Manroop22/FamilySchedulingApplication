@@ -61,8 +61,8 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
         ImageButton listOptions;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            listName=itemView.findViewById(R.id.listName);
-            listOptions=itemView.findViewById(R.id.listOptions);
+            listName=itemView.findViewById(R.id.categoryName);
+            listOptions=itemView.findViewById(R.id.categoryOptions);
             listOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));

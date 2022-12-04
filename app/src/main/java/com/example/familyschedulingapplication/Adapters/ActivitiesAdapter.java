@@ -45,7 +45,7 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     public ActivitiesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i (TAG,  "onCreateViewHolder: "+ count++);
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
-        View view = layoutInflater.inflate (R.layout.category_array_item, parent, false);
+        View view = layoutInflater.inflate (R.layout.activities_item, parent, false);
         return new ActivitiesAdapter.ViewHolder(view);
     }
 
@@ -53,7 +53,7 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     public void onBindViewHolder(@NonNull ActivitiesAdapter.ViewHolder holder, int position) {
 //        holder.nameView.setText(eventList.get(position).getName());
 //        holder.dateView.setText(eventList.get(position).getEventDate().toString());
-        holder.categoryName.setText(activityList.get(position).getName());
+        holder.listName.setText(activityList.get(position).getName());
     }
 
     @Override
@@ -61,14 +61,14 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
         return activityList.size();
     }
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView categoryName;
-        ImageButton categoryOptions;
+        TextView listName;
+        ImageButton listOptions;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            categoryName=itemView.findViewById(R.id.listName);
-            categoryOptions=itemView.findViewById(R.id.listOptions);
+            listName=itemView.findViewById(R.id.listName);
+            listOptions=itemView.findViewById(R.id.listOptions);
 //            nameView.setOnClickListener(this);
-            categoryOptions.setOnClickListener(view -> {
+            listOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));
                 list.add(new PowerMenuItem("Edit",false));
@@ -88,8 +88,8 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle activityBundle = new Bundle();
-//                    Log.d(TAG, "onBindViewHolder: " + activityList.get(getAdapterPosition()).getReference());
                     activityBundle.putString("name", activityList.get(getAdapterPosition()).getName());
+                    activityBundle.putString("activityId", activityList.get(getAdapterPosition()).getActivityId());
                     activityBundle.putString("createdBy", activityList.get(getAdapterPosition()).getCreatedBy().toString());
                     // print reference
                     Class<?> destination = null;

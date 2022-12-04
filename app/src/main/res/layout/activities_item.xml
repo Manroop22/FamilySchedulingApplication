@@ -2,35 +2,35 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listItemLayout"
+    android:id="@+id/linearLayout3"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="#FFFFFF">
 
     <TextView
-        android:id="@+id/categoryName"
+        android:id="@+id/listName"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="@string/list_name"
+        android:text="@string/activity_name"
         android:textColor="#757575"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/categoryOptions"
+        app:layout_constraintEnd_toStartOf="@+id/listOptions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/categoryOptions"
+        android:id="@+id/listOptions"
+        tools:ignore="ImageContrastCheck"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:background="#00FFFFFF"
         android:contentDescription="@string/view_cateogory_bottom_sheet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/listName"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_more_horiz_24"
-        tools:ignore="ImageContrastCheck" />
-
+        app:srcCompat="@drawable/ic_baseline_more_horiz_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

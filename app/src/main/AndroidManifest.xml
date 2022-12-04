@@ -48,13 +48,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".CreateList"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".CreateActivity"
             android:exported="false">
             <meta-data

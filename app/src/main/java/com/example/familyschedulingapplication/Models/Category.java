@@ -3,6 +3,7 @@ package com.example.familyschedulingapplication.Models;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -147,6 +148,16 @@ public class Category {
             Log.d(TAG, "getCategoriesByCreatedBy: " + e.getMessage());
         }
         return categories;
+    }
+
+    public static Category getCategoryByReference(DocumentReference reference, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        Category category = new Category();
+        try {
+            db.collection(collection).document(reference.getId()).get().addOnCompleteListener(onCompleteListener);
+        } catch (Exception e) {
+            Log.d(TAG, "getCategoryByReference: " + e.getMessage());
+        }
+        return category;
     }
 
     public static void addCategory(Category cat) {

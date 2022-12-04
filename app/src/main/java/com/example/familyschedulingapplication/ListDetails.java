@@ -184,7 +184,8 @@ public class ListDetails extends AppCompatActivity {
                 // get spinner values, get position of value that matches category
                 // set spinner position to that value
                 if (list.getCategory() != null) {
-                    categorySpinner.setSelection(categoryAdapter.getPosition(list.getCategory()));
+//                    categorySpinner.setSelection(categoryAdapter.getPosition());
+                    categorySpinner.setSelection(CategoryAdapter.categories.indexOf(list.getCategory()));
                 }
                 if (listItems == null) {
                     listItems = new ArrayList<>();

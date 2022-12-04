@@ -2,35 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout2"
+    android:id="@+id/categorySpinnerItemLayout"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="#FFFFFF">
+    android:layout_height="40dp">
 
     <TextView
-        android:id="@+id/listName"
+        android:id="@+id/categoryName"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:text="@string/category_name"
-        android:textColor="#757575"
+        android:textColor="#546E7A"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/listOptions"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/listOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:background="#00FFFFFF"
-        android:contentDescription="@string/view_cateogory_bottom_sheet"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/listName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_more_horiz_24"
-        tools:ignore="ImageContrastCheck" />
+    <!--    app:layout_constraintEnd_toStartOf="@+id/categoryOptions"-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/categoryOptions"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="48dp"-->
+    <!--        android:background="#00FFFFFF"-->
+    <!--        android:contentDescription="@string/view_cateogory_bottom_sheet"-->
+    <!--        android:minWidth="48dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/categoryName"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:srcCompat="@drawable/ic_baseline_more_horiz_24"-->
+    <!--        tools:ignore="ImageContrastCheck" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
