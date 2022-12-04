@@ -2,6 +2,8 @@ package com.example.familyschedulingapplication;
 
 import static android.widget.Toast.LENGTH_LONG;
 
+import static java.util.UUID.randomUUID;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -104,6 +106,7 @@ public class NewBillActivity extends AppCompatActivity {
         CheckBox email = findViewById(R.id.checkBox);
         CheckBox sms = findViewById(R.id.checkBox2);
         CheckBox push = findViewById(R.id.checkBox3);
+        String billId=randomUUID().toString();
 
         if(name.getText().equals(""))
             Toast.makeText(NewBillActivity.this,"Please enter name of Bill", LENGTH_LONG).show();
@@ -122,6 +125,7 @@ public class NewBillActivity extends AppCompatActivity {
         else {
             //Create a new bill
             Map<String, Object> bill = new HashMap<>();
+            bill.put("billId",billId);
             bill.put("name", name.getText().toString());
             bill.put("date",sd.parse(dateText.getText().toString()));
             bill.put("due", sd.parse(dateText2.getText().toString()));
@@ -132,7 +136,7 @@ public class NewBillActivity extends AppCompatActivity {
             bill.put("sms", sms.isChecked());
             bill.put("push", push.isChecked());
 
-            db.collection("bills").document(name.getText().toString())
+            db.collection("bills").document(billId)
                     .set(bill)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

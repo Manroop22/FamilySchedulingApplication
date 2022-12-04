@@ -95,13 +95,6 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
     }
 
 
-    public void next(View view){
-        Intent intent=new Intent(this, NewBillActivity.class);
-        startActivity(intent);
-        updateBillList(currentTab.toLowerCase(Locale.ROOT));
-
-    }
-
     @Override
     public void onClick(View view, TextView views) {
         TextView rst= (TextView) views;
@@ -111,51 +104,12 @@ public class BillActivity  extends AppCompatActivity implements ItemClickListene
         String name = read.next().trim();
         Intent intent=new Intent(this, IndividualBillActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("name",name);
+        //bundle.putString("billId",name);
         intent.putExtras(bundle);
         startActivity(intent);
 
 
     }
-    /*public void updatelList(String tab){
-        db.collection("/bills")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                Map<String, Object> data = document.getData();
-                                list.add("Bill Name: "+data.get("name").toString()+"  " +"Due Date: " +data.get("due"));
-//                                Log.d("test",list.toString());
-                            }
-
-                            Log.d("testList",list.toString());
-                            noOfBills.setText("You have "+list.size()+" Upcoming Bills");
-                            data = new String[list.size()];
-                            for(int i=0;i<data.length;i++)
-                            {
-                                data[i]=list.get(i);
-                            }
-
-                            rv = (RecyclerView) findViewById(R.id.recycleView);
-                            rv.setLayoutManager(new LinearLayoutManager(billingContext));
-                            rv.addItemDecoration(new DividerItemDecoration(billingContext,
-                                    DividerItemDecoration.VERTICAL));
-                            rva = new BillAdapter(billingContext,data);
-                            data=new String[]{""};
-                            rv.setAdapter(rva);
-                            rva.setClickListener(billingContext);
-                        } else {
-                            Toast.makeText(BillActivity.this,"Failure reading documents",Toast.LENGTH_LONG).show();
-                        }
-
-
-                    }
-                });
-    }*/
     public void updateBillList(String tab) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         //DocumentReference memRef = db.collection("members").document(user.getUid());
