@@ -82,6 +82,7 @@
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
             android:contentDescription="@string/go_to_bills"
+            android:onClick="bill"
             android:src="@drawable/ic_baseline_attach_money_24"
             tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
 

@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication.ModalBottomSheets;
+package com.example.familyschedulingapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -70,9 +70,10 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
         calendarBtnText.setOnClickListener(v -> goTo(EventMainScreen.class));
         listsBtn.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
         listsBtnText.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
+        billsBtn.setOnClickListener(v->goTo(BillActivity.class));
+        billsBtnText.setOnClickListener(v->goTo(BillActivity.class));
         return view;
     }
-
     public void goTo(Class<? extends AppCompatActivity> activity) {
         Intent intent = new Intent(getActivity(), activity);
         startActivity(intent);
