@@ -139,12 +139,12 @@ public class BillMainActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        if (billsList.size() == 0) {
+                        if (billsList.size() > 0 && !Objects.equals(tab, "all")) {
                             noOfBills.setVisibility(View.VISIBLE);
                         } else {
                             noOfBills.setVisibility(View.GONE);
                         }
-                        noOfBills.setText(String.format("You have %d overdue bills", overdueCount[0]));
+                        noOfBills.setText(String.format("You have %d %s bills", tab == "overdue" ? overdueCount[0] : billsList.size(), tab));
                         billAdapter = new BillAdapter(billsList);
                         rv.setAdapter(billAdapter);
                         rv.setLayoutManager(new LinearLayoutManager(this));
