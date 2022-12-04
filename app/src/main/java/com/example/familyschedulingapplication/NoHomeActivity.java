@@ -1,6 +1,8 @@
 package com.example.familyschedulingapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +12,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Adapters.EventAdapter;
+import com.example.familyschedulingapplication.Adapters.InviteAdapter;
 import com.example.familyschedulingapplication.Models.Home;
+import com.example.familyschedulingapplication.Models.HomeInvite;
 import com.example.familyschedulingapplication.Models.Member;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,13 +26,21 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 public class NoHomeActivity extends AppCompatActivity {
+    private ArrayList<HomeInvite> inviteList;
     private String mode = ""; // create or join
+    private RecyclerView inviteRecyclerView;
+    InviteAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_no_home);
+        inviteRecyclerView=findViewById(R.id.rvHomeInvites);
         ImageButton backBtn = findViewById(R.id.backBtn);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        adapter = new InviteAdapter(inviteList);
+        inviteRecyclerView.setAdapter(adapter);
+        inviteRecyclerView.setLayoutManager(new LinearLayoutManager(NoHomeActivity.this));
 //        if (user == null) {
 //            Intent intent = new Intent(this, LoginActivity.class);
 //            startActivity(intent);
