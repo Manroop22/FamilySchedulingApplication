@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
 //    implementation 'com.google.cloud:google-cloud-datastore'
     implementation 'com.google.firebase:firebase-analytics'
+    implementation "com.github.skydoves:powermenu:2.2.1"
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
