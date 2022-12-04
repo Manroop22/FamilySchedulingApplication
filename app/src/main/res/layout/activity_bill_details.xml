@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityDetails">
+    tools:context=".BillDetails">
 
     <LinearLayout
         android:id="@+id/billHeaderLayout"
@@ -30,8 +30,8 @@
             android:gravity="center_vertical"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/activity"
-            android:textSize="20sp" />
+            android:text="@string/mode_bill"
+            android:textSize="24sp" />
 
         <ImageButton
             android:id="@+id/editBillBtn"
@@ -82,45 +82,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="@string/activity_name"
+                android:hint="@string/bill_name"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:textSize="14sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linkLayout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:id="@+id/categoryText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:minWidth="120dp"
-                android:text="@string/category"
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/categorySpinner"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/select_a_category" />
-
-            <ImageButton
-                android:id="@+id/newCategoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="#00FFFFFF"
-                android:contentDescription="@string/create_a_custom_category"
-                android:src="@drawable/ic_baseline_add_24" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -145,7 +111,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="@string/select_a_date"
+                android:hint="@string/due_date"
                 android:importantForAutofill="no"
                 android:inputType="date"
                 android:minHeight="48dp"
@@ -154,7 +120,67 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/inviteLayout"
+            android:id="@+id/amountLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:id="@+id/amountText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:minWidth="120dp"
+                android:text="@string/amount"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/amountInput"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/amount_due"
+                android:importantForAutofill="no"
+                android:inputType="numberSigned|number|numberDecimal"
+                android:minHeight="48dp"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linkLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:id="@+id/categoryText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:minWidth="120dp"
+                android:text="@string/link"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/linkInput"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/link_to_payment_page"
+                android:importantForAutofill="no"
+                android:inputType="textUri|textWebEmailAddress|text"
+                android:minHeight="48dp"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/permittedLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
@@ -167,7 +193,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:minWidth="120dp"
-                android:text="@string/invite"
+                android:text="@string/permitted"
                 android:textSize="16sp" />
 
 
@@ -181,6 +207,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/billNoteLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -199,12 +226,13 @@
             <EditText
                 android:id="@+id/noteInput"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:ems="10"
                 android:gravity="top"
                 android:hint="@string/write_your_notes_here"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
+                android:minHeight="100dp"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -257,28 +285,39 @@
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/billNotifyLayout">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/cancelMsgBtn"
+            android:id="@+id/cancelBillBtn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/saveMsgBtn"
+            app:layout_constraintEnd_toStartOf="@+id/payBillBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/saveMsgBtn"
+            android:id="@+id/payBillBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/pay_bill"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/saveBillBtn"
+            app:layout_constraintStart_toEndOf="@+id/cancelBillBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/saveBillBtn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cancelMsgBtn"
+            app:layout_constraintStart_toEndOf="@+id/payBillBtn"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

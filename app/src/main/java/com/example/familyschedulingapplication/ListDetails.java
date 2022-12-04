@@ -2,7 +2,6 @@ package com.example.familyschedulingapplication;
 
 import static java.util.UUID.randomUUID;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
@@ -26,8 +24,6 @@ import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomS
 import com.example.familyschedulingapplication.Models.List;
 import com.example.familyschedulingapplication.Models.ListItem;
 import com.example.familyschedulingapplication.Models.Member;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -65,20 +61,20 @@ public class ListDetails extends AppCompatActivity {
             mode = "view";
         }
         user = FirebaseAuth.getInstance().getCurrentUser();
-        listMode = findViewById(R.id.listMode);
+        listMode = findViewById(R.id.billMode);
         assert user != null;
         member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
         listId = getIntent().getStringExtra("listId");
-        backBtn = findViewById(R.id.createMsgMenuBtn);
+        backBtn = findViewById(R.id.exitBillBtn);
         editBtn = findViewById(R.id.editList);
         deleteBtn = findViewById(R.id.deleteList);
         addListItemBtn = findViewById(R.id.addListItem);
         addCategoryBtn = findViewById(R.id.newCategoryButton);
         saveBtn = findViewById(R.id.saveMsgBtn);
         cancelBtn = findViewById(R.id.cancelMsgBtn);
-        nameInput = findViewById(R.id.msgTitleInput);
-        notesInput = findViewById(R.id.msgMultiInput);
+        nameInput = findViewById(R.id.billNameInput);
+        notesInput = findViewById(R.id.noteInput);
         categorySpinner = findViewById(R.id.categorySpinner);
         listItemsRecyclerView = findViewById(R.id.listItemsRecyclerView);
         scrollView = findViewById(R.id.itemScroller);

@@ -4,5 +4,5 @@ import android.view.View;
 import android.widget.TextView;
 
 public interface ItemClickListener {
-    public void onClick(View view, TextView viewt);
+    void onClick(View view, TextView viewt);
 }

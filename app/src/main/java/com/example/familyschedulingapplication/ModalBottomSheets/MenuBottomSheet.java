@@ -1,4 +1,4 @@
-package com.example.familyschedulingapplication;
+package com.example.familyschedulingapplication.ModalBottomSheets;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,12 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 
+import com.example.familyschedulingapplication.BillMainActivity;
 import com.example.familyschedulingapplication.EventMainScreen;
+import com.example.familyschedulingapplication.ListAndActivityMainScreen;
 import com.example.familyschedulingapplication.MainActivity;
 import com.example.familyschedulingapplication.MessageBoard;
 import com.example.familyschedulingapplication.R;
-import com.example.familyschedulingapplication.ListAndActivityMainScreen;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,8 +71,8 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
         calendarBtnText.setOnClickListener(v -> goTo(EventMainScreen.class));
         listsBtn.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
         listsBtnText.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
-        billsBtn.setOnClickListener(v->goTo(BillActivity.class));
-        billsBtnText.setOnClickListener(v->goTo(BillActivity.class));
+        billsBtn.setOnClickListener(v->goTo(BillMainActivity.class));
+        billsBtnText.setOnClickListener(v->goTo(BillMainActivity.class));
         return view;
     }
     public void goTo(Class<? extends AppCompatActivity> activity) {

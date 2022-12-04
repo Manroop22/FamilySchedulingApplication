@@ -120,6 +120,20 @@
     <string name="clement_on_today">\@clement on Today</string>
     <string name="v_e_d">View, Edit, or Delete</string>
     <string name="default_price">$100</string>
+    <string name="bill_name">Bill Name</string>
+    <string name="link">Link:</string>
+    <string name="link_to_payment_page">Link to Payment Page</string>
+    <string name="due_date">Due Date</string>
+    <string name="permitted">Permitted:</string>
+    <string name="amount_due">Amount Due</string>
+    <string name="amount">Amount:</string>
+    <string name="mode_bill">Mode Bill</string>
+    <string name="pay_bill">Pay Bill</string>
+    <string name="open_bill_options_menu">Open Bill Options Menu</string>
+    <string name="overdue">Overdue</string>
+    <string name="add_bill">Add Bill</string>
+    <string name="edit_bill">Edit Bill</string>
+    <string name="bill_details">Bill Details</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

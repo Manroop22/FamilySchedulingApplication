@@ -1,10 +1,8 @@
 package com.example.familyschedulingapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +19,6 @@ import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomS
 import com.example.familyschedulingapplication.Models.Activity;
 import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.Models.Member;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,7 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -47,18 +42,12 @@ public class ActivityDetails extends AppCompatActivity {
     MemberAdapter invitesAdapter;
     ArrayList<Category> categoryList;
     ArrayList<Member> invitesList;
-    DatePickerDialog datePickerDialog;
-    Calendar calendar = Calendar.getInstance();
     String dateString, mode = "view", activityId;
     FirebaseUser user;
     DocumentReference memberRef;
-//    DocumentSnapshot activityRef;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Member member;
     Activity activity;
-    int year;
-    int month;
-    int day;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,45 +56,38 @@ public class ActivityDetails extends AppCompatActivity {
         assert user != null;
         member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
-        nameInput = findViewById(R.id.msgTitleInput);
+        nameInput = findViewById(R.id.billNameInput);
         dateInput = findViewById(R.id.dateInput);
         categorySpinner = findViewById(R.id.categorySpinner);
-        notesInput = findViewById(R.id.msgMultiInput);
-        invitesSpinner = findViewById(R.id.inviteSpinner);
-        backBtn = findViewById(R.id.createMsgMenuBtn);
+        notesInput = findViewById(R.id.noteInput);
+        invitesSpinner = findViewById(R.id.permittedSpinner);
+        backBtn = findViewById(R.id.exitBillBtn);
         newCategoryBtn = findViewById(R.id.newCategoryButton);
-        editBtnActivity = findViewById(R.id.editBtnActivity);
-        deleteBtnActivity = findViewById(R.id.deleteBtnActivity);
+        editBtnActivity = findViewById(R.id.editBillBtn);
+        deleteBtnActivity = findViewById(R.id.deleteBillBtn);
         saveBtn = findViewById(R.id.saveMsgBtn);
         cancelBtn = findViewById(R.id.cancelMsgBtn);
-        smsCheckbox = findViewById(R.id.smsCheckBox);
-        pushCheckbox = findViewById(R.id.pushCheckBox);
-        emailCheckbox = findViewById(R.id.emailCheckBox);
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
+        smsCheckbox = findViewById(R.id.notifySMS);
+        pushCheckbox = findViewById(R.id.notifyPush);
+        emailCheckbox = findViewById(R.id.notifyEmail);
         mode = getIntent().getStringExtra("mode");
         if (mode == null) {
-            mode = "view";
+            mode = "add";
         }
-//        activity = Activity.getActivityById(getIntent().getStringExtra("activityId"));
-        activity = Activity.getActivityById(getIntent().getStringExtra("activityId"), new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        activity = document.toObject(Activity.class);
-                        init();
-                        Log.d("ActivityDetails", "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d("ActivityDetails", "No such document");
-                        finish();
-                    }
+        activity = Activity.getActivityById(getIntent().getStringExtra("activityId"), task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    activity = document.toObject(Activity.class);
+                    init();
+                    Log.d("ActivityDetails", "DocumentSnapshot data: " + document.getData());
                 } else {
-                    Log.d("ActivityDetails", "get failed with ", task.getException());
+                    Log.d("ActivityDetails", "No such document");
                     finish();
                 }
+            } else {
+                Log.d("ActivityDetails", "get failed with ", task.getException());
+                finish();
             }
         });
     }

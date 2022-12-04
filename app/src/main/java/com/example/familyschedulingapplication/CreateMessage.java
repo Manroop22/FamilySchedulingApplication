@@ -47,12 +47,12 @@ public class CreateMessage extends AppCompatActivity {
         member = Member.getMemberByUserId(user.getUid());
         cancelMsgBtn=findViewById(R.id.cancelMsgBtn);
         saveMsgBtn=findViewById(R.id.saveMsgBtn);
-        menuBtn=findViewById(R.id.createMsgMenuBtn);
-        titleInput=findViewById(R.id.msgTitleInput);
-        msgInput=findViewById(R.id.msgMultiInput);
-        smsCheckBox=findViewById(R.id.smsCheckBox);
-        emailCheckBox=findViewById(R.id.emailCheckBox);
-        pushCheckBox=findViewById(R.id.pushCheckBox);
+        menuBtn=findViewById(R.id.exitBillBtn);
+        titleInput=findViewById(R.id.billNameInput);
+        msgInput=findViewById(R.id.noteInput);
+        smsCheckBox=findViewById(R.id.notifySMS);
+        emailCheckBox=findViewById(R.id.notifyEmail);
+        pushCheckBox=findViewById(R.id.notifyPush);
         cancelMsgBtn.setOnClickListener(view -> {
             if (validateFields(false)) {
                 // dialog asking if they are sure they want to cancel

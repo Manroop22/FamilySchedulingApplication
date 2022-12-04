@@ -9,9 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.CheckBox;
@@ -22,20 +19,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class NewBillActivity extends AppCompatActivity {
     EditText dateText;
@@ -142,7 +134,7 @@ public class NewBillActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(NewBillActivity.this,"Data Successfuly added",Toast.LENGTH_LONG).show();
-                            Intent newIntent = new Intent(NewBillActivity.this,BillActivity.class);
+                            Intent newIntent = new Intent(NewBillActivity.this, BillMainActivity.class);
                             newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(newIntent);

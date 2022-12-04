@@ -7,7 +7,7 @@
     tools:context=".ListDetails">
 
     <LinearLayout
-        android:id="@+id/msgHeaderLayout"
+        android:id="@+id/billHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/createMsgMenuBtn"
+            android:id="@+id/exitBillBtn"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
@@ -23,7 +23,7 @@
             android:src="@drawable/ic_baseline_arrow_back_ios_new_24" />
 
         <TextView
-            android:id="@+id/listMode"
+            android:id="@+id/billMode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -58,7 +58,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msgHeaderLayout">
+        app:layout_constraintTop_toBottomOf="@+id/billHeaderLayout">
 
         <LinearLayout
             android:id="@+id/msgTitleLayout"
@@ -78,7 +78,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/msgTitleInput"
+                android:id="@+id/billNameInput"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -90,7 +90,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/categoryLayout"
+            android:id="@+id/linkLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
@@ -140,7 +140,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/msgMultiInput"
+                android:id="@+id/noteInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -155,7 +155,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/taskLayout"
+        android:id="@+id/billNotifyLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"

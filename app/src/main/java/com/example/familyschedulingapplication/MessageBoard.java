@@ -29,7 +29,7 @@ import java.util.Date;
 public class MessageBoard extends AppCompatActivity {
     private static final String TAG = "MessageBoard";
     private ArrayList<Event> eventList = new ArrayList<>();
-    private ArrayList<Bill> billList=new ArrayList<>();
+    private ArrayList<Bill> billList = new ArrayList<>();
     private ArrayList<Message> messageList=new ArrayList<>();
     private EventAdapter eventAdapter;
     private BillAdapter billAdapter;
@@ -56,7 +56,7 @@ public class MessageBoard extends AppCompatActivity {
         sync=findViewById(R.id.refreshBoard);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
-        Member member = Member.getMemberByUserId(user.getUid());
+//        Member member = Member.getMemberByUserId(user.getUid());
         DocumentReference memberRef = db.collection("members").document(user.getUid());
         dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);
         sync(memberRef);
@@ -80,15 +80,33 @@ public class MessageBoard extends AppCompatActivity {
     }
 
     private void initBills(DocumentReference memberRef) {
-        billList = new ArrayList<>();
-        billList.add(new Bill("Water Bill", new Date(),100)); // adds a default bill to check.
-        billList.add(new Bill("Water Bill", new Date(),100)); // adds a default bill to check.
-        billList.add(new Bill("Water Bill", new Date(),100)); // adds a default bill to check.
-        billList.add(new Bill("Water Bill", new Date(),100)); // adds a default bill to check.
-        billAdapter=new BillAdapter(billList);
-        billRecycler.setLayoutManager(new LinearLayoutManager(this));
-        billRecycler.setAdapter(billAdapter);
-//        billRecycler.addItemDecoration(dividerItemDecoration);
+        Bill.getBillsByMember(memberRef, task -> {
+            if (task.isSuccessful()) {
+                billList = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult()) {
+                    Bill bill = document.toObject(Bill.class);
+                    assert bill != null;
+                    if ((bill.getDueDate().before(new Date()) && !bill.getPaid()) || bill.getDueDate().after(new Date())) {
+                        billList.add(bill);
+                    }
+                }
+                Bill.getBillsIfPermited(memberRef, task1 -> {
+                    if (task1.isSuccessful()) {
+                        for (DocumentSnapshot document : task1.getResult()) {
+                            Bill bill = document.toObject(Bill.class);
+                            assert bill != null;
+                            if ((bill.getDueDate().before(new Date()) && !bill.getPaid()) || bill.getDueDate().after(new Date())) {
+                                billList.add(bill);
+                            }
+                        }
+                        billAdapter = new BillAdapter(billList);
+                        billRecycler.setAdapter(billAdapter);
+                        billRecycler.setLayoutManager(new LinearLayoutManager(this));
+                        billRecycler.addItemDecoration(dividerItemDecoration);
+                    }
+                });
+            }
+        });
     }
 
     private void initMessages(DocumentReference memberRef) {

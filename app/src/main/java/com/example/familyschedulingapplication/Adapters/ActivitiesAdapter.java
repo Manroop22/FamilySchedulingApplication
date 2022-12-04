@@ -51,8 +51,6 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ActivitiesAdapter.ViewHolder holder, int position) {
-//        holder.nameView.setText(eventList.get(position).getName());
-//        holder.dateView.setText(eventList.get(position).getEventDate().toString());
         holder.listName.setText(activityList.get(position).getName());
     }
 

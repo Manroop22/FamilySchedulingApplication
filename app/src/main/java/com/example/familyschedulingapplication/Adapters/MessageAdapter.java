@@ -34,7 +34,7 @@ import java.util.Objects;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
     private static final String TAG = "MessageAdapter";
-    private ArrayList<Message> messageList;
+    private final ArrayList<Message> messageList;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
