@@ -2,6 +2,8 @@ package com.example.familyschedulingapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Adapters.HomeMemberAdapter;
+import com.example.familyschedulingapplication.Adapters.InviteAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
@@ -22,6 +26,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,10 +34,14 @@ public class MainActivity extends AppCompatActivity {
     public Member member;
     public Home home;
     TextView welcomeTitle;
+    HomeMemberAdapter adapter;
+    RecyclerView HomeMemberRV;
+    ArrayList<Member> homeMemberList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        HomeMemberRV=findViewById(R.id.HomeMemberRecyclerView);
         welcomeTitle = findViewById(R.id.welcomeTitle);
         MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         ImageButton menuBtn = findViewById(R.id.menuBtn);
@@ -66,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void buildHome(Home home) {
         if (home != null) {
+            // adapter set.
+            adapter = new HomeMemberAdapter(homeMemberList);
+            HomeMemberRV.setAdapter(adapter);
+            HomeMemberRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             if (home.getName() != null) {
                 welcomeTitle.setText(String.format("%s", home.getName()));
             } else {
