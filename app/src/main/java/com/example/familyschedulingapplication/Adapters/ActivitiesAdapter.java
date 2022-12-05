@@ -15,10 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.Models.Activity;
+import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.R;
 import com.example.familyschedulingapplication.ActivityDetails;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,6 +54,12 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ActivitiesAdapter.ViewHolder holder, int position) {
         holder.listName.setText(activityList.get(position).getName());
+        Category.getCategoryByReference(activityList.get(position).getCategory(), task -> {
+            if (task.isSuccessful()) {
+                Category mcat = task.getResult().toObject(Category.class);
+                holder.activityItemLayout.setBackgroundColor(mcat.getColor());
+            }
+        });
     }
 
     @Override
@@ -61,10 +69,12 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView listName;
         ImageButton listOptions;
+        ConstraintLayout activityItemLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             listName=itemView.findViewById(R.id.listName);
             listOptions=itemView.findViewById(R.id.listOptions);
+            activityItemLayout=itemView.findViewById(R.id.activityItemLayout);
 //            nameView.setOnClickListener(this);
             listOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
@@ -86,9 +96,9 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle activityBundle = new Bundle();
-                    activityBundle.putString("name", activityList.get(getAdapterPosition()).getName());
-                    activityBundle.putString("activityId", activityList.get(getAdapterPosition()).getActivityId());
-                    activityBundle.putString("createdBy", activityList.get(getAdapterPosition()).getCreatedBy().toString());
+                    activityBundle.putString("name", activityList.get(getAbsoluteAdapterPosition()).getName());
+                    activityBundle.putString("activityId", activityList.get(getAbsoluteAdapterPosition()).getActivityId());
+                    activityBundle.putString("createdBy", activityList.get(getAbsoluteAdapterPosition()).getCreatedBy().toString());
                     // print reference
                     Class<?> destination = null;
                     switch (position){
@@ -107,12 +117,12 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
                             builder.setPositiveButton("Yes", (dialog, which) -> db.collection("activities").get().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     for (DocumentSnapshot document : task.getResult()) {
-                                        if (Objects.equals(document.getString("name"), activityList.get(getAdapterPosition()).getName()) && Objects.equals(document.getDocumentReference("createdBy"), activityList.get(getAdapterPosition()).getCreatedBy())) {
+                                        if (Objects.equals(document.getString("name"), activityList.get(getAbsoluteAdapterPosition()).getName()) && Objects.equals(document.getDocumentReference("createdBy"), activityList.get(getAbsoluteAdapterPosition()).getCreatedBy())) {
                                             db.collection("activities").document(document.getId()).delete().addOnCompleteListener(task1 -> {
                                                 if (task1.isSuccessful()) {
                                                     Toast.makeText(itemView.getContext(), "Activity deleted successfully", Toast.LENGTH_SHORT).show();
-                                                    activityList.remove(getAdapterPosition());
-                                                    notifyItemRemoved(getAdapterPosition());
+                                                    activityList.remove(getAbsoluteAdapterPosition());
+                                                    notifyItemRemoved(getAbsoluteAdapterPosition());
                                                 } else {
                                                     Toast.makeText(itemView.getContext(), "Activity deletion failed", Toast.LENGTH_SHORT).show();
                                                 }
@@ -138,7 +148,7 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "onClick: " + getAdapterPosition());
+            Log.d(TAG, "onClick: " + getAbsoluteAdapterPosition());
         }
     }
 }

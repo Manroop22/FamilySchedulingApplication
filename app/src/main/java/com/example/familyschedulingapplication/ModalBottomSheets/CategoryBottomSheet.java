@@ -74,7 +74,7 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // set draggable to false, set peekable to true
         BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from((View) view.getParent());
-        bottomSheetBehavior.setDraggable(true);
+//        bottomSheetBehavior.setDraggable(true);
         bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setPeekHeight(200);
         bottomSheetBehavior.setFitToContents(true);

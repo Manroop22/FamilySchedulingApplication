@@ -41,9 +41,7 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/billHeaderLayout">
@@ -62,14 +60,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/allround"
             android:hint="@string/title"
             android:importantForAutofill="no"
             android:inputType="text"
             android:minHeight="48dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textColor="#242124"
             android:textColorHint="#555555"
             android:textSize="14sp" />
     </LinearLayout>
@@ -99,14 +93,12 @@
             android:id="@+id/noteInput"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:background="@drawable/allround"
             android:ems="10"
             android:gravity="top"
             android:hint="@string/write_message"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:padding="8dp"
-            android:textColor="#242124"
             android:textColorHint="#555555"
             android:textSize="14sp" />
 

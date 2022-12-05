@@ -89,11 +89,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle eventBundle = new Bundle();
-                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAdapterPosition()).getReference());
-                    eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
-                    eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
-                    eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getEventId());
-                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAdapterPosition()).getEventId());
+                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAbsoluteAdapterPosition()).getReference());
+                    eventBundle.putString("name",eventList.get(getAbsoluteAdapterPosition()).getName());
+                    eventBundle.putString("date",eventList.get(getAbsoluteAdapterPosition()).getEventDate().toString());
+                    eventBundle.putString("eventId", eventList.get(getAbsoluteAdapterPosition()).getEventId());
+                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAbsoluteAdapterPosition()).getEventId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){
@@ -111,12 +111,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                             builder.setMessage("Are you sure you want to delete this event?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
                                 // get event from db based on reference
-                                String eventId = eventList.get(getAdapterPosition()).getReference().getId();
+                                String eventId = eventList.get(getAbsoluteAdapterPosition()).getReference().getId();
                                 db.collection("events").document(eventId).delete().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(itemView.getContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
-                                        eventList.remove(getAdapterPosition());
-                                        notifyItemRemoved(getAdapterPosition());
+                                        eventList.remove(getAbsoluteAdapterPosition());
+                                        notifyItemRemoved(getAbsoluteAdapterPosition());
                                     } else {
                                         Toast.makeText(itemView.getContext(), "Error deleting event", Toast.LENGTH_SHORT).show();
                                     }
@@ -139,7 +139,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "onClick: " + getAdapterPosition());
+            Log.d(TAG, "onClick: " + getAbsoluteAdapterPosition());
         }
     }
 }

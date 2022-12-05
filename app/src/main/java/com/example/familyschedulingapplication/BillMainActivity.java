@@ -32,7 +32,7 @@ public class BillMainActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView rv;
     TextView noOfBills;
-    String currentTab = "overdue";
+    String currentTab = "upcoming";
     FirebaseUser user;
     Member member;
     DocumentReference memberRef;
@@ -59,7 +59,7 @@ public class BillMainActivity extends AppCompatActivity {
             tab.select();
             currentTab = Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
         } else {
-            currentTab = "overdue";
+            currentTab = "upcoming";
         }
         Objects.requireNonNull(tab).select();
         updateBillList(currentTab);

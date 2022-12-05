@@ -62,10 +62,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
             isCompleted=itemView.findViewById(R.id.isCompleted);
             editItem=itemView.findViewById(R.id.editListitem);
             deleteItem=itemView.findViewById(R.id.deleteListItem);
-            if (getAdapterPosition() == 0 || getAdapterPosition() == -1) {
+            if (getAbsoluteAdapterPosition() == 0 || getAbsoluteAdapterPosition() == -1) {
                 item = new ListItem(listItemName.getText().toString(), isCompleted.isChecked());
             } else {
-                item = listItems.get(getAdapterPosition());
+                item = listItems.get(getAbsoluteAdapterPosition());
             }
             switchMode(mode);
 //            setValues(item);
@@ -78,8 +78,8 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
                 switchMode(mode);
             });
             deleteItem.setOnClickListener(view -> {
-                listItems.remove(getAdapterPosition());
-                notifyItemRemoved(getAdapterPosition());
+                listItems.remove(getAbsoluteAdapterPosition());
+                notifyItemRemoved(getAbsoluteAdapterPosition());
             });
             isCompleted.setOnClickListener(view -> item.setCompleted(isCompleted.isChecked()));
         }

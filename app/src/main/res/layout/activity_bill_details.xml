@@ -281,6 +281,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/billNotifyLayout">
+
+        <Button
+            android:id="@+id/billPaidBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:text="@string/i_have_paid_this_bill"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/saveBillBtn"
+            app:layout_constraintStart_toEndOf="@+id/cancelBillBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"

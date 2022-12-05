@@ -38,7 +38,7 @@ public class BillDetails extends AppCompatActivity {
     TextView billMode;
     EditText billName, billAmount, dateInput, linkInput, noteInput;
     ImageButton exitBillBtn, editBillBtn, deleteBillBtn;
-    Button saveBillBtn, cancelBillBtn, payBillBtn;
+    Button saveBillBtn, cancelBillBtn, payBillBtn, billPaidBtn;
     Spinner permittedSpinner;
     CheckBox notifySMS, notifyEmail, notifyPush;
     String mode, billId, dateString;
@@ -73,11 +73,11 @@ public class BillDetails extends AppCompatActivity {
         notifySMS = findViewById(R.id.notifySMS);
         notifyEmail = findViewById(R.id.notifyEmail);
         notifyPush = findViewById(R.id.notifyPush);
+        billPaidBtn = findViewById(R.id.billPaidBtn);
         if (mode == null) {
             mode = "add";
         }
         mode = mode.toLowerCase(Locale.ROOT);
-        Toast.makeText(this, mode, Toast.LENGTH_SHORT).show();
         if (billId == null) {
             bill = new Bill();
             initBill();
@@ -87,6 +87,9 @@ public class BillDetails extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         bill = Bill.getBill(task.getResult());
+                        if (bill.getPaid()) {
+                            mode = "view";
+                        }
                         initBill();
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Toast.makeText(getApplicationContext(), "Bill loaded successfully", Toast.LENGTH_SHORT).show();
@@ -124,6 +127,17 @@ public class BillDetails extends AppCompatActivity {
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBillBtn.setOnClickListener(v -> saveBill(mode));
         payBillBtn.setOnClickListener(v -> payNow());
+        billPaidBtn.setOnClickListener(v -> {
+            bill.setPaid(true);
+            saveBill(mode);
+            // reload the page without blink
+            Intent intent = new Intent(this, BillDetails.class);
+            intent.putExtra("mode", "view");
+            intent.putExtra("billId", bill.getBillId());
+            startActivity(intent);
+            finish();
+            Toast.makeText(this, "Bill marked as paid", Toast.LENGTH_SHORT).show();
+        });
         cancelBillBtn.setOnClickListener(v -> {
             if (mode.equals("add")) {
                 finish();
@@ -154,6 +168,9 @@ public class BillDetails extends AppCompatActivity {
     }
 
     public void switchMode(String mode) {
+        if (mode.equals("edit") && bill.getPaid()) {
+            mode = "view";
+        }
         switch (mode) {
             case "add":
             case "create":
@@ -173,6 +190,7 @@ public class BillDetails extends AppCompatActivity {
                 payBillBtn.setVisibility(View.GONE);
                 editBillBtn.setVisibility(View.GONE);
                 deleteBillBtn.setVisibility(View.GONE);
+                billPaidBtn.setVisibility(View.GONE);
                 break;
             case "edit":
                 billMode.setText(R.string.edit_bill);
@@ -187,8 +205,15 @@ public class BillDetails extends AppCompatActivity {
                 notifyPush.setEnabled(true);
                 saveBillBtn.setVisibility(View.VISIBLE);
                 cancelBillBtn.setVisibility(View.VISIBLE);
-                payBillBtn.setVisibility(View.GONE);
-                editBillBtn.setVisibility(View.GONE);
+                if (bill.getPaid()) {
+                    payBillBtn.setVisibility(View.GONE);
+                    editBillBtn.setVisibility(View.GONE);
+                    billPaidBtn.setVisibility(View.GONE);
+                } else {
+                    payBillBtn.setVisibility(View.GONE);
+                    editBillBtn.setVisibility(View.GONE);
+                    billPaidBtn.setVisibility(View.GONE);
+                }
                 deleteBillBtn.setVisibility(View.GONE);
                 break;
             case "view":
@@ -204,8 +229,15 @@ public class BillDetails extends AppCompatActivity {
                 notifyPush.setEnabled(false);
                 saveBillBtn.setVisibility(View.GONE);
                 cancelBillBtn.setVisibility(View.GONE);
-                payBillBtn.setVisibility(View.VISIBLE);
-                editBillBtn.setVisibility(View.VISIBLE);
+                if (!bill.getPaid()) {
+                    payBillBtn.setVisibility(View.VISIBLE);
+                    editBillBtn.setVisibility(View.VISIBLE);
+                    billPaidBtn.setVisibility(View.VISIBLE);
+                } else {
+                    payBillBtn.setVisibility(View.GONE);
+                    editBillBtn.setVisibility(View.GONE);
+                    billPaidBtn.setVisibility(View.GONE);
+                }
                 deleteBillBtn.setVisibility(View.VISIBLE);
                 break;
         }

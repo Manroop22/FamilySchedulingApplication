@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/topround"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/send_an_invite"
+        android:textColor="#78909C"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/emailInvite"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/email_address"
+            android:importantForAutofill="no"
+            android:inputType="textWebEmailAddress|textEmailAddress"
+            android:textColor="#757575"
+            android:textColorHint="#757575" />
+
+        <ImageButton
+            android:id="@+id/sendInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/send_invite"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_baseline_send_24" />
+    </LinearLayout>
+</LinearLayout>

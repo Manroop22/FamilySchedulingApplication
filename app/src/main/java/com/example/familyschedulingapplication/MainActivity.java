@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Adapters.HomeMemberAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
+import com.example.familyschedulingapplication.ModalBottomSheets.ShareBottomSheet;
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public Home home;
     TextView welcomeTitle, hacCode;
     HomeMemberAdapter adapter;
+    ImageButton menuBtn, inviteBtn;
     RecyclerView HomeMemberRV;
     ArrayList<Member> homeMemberList;
     @Override
@@ -44,9 +46,45 @@ public class MainActivity extends AppCompatActivity {
         welcomeTitle = findViewById(R.id.welcomeTitle);
         hacCode = findViewById(R.id.homeAccessCodeText);
         MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
-        ImageButton menuBtn = findViewById(R.id.menuBtn);
+        inviteBtn = findViewById(R.id.inviteBtn);
+        menuBtn = findViewById(R.id.menuBtn);
+        menuBtn.setVisibility(ImageButton.INVISIBLE);
+        inviteBtn.setVisibility(ImageButton.INVISIBLE);
         menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
         checkCurrentUser();
+        listeners();
+    }
+
+    void listeners() {
+        ImageButton homeBtn = findViewById(R.id.homeBtn2);
+        TextView homeBtnText = findViewById(R.id.homeBtnText2);
+        ImageButton calendarBtn = findViewById(R.id.calendarBtn2);
+        TextView calendarBtnText = findViewById(R.id.calendarBtnText2);
+        ImageButton billsBtn = findViewById(R.id.billsBtn2);
+        TextView billsBtnText = findViewById(R.id.billsBtnText2);
+        ImageButton boardBtn = findViewById(R.id.boardBtn2);
+        TextView boardBtnText = findViewById(R.id.boardBtnText2);
+        ImageButton listsBtn = findViewById(R.id.listsBtn2);
+        TextView listsBtnText = findViewById(R.id.listsBtnText2);
+//        ImageButton logoutBtn = findViewById(R.id.logoutBtn2);
+//        TextView logoutBtnText = findViewById(R.id.logoutBtnText2);
+        homeBtn.setOnClickListener(v -> goTo(MainActivity.class));
+        homeBtnText.setOnClickListener(v -> goTo(MainActivity.class));
+        boardBtn.setOnClickListener(v -> goTo(MessageBoard.class));
+        boardBtnText.setOnClickListener(v -> goTo(MessageBoard.class));
+//        logoutBtn.setOnClickListener(v -> signOut());
+//        logoutBtnText.setOnClickListener(v -> signOut());
+        calendarBtn.setOnClickListener(v -> goTo(EventMainScreen.class));
+        calendarBtnText.setOnClickListener(v -> goTo(EventMainScreen.class));
+        listsBtn.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
+        listsBtnText.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
+        billsBtn.setOnClickListener(v->goTo(BillMainActivity.class));
+        billsBtnText.setOnClickListener(v->goTo(BillMainActivity.class));
+    }
+
+    void goTo(Class<?> activity) {
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
     }
 
     public void homeInit(Home hom) {
@@ -75,11 +113,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void buildHome(Home home) {
-        if (home != null) {
+    public void buildHome(Home hom) {
+        if (hom != null) {
             // adapter set.
-            if (home.getName() != null) {
-                welcomeTitle.setText(String.format("%s", home.getName()));
+            if (hom.getName() != null) {
+                welcomeTitle.setText(String.format("%s", hom.getName()));
             } else {
                 welcomeTitle.setText("Welcome Home");
             }
@@ -152,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
                                             home.setAccessCode(Home.createAccessCode());
                                             home.updateHome();
                                         }
+                                        inviteBtn.setVisibility(ImageButton.VISIBLE);
+                                        Log.d(TAG, "buildHome: " + home.getAccessCode());
+                                        inviteBtn.setOnClickListener(v -> ShareBottomSheet.newInstance(task1.getResult().getReference(), home.getAccessCode()).show(getSupportFragmentManager(), ShareBottomSheet.TAG));
                                         homeInit(home);
                                     }
                                 } else {
@@ -168,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             // No user is signed in
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 

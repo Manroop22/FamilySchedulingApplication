@@ -3,6 +3,7 @@ package com.example.familyschedulingapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -82,7 +83,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 });
             } else {
                 Log.d("EventDetailsActivity", "onCreate: " + task.getException());
-                finish();
+                goBack();
             }
         });
     }
@@ -104,7 +105,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         editBtn.setOnClickListener(v -> switchMode("edit"));
         deleteBtn.setOnClickListener(v -> db.collection("events").document(eventId).delete().addOnSuccessListener(aVoid -> {
             Toast.makeText(EventDetailsActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
-            finish();
+            goBack();
         }));
         cancelBtn.setOnClickListener(v -> switchMode("view"));
         saveBtn.setOnClickListener(v -> saveDetails());
@@ -131,6 +132,12 @@ public class EventDetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void goBack() {
+        Intent intent = new Intent(EventDetailsActivity.this, EventMainScreen.class);
+        startActivity(intent);
+        finish();
     }
 
     public void setValues(){
@@ -202,6 +209,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                 event.setEventDate(new Date(dateInput.getText().toString()));
                 event.setParticipants(participants);
                 event.setUpdatedAt(new Date());
+                if (event.getHomeId() == null) {
+                    event.setHomeId(member.getHomeId());
+                }
                 Event.updateEvent(event, task1 -> {
                     if (task1.isSuccessful()) {
                         Toast.makeText(EventDetailsActivity.this, "Event updated", Toast.LENGTH_SHORT).show();

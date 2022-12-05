@@ -66,7 +66,7 @@
             android:gravity="center_vertical"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/calendar"
+            android:text="@string/family_events"
             android:textColor="#5C6BC0" />
     </LinearLayout>
 

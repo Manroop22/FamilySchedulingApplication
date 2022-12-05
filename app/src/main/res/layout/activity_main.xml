@@ -39,7 +39,7 @@
             android:textSize="24sp" />
 
         <ImageButton
-            android:id="@+id/inviteMember"
+            android:id="@+id/inviteBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="#00FFFFFF"
@@ -102,5 +102,170 @@
                 android:paddingBottom="8dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/homeBtn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/go_home"
+                android:minHeight="48dp"
+                android:src="@drawable/ic_baseline_home_24"
+                tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck,ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/homeBtnText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/home"
+                android:textColor="#7986CB"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/calendarBtn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/go_to_calendar"
+                android:minHeight="48dp"
+                android:src="@drawable/ic_baseline_calendar_month_24"
+                tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/calendarBtnText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/family_events"
+                android:textColor="#7986CB"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/billsBtn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/go_to_bills"
+                android:minHeight="48dp"
+                android:onClick="bill"
+                android:src="@drawable/ic_baseline_attach_money_24"
+                tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/billsBtnText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/bills"
+                android:textColor="#7986CB"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/listsBtn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/go_to_lists_and_activities"
+                android:minHeight="48dp"
+                android:src="@drawable/ic_baseline_checklist_24"
+                tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/listsBtnText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/personal"
+                android:textColor="#7986CB"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/boardBtn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/go_to_message_board"
+                android:minHeight="48dp"
+                android:src="@drawable/ic_baseline_space_dashboard_24"
+                tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/boardBtnText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="@string/board"
+                android:textColor="#7986CB"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

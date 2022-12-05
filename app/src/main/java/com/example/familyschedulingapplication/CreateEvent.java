@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,7 +53,6 @@ public class CreateEvent extends AppCompatActivity {
     MemberAdapter adapter;
     ArrayList<DocumentReference> memberList = new ArrayList<>();
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,10 +128,10 @@ public class CreateEvent extends AppCompatActivity {
     }
 
     public void onCancel(View view){
-        finish(); // goes back to mainEventScreen.
+        goBack(); // goes back to mainEventScreen.
     }
     public void onBack(View view){
-        finish(); // goes back to the mainEventScreen.
+        goBack(); // goes back to the mainEventScreen.
     }
     public void onSave(View view){
         if (validateFields()) {
@@ -145,15 +145,22 @@ public class CreateEvent extends AppCompatActivity {
             event.setParticipants(memberList);
             event.setCreatedBy(member.getReference());
             event.setEventId(randomUUID().toString());
+            event.setHomeId(member.getHomeId());
             Event.addEvent(event, task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(CreateEvent.this, "Event created successfully", Toast.LENGTH_SHORT).show();
-                    finish();
+                    goBack();
                 } else {
                     Toast.makeText(CreateEvent.this, "Event creation failed", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+    }
+
+    void goBack() {
+        Intent intent = new Intent(CreateEvent.this, EventMainScreen.class);
+        startActivity(intent);
+        finish();
     }
 
     public boolean validateFields() {

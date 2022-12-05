@@ -175,7 +175,7 @@ public class Home {
     }
 
     public DocumentReference getReference() {
-        return db.collection(collection).document(getHomeId());
+        return db.collection(Home.collection).document(this.getHomeId());
     }
 
     public static String createAccessCode() {

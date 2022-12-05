@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Adapters.EventAdapter;
@@ -39,6 +40,7 @@ public class NoHomeActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     InviteAdapter adapter;
     ImageButton backBtn;
+    TextView welcomeTitle;
     Member member;
     Button createHomeBtn;
     Button joinHomebtn;
@@ -53,6 +55,7 @@ public class NoHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_no_home);
         assert user != null;
+        welcomeTitle = findViewById(R.id.welcomeTitle);
         createHomeBtn = findViewById(R.id.createHomeBtn);
         joinHomebtn = findViewById(R.id.joinHomeBtn);
         accessCode = findViewById(R.id.editTextAccessCode);
@@ -81,6 +84,7 @@ public class NoHomeActivity extends AppCompatActivity {
                     member.setName(user.getEmail().split("@")[0]);
                     member.updateMember();
                 }
+                welcomeTitle.setText("Welcome, " + member.getName() + "!");
                 init();
             }
         });
@@ -198,8 +202,22 @@ public class NoHomeActivity extends AppCompatActivity {
     }
 
     public void inviteRecycler() {
-        inviteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new InviteAdapter(inviteList);
-        inviteRecyclerView.setAdapter(adapter);
+        HomeInvite.getHomeInvitesByInvitedMemberEmail(user.getEmail(), task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                ArrayList<HomeInvite> homeInvites = new ArrayList<>();
+                for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                    HomeInvite homeInvite = documentSnapshot.toObject(HomeInvite.class);
+                    homeInvites.add(homeInvite);
+                }
+                if (homeInvites.size() > 0) {
+                    inviteRecyclerView.setAdapter(new InviteAdapter(homeInvites));
+                    inviteRecyclerView.setVisibility(RecyclerView.VISIBLE);
+                    inviteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                } else {
+                    inviteRecyclerView.setVisibility(RecyclerView.GONE);
+                }
+            }
+        });
     }
 }

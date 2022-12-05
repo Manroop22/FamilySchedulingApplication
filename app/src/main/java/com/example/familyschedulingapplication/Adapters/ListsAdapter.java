@@ -15,10 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.ListDetails;
+import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.Models.List;
 import com.example.familyschedulingapplication.R;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,6 +52,12 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ListsAdapter.ViewHolder holder, int position) {
         holder.listName.setText(myLists.get(position).getName());
+        Category.getCategoryByReference(myLists.get(position).getCategory(), task -> {
+            if (task.isSuccessful()) {
+                Category mcat = task.getResult().toObject(Category.class);
+                holder.listItemLayout.setBackgroundColor(mcat.getColor());
+            }
+        });
     }
 
     @Override
@@ -59,10 +67,12 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView listName;
         ImageButton listOptions;
+        ConstraintLayout listItemLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             listName=itemView.findViewById(R.id.categoryName);
             listOptions=itemView.findViewById(R.id.categoryOptions);
+            listItemLayout=itemView.findViewById(R.id.listItemLayout);
             listOptions.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));
@@ -83,8 +93,8 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle listBundle = new Bundle();
-                    listBundle.putString("name", myLists.get(getAdapterPosition()).getName());
-                    listBundle.putString("listId", myLists.get(getAdapterPosition()).getTaskId());
+                    listBundle.putString("name", myLists.get(getAbsoluteAdapterPosition()).getName());
+                    listBundle.putString("listId", myLists.get(getAbsoluteAdapterPosition()).getTaskId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){
@@ -101,12 +111,12 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                             builder.setTitle("Delete List");
                             builder.setMessage("Are you sure you want to delete this list?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                List mlist = myLists.get(getAdapterPosition());
+                                List mlist = myLists.get(getAbsoluteAdapterPosition());
                                 List.deleteList(mlist, task -> {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(itemView.getContext(), "List deleted successfully", Toast.LENGTH_SHORT).show();
-                                        myLists.remove(getAdapterPosition());
-                                        notifyItemRemoved(getAdapterPosition());
+                                        myLists.remove(getAbsoluteAdapterPosition());
+                                        notifyItemRemoved(getAbsoluteAdapterPosition());
                                     } else {
                                         Toast.makeText(itemView.getContext(), "List deletion failed", Toast.LENGTH_SHORT).show();
                                     }
@@ -129,7 +139,7 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "onClick: " + getAdapterPosition());
+            Log.d(TAG, "onClick: " + getAbsoluteAdapterPosition());
         }
     }
 }

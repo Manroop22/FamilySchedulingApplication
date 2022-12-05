@@ -5,11 +5,13 @@ import static java.util.UUID.randomUUID;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Models.Member;
 import com.example.familyschedulingapplication.Models.Message;
@@ -43,7 +45,7 @@ public class CreateMessage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_message);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        memberRef = db.collection("members").document(user.getUid());
+        memberRef = db.collection(Member.collection).document(user.getUid());
 //        member = Member.getMemberByUserId(user.getUid());
         cancelMsgBtn=findViewById(R.id.cancelMsgBtn);
         saveMsgBtn=findViewById(R.id.saveMsgBtn);
@@ -61,14 +63,10 @@ public class CreateMessage extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Cancel Message");
                 builder.setMessage("Are you sure you want to cancel this message?");
-                builder.setPositiveButton("Yes", (dialog, which) -> {
-                    finish();
-                });
-                builder.setNegativeButton("No", (dialog, which) -> {
-                    dialog.dismiss();
-                });
+                builder.setPositiveButton("Yes", (dialog, which) -> goBack());
+                builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
             } else {
-                finish();
+                goBack();
             }
         });
         saveMsgBtn.setOnClickListener(view -> saveMessage());
@@ -97,6 +95,12 @@ public class CreateMessage extends AppCompatActivity {
         menuBtn.setOnClickListener(view -> finish());
     }
 
+    void goBack() {
+        Intent intent = new Intent(this, MessageBoard.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void saveMessage() {
         title=titleInput.getText().toString();
         msgText=msgInput.getText().toString();
@@ -108,10 +112,13 @@ public class CreateMessage extends AppCompatActivity {
         msg.setMessage(msgText);
         msg.setNotificationType(notificationType);
         msg.setMessageId(randomUUID().toString());
-        msg.setCreatedAt(new Date());
+        msg.setCreatedAt(new Date(System.currentTimeMillis()));
         msg.setPublished(true);
         msg.setCreatedBy(memberRef);
-        Message.addMessage(msg, task -> finish());
+        Message.addMessage(msg, task -> {
+            finish();
+            Toast.makeText(this, "Message posted!", Toast.LENGTH_SHORT).show();
+        });
     }
 
     public boolean validateFields(boolean checkErrors) {
@@ -121,12 +128,16 @@ public class CreateMessage extends AppCompatActivity {
                 titleInput.setError("Title is required");
             }
             valid = false;
+        } else {
+            titleInput.setError(null);
         }
         if (msgInput.getText().toString().isEmpty()) {
             if (checkErrors) {
                 msgInput.setError("Message is required");
             }
             valid = false;
+        } else {
+            msgInput.setError(null);
         }
         return valid;
     }

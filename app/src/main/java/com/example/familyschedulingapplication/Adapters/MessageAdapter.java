@@ -102,14 +102,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         .setSelectedMenuColor(ContextCompat.getColor(itemView.getContext(), R.color.purple_500)).build();
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
-                    String messageId = messageList.get(getAdapterPosition()).getMessageId();
+                    String messageId = messageList.get(getAbsoluteAdapterPosition()).getMessageId();
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
                     builder.setTitle("Delete Activity");
                     builder.setMessage("Are you sure you want to delete this activity?");
                     builder.setPositiveButton("Yes", (dialog, which) -> db.collection("messages").document(messageId).delete().addOnSuccessListener(aVoid -> {
                         Toast.makeText(itemView.getContext(), "Message deleted", Toast.LENGTH_SHORT).show();
-                        messageList.remove(getAdapterPosition());
-                        notifyItemRemoved(getAdapterPosition());
+                        messageList.remove(getAbsoluteAdapterPosition());
+                        notifyItemRemoved(getAbsoluteAdapterPosition());
                     }).addOnFailureListener(e -> Toast.makeText(itemView.getContext(), "Error deleting message", Toast.LENGTH_SHORT).show()));
                     builder.setNegativeButton("No", (dialog, which) -> {
                     });

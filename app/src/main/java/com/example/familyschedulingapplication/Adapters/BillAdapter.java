@@ -118,12 +118,16 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
                 powerMenu.setOnMenuItemClickListener((position, item) -> {
                     powerMenu.dismiss();
                     Bundle billBundle = new Bundle();
-                    billBundle.putString("billId", billList.get(getAdapterPosition()).getBillId());
+                    billBundle.putString("billId", billList.get(getAbsoluteAdapterPosition()).getBillId());
                     Class<?> destination = BillDetails.class;
                     switch (position) {
                         case 0:
                             Log.d(TAG, "Pay Now");
-                            String link = billList.get(getAdapterPosition()).getLink();
+                            String link = billList.get(getAbsoluteAdapterPosition()).getLink();
+                            // if link is blank or doesn't start with a protocol, fix it and open it
+                            if (link == null || link.equals("") || !link.startsWith("http") || !link.startsWith("https")) {
+                                link = "https://" + link;
+                            }
                             // browser intent
                             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
                             itemView.getContext().startActivity(browserIntent);
@@ -136,19 +140,19 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 assert user != null;
                                 DocumentReference memRef = db.collection(Member.collection).document(user.getUid());
-                                billList.get(getAdapterPosition()).setPaid(true);
-                                billList.get(getAdapterPosition()).setPaidBy(memRef);
-                                billList.get(getAdapterPosition()).setPaidAt(new Date());
-                                billList.get(getAdapterPosition()).setUpdatedAt(new Date());
-                                Bill.updateBill(billList.get(getAdapterPosition()), task -> {
+                                billList.get(getAbsoluteAdapterPosition()).setPaid(true);
+                                billList.get(getAbsoluteAdapterPosition()).setPaidBy(memRef);
+                                billList.get(getAbsoluteAdapterPosition()).setPaidAt(new Date());
+                                billList.get(getAbsoluteAdapterPosition()).setUpdatedAt(new Date());
+                                Bill.updateBill(billList.get(getAbsoluteAdapterPosition()), task -> {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "Bill status updated to paid");
                                         // notify adapter of change
-                                        notifyItemChanged(getAdapterPosition());
+                                        notifyItemChanged(getAbsoluteAdapterPosition());
                                         // remove bill from list
-                                        billList.remove(getAdapterPosition());
+                                        billList.remove(getAbsoluteAdapterPosition());
                                         // notify adapter of change
-                                        notifyItemRemoved(getAdapterPosition());
+                                        notifyItemRemoved(getAbsoluteAdapterPosition());
                                     } else {
                                         Log.d(TAG, "Error updating bill status");
                                     }
@@ -181,13 +185,13 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
                             builder2.setMessage("Are you sure you want to delete this bill?");
                             builder2.setPositiveButton("Yes", (dialog, which) -> {
                                 // delete bill from database
-                                Bill.deleteBill(billList.get(getAdapterPosition()), task -> {
+                                Bill.deleteBill(billList.get(getAbsoluteAdapterPosition()), task -> {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "Bill deleted");
                                         // remove bill from list
-                                        billList.remove(getAdapterPosition());
+                                        billList.remove(getAbsoluteAdapterPosition());
                                         // notify adapter of change
-                                        notifyItemRemoved(getAdapterPosition());
+                                        notifyItemRemoved(getAbsoluteAdapterPosition());
                                     } else {
                                         Log.d(TAG, "Error deleting bill");
                                     }

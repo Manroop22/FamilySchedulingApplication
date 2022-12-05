@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication.Adapters;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -21,9 +23,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.BillDetails;
+import com.example.familyschedulingapplication.MainActivity;
 import com.example.familyschedulingapplication.Models.Bill;
+import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.HomeInvite;
 import com.example.familyschedulingapplication.Models.Member;
+import com.example.familyschedulingapplication.NoHomeActivity;
 import com.example.familyschedulingapplication.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -89,28 +94,47 @@ public class InviteAdapter extends RecyclerView.Adapter<InviteAdapter.ViewHolder
             declineBtn = itemView.findViewById(R.id.inviteDeclineBtn);
             acceptBtn.setOnClickListener(view -> {
                 // code for accepting the invite
+                Log.d(TAG, "onClick: acceptBtn clicked");
                 Member.getMember(user.getUid(), task -> {
                     if (task.isSuccessful()) {
                         Member member = Member.getMemberByMemberId(task.getResult());
-                        Member.joinHome(inviteList.get(getAdapterPosition()).getHomeId(), member, inviteList.get(getAdapterPosition()).getAccessCode(), task1 -> {
-                            HomeInvite.getHomeInviteByHomeMemberAndAccessCode(inviteList.get(getAdapterPosition()).getHomeId(), member.getReference(), inviteList.get(getAdapterPosition()).getAccessCode(), task2 -> {
-                                if (task2.isSuccessful()) {
-                                    QuerySnapshot querySnapshot = task2.getResult();
-                                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                                        HomeInvite homeInvite = querySnapshot.getDocuments().get(0).toObject(HomeInvite.class);
-                                        assert homeInvite != null;
-                                        HomeInvite.deleteHomeInvite(homeInvite, task3 -> {
-                                            if (task3.isSuccessful()) {
-                                                inviteList.remove(getAdapterPosition());
-                                                notifyItemRemoved(getAdapterPosition());
-                                                Toast.makeText(itemView.getContext(), "Invite Accepted", Toast.LENGTH_SHORT).show();
+                        member.setHomeId(inviteList.get(getAbsoluteAdapterPosition()).getHomeId());
+                        Home.getHomeById(inviteList.get(getAbsoluteAdapterPosition()).getHomeId(), task1 -> {
+                            if (task1.isSuccessful()) {
+                                DocumentSnapshot homeSnap = task1.getResult();
+                                if (homeSnap.exists()) {
+                                    Home home = Home.getHome(homeSnap);
+                                    assert home != null;
+                                    if (home.getAccessCode().equals(inviteList.get(getAbsoluteAdapterPosition()).getAccessCode())) {
+                                        db.collection(Member.collection).document(member.getUserId()).set(member).addOnCompleteListener(task2 -> {
+                                            if (task2.isSuccessful()) {
+                                                Log.d(TAG, "onClick: member added to home");
+                                                db.collection(HomeInvite.collection).document(inviteList.get(getAbsoluteAdapterPosition()).getHomeInviteId()).delete().addOnCompleteListener(task3 -> {
+                                                    if (task3.isSuccessful()) {
+                                                        Log.d(TAG, "onClick: invite deleted");
+                                                        inviteList.remove(getAbsoluteAdapterPosition());
+                                                        notifyItemRemoved(getAbsoluteAdapterPosition());
+                                                        Intent intent = new Intent(itemView.getContext(), MainActivity.class);
+                                                        ((NoHomeActivity) itemView.getContext()).startActivity(intent);
+                                                        ((NoHomeActivity) itemView.getContext()).finish();
+                                                        Toast.makeText(itemView.getContext(), "Invite accepted", Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Log.d(TAG, "onClick: invite not deleted");
+                                                    }
+                                                });
                                             } else {
-                                                Toast.makeText(itemView.getContext(), "Error accepting invite", Toast.LENGTH_SHORT).show();
+                                                Log.d(TAG, "onClick: member not added to home");
                                             }
                                         });
+                                    } else {
+                                        Log.d("Member", "joinHome: incorrect access code");
                                     }
+                                } else {
+                                    Log.d("Member", "joinHome: home does not exist");
                                 }
-                            });
+                            } else {
+                                Log.d("Member", "joinHome: home does not exist");
+                            }
                         });
                     }
                 });
@@ -121,8 +145,8 @@ public class InviteAdapter extends RecyclerView.Adapter<InviteAdapter.ViewHolder
                 Member.getMember(user.getUid(), task -> {
                     if (task.isSuccessful()) {
                         Member member = Member.getMemberByMemberId(task.getResult());
-                        Member.joinHome(inviteList.get(getAdapterPosition()).getHomeId(), member, inviteList.get(getAdapterPosition()).getAccessCode(), task1 -> {
-                            HomeInvite.getHomeInviteByHomeMemberAndAccessCode(inviteList.get(getAdapterPosition()).getHomeId(), member.getReference(), inviteList.get(getAdapterPosition()).getAccessCode(), task2 -> {
+                        Member.joinHome(inviteList.get(getAbsoluteAdapterPosition()).getHomeId(), member, inviteList.get(getAbsoluteAdapterPosition()).getAccessCode(), task1 -> {
+                            HomeInvite.getHomeInviteByHomeMemberAndAccessCode(inviteList.get(getAbsoluteAdapterPosition()).getHomeId(), member.getReference(), inviteList.get(getAbsoluteAdapterPosition()).getAccessCode(), task2 -> {
                                 if (task2.isSuccessful()) {
                                     QuerySnapshot querySnapshot = task2.getResult();
                                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
@@ -130,9 +154,12 @@ public class InviteAdapter extends RecyclerView.Adapter<InviteAdapter.ViewHolder
                                         assert homeInvite != null;
                                         HomeInvite.deleteHomeInvite(homeInvite, task3 -> {
                                             if (task3.isSuccessful()) {
-                                                inviteList.remove(getAdapterPosition());
-                                                notifyItemRemoved(getAdapterPosition());
+                                                inviteList.remove(getAbsoluteAdapterPosition());
+                                                notifyItemRemoved(getAbsoluteAdapterPosition());
                                                 Toast.makeText(itemView.getContext(), "Invite Declined", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(itemView.getContext(), MainActivity.class);
+                                                ((NoHomeActivity) itemView.getContext()).startActivity(intent);
+                                                ((NoHomeActivity) itemView.getContext()).finish();
                                             } else {
                                                 Toast.makeText(itemView.getContext(), "Error declining invite", Toast.LENGTH_SHORT).show();
                                             }

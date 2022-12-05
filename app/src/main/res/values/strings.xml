@@ -144,6 +144,15 @@
     <string name="home_members">Home Members</string>
     <string name="invite_member">Invite Member</string>
     <string name="your_home_access_code">Access Code:</string>
+    <string name="family_events">Family Events</string>
+    <string name="personal">Personal</string>
+    <string name="board">Board</string>
+    <string name="send_invite">Send Invite</string>
+    <string name="email_address">Email Address...</string>
+    <string name="send_an_invite">Send an Invite</string>
+    <string name="i_have_paid_this_bill">I HAVE PAID THIS BILL</string>
+    <string name="sign_in">Sign In</string>
+    <string name="register">Register</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

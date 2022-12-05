@@ -3,8 +3,10 @@ package com.example.familyschedulingapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,13 +30,24 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
-        findViewById(R.id.login).setOnClickListener(v -> {
+        Button login = findViewById(R.id.login);
+        Button register = findViewById(R.id.register);
+        login.setOnClickListener(v -> {
             String emailStr = email.getText().toString();
             String passwordStr = password.getText().toString();
             if (emailStr.isEmpty() || passwordStr.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
             } else {
                 signIn(emailStr, passwordStr);
+            }
+        });
+        register.setOnClickListener(v -> {
+            String emailStr = email.getText().toString();
+            String passwordStr = password.getText().toString();
+            if (emailStr.isEmpty() || passwordStr.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please enter your email and password", Toast.LENGTH_SHORT).show();
+            } else {
+                createAccount(emailStr, passwordStr);
             }
         });
     }
@@ -77,13 +90,9 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        if (Objects.equals(Objects.requireNonNull(task.getException()).getMessage(), "There is no user record corresponding to this identifier. The user may have been deleted.")) {
-                            createAccount(email, password);
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                        updateUI(null);
                     }
                 });
     }
@@ -106,17 +115,21 @@ public class LoginActivity extends AppCompatActivity {
                         member.setActive(true);
                         member.setJoinedAt(new Date(System.currentTimeMillis()));
                         Member.addMember(member, task1 -> {
-                              if (task1.isSuccessful()) {
-                                  Log.d(TAG, "New Member created: " + task1.getResult());
-                                  finish();
-                             } else {
-                                  Log.w(TAG, "Error adding document", task1.getException());
-                             }
+                            if (task1.isSuccessful()) {
+                                Log.d(TAG, "New Member created: " + task1.getResult());
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                              Log.w(TAG, "Error adding document", task1.getException());
+                            }
                         });
                     } else {
                         Member.updateMember(member, task1 -> {
                             if (task1.isSuccessful()) {
                                 Log.d(TAG, "Member updated: " + task1.getResult());
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
                                 finish();
                             } else {
                                 Log.w(TAG, "Error updating document", task1.getException());

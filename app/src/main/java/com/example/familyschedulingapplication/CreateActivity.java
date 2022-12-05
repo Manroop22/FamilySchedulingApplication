@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -101,11 +102,11 @@ public class CreateActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
                 builder.setTitle("Discard Changes?");
                 builder.setMessage("Are you sure you want to discard your changes?");
-                builder.setPositiveButton("Yes", (dialog, which) -> finish());
+                builder.setPositiveButton("Yes", (dialog, which) -> goBack());
                 builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
                 builder.show();
             } else {
-                finish();
+                goBack();
             }
         });
         invitesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -130,6 +131,12 @@ public class CreateActivity extends AppCompatActivity {
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBtn.setOnClickListener(v -> saveActivity());
         cancelBtn.setOnClickListener(v -> finish());
+    }
+
+    public void goBack() {
+        Intent intent = new Intent(CreateActivity.this, ListAndActivityMainScreen.class);
+        startActivity(intent);
+        finish();
     }
 
     public void spinnerAdapter() {
@@ -217,7 +224,7 @@ public class CreateActivity extends AppCompatActivity {
             activity.setCategory(catRef);
             activity.setNotes(notesInput.getText().toString());
             activity.setCreatedBy(memberRef);
-            activity.setCreatedAt(new Date());
+            activity.setCreatedAt(new Date(System.currentTimeMillis()));
             // get checkbox values
             ArrayList<String> notificationTypes = new ArrayList<>();
             if (smsCheckbox.isChecked()) {
@@ -234,7 +241,7 @@ public class CreateActivity extends AppCompatActivity {
             Activity.addActivity(activity, task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(CreateActivity.this, "Activity created successfully", Toast.LENGTH_SHORT).show();
-                    finish();
+                    goBack();
                 } else {
                     Toast.makeText(CreateActivity.this, "Error creating activity", Toast.LENGTH_SHORT).show();
                 }

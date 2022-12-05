@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout3"
+    android:id="@+id/activityItemLayout"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="#FFFFFF">
@@ -15,7 +15,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:text="@string/activity_name"
-        android:textColor="#757575"
+        android:textColor="#242124"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/listOptions"
         app:layout_constraintStart_toStartOf="parent"

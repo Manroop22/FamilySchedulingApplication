@@ -84,6 +84,8 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
     public void signOut() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
             getActivity().finish();
         }
     }

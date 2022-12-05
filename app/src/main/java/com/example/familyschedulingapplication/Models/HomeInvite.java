@@ -162,7 +162,7 @@ public class HomeInvite {
 		db.collection(collection).document(homeInvite.getHomeInviteId()).delete().addOnCompleteListener(onCompleteListener);
 	}
 
-	public static void createHomeInvite(HomeInvite homeInvite, OnCompleteListener<DocumentReference> onCompleteListener) {
-		db.collection(collection).add(homeInvite).addOnCompleteListener(onCompleteListener);
+	public static void createHomeInvite(HomeInvite homeInvite, OnCompleteListener<Void> onCompleteListener) {
+		db.collection(collection).document(homeInvite.getHomeInviteId()).set(homeInvite).addOnCompleteListener(onCompleteListener);
 	}
 }

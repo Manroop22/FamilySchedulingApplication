@@ -27,6 +27,7 @@ public class Event {
     private String notes;
     private ArrayList<DocumentReference> participants;
     private Date updatedAt;
+    private DocumentReference homeId;
     private DocumentReference reference;
     private Date eventDate;
     public static final String collection = "events";
@@ -35,7 +36,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(String name, Date createdAt, DocumentReference createdBy, String description, String location, String notes, ArrayList<DocumentReference> participants, Date updatedAt, Date eventDate) {
+    public Event(String name, Date createdAt, DocumentReference createdBy, String description, String location, String notes, ArrayList<DocumentReference> participants, Date updatedAt, Date eventDate, DocumentReference homeId) {
         this.name = name;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
@@ -45,6 +46,7 @@ public class Event {
         this.participants = participants;
         this.updatedAt = updatedAt;
         this.eventDate = eventDate;
+        this.homeId = homeId;
     }
 
     public Event(String name, Date date) {
@@ -128,6 +130,14 @@ public class Event {
         this.eventDate = eventDate;
     }
 
+    public DocumentReference getHomeId() {
+        return homeId;
+    }
+
+    public void setHomeId(DocumentReference homeId) {
+        this.homeId = homeId;
+    }
+
     public static void addEvent(Event event, OnCompleteListener<Void> onCompleteListener) {
         db.collection(collection).document(event.getReference().getId()).set(event).addOnCompleteListener(onCompleteListener);
     }
@@ -155,6 +165,10 @@ public class Event {
 
     public static void getEventByEventId(String evId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(collection).document(evId).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getEventByHomeId(DocumentReference homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(onCompleteListener);
     }
 
     public static Event getEvent(DocumentSnapshot evId) {
