@@ -1,6 +1,7 @@
 package com.example.familyschedulingapplication;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,8 @@ import com.example.familyschedulingapplication.Models.Bill;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
 import com.example.familyschedulingapplication.Models.Message;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +44,8 @@ public class MessageBoard extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DividerItemDecoration dividerItemDecoration;
     ImageButton sync;
+    Member member;
+    DocumentReference memberRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,9 +61,15 @@ public class MessageBoard extends AppCompatActivity {
         sync=findViewById(R.id.refreshBoard);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
-//        Member member = Member.getMemberByUserId(user.getUid());
-        DocumentReference memberRef = db.collection("members").document(user.getUid());
+        memberRef = db.collection(Member.collection).document(user.getUid());
         dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);
+        Member.getMember(user.getUid(), task -> {
+            member = task.getResult().toObject(Member.class);
+            init();
+        });
+    }
+
+    void init() {
         sync(memberRef);
         sync.setOnClickListener(v -> {
             finish();
@@ -74,7 +85,7 @@ public class MessageBoard extends AppCompatActivity {
     }
 
     public void sync(DocumentReference memberRef){
-        initEvents(memberRef);
+        initEvents();
         initBills(memberRef);
         initMessages(memberRef);
     }
@@ -101,7 +112,7 @@ public class MessageBoard extends AppCompatActivity {
                         }
                         billAdapter = new BillAdapter(billList);
                         billRecycler.setAdapter(billAdapter);
-                        billRecycler.setLayoutManager(new LinearLayoutManager(this));
+                        billRecycler.setLayoutManager(new LinearLayoutManager(MessageBoard.this));
                         billRecycler.addItemDecoration(dividerItemDecoration);
                     }
                 });
@@ -124,7 +135,7 @@ public class MessageBoard extends AppCompatActivity {
                             messageList.add(message);
                         }
                         messageAdapter = new MessageAdapter(messageList);
-                        messageRecycler.setLayoutManager(new LinearLayoutManager(this));
+                        messageRecycler.setLayoutManager(new LinearLayoutManager(MessageBoard.this));
                         messageRecycler.setAdapter(messageAdapter);
 //                        messageRecycler.addItemDecoration(dividerItemDecoration);
                     }
@@ -133,21 +144,16 @@ public class MessageBoard extends AppCompatActivity {
         });
     }
 
-    public void initEvents(DocumentReference memRef) {
-        db.collection("events").get().addOnCompleteListener(task -> {
+    public void initEvents() {
+        Event.getEventByHomeId(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
-                eventList = new ArrayList<>();
                 for (DocumentSnapshot document : task.getResult()) {
                     Event event = document.toObject(Event.class);
-                    assert event != null;
-                    if (event.getCreatedBy().equals(memRef) || event.getParticipants().contains(memRef)) {
-                        eventList.add(event);
-                    }
+                    eventList.add(event);
                 }
                 eventAdapter=new EventAdapter(eventList, R.layout.event);
                 eventRecycler.setLayoutManager(new LinearLayoutManager(MessageBoard.this));
                 eventRecycler.setAdapter(eventAdapter);
-//                eventRecycler.addItemDecoration(dividerItemDecoration);
             }
         });
     }
