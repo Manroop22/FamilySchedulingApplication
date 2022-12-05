@@ -1,5 +1,8 @@
 package com.example.familyschedulingapplication;
 
+import static java.util.UUID.randomUUID;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -18,19 +21,26 @@ import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomSheet;
 import com.example.familyschedulingapplication.Models.Activity;
 import com.example.familyschedulingapplication.Models.Category;
+import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.UUID;
 
 public class ActivityDetails extends AppCompatActivity {
     EditText nameInput, dateInput, notesInput;
@@ -48,13 +58,13 @@ public class ActivityDetails extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Member member;
     Activity activity;
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_desc);
         user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
-        member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
         nameInput = findViewById(R.id.billNameInput);
         dateInput = findViewById(R.id.dateInput);
@@ -74,13 +84,17 @@ public class ActivityDetails extends AppCompatActivity {
         if (mode == null) {
             mode = "add";
         }
-        activity = Activity.getActivityById(getIntent().getStringExtra("activityId"), task -> {
+        activityId = getIntent().getStringExtra("activityId");
+        Activity.getActivity(activityId, task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    activity = document.toObject(Activity.class);
-                    init();
                     Log.d("ActivityDetails", "DocumentSnapshot data: " + document.getData());
+                    Member.getMember(user.getUid(), task1 -> {
+                        member = task1.getResult().toObject(Member.class);
+                        activity = document.toObject(Activity.class);
+                        init();
+                    });
                 } else {
                     Log.d("ActivityDetails", "No such document");
                     finish();
@@ -93,9 +107,11 @@ public class ActivityDetails extends AppCompatActivity {
     }
 
     public void init() {
+        updateCategoryAdapter();
+        updateInvitesAdapter();
         switchMode(mode);
         backBtn.setOnClickListener(v -> {
-            if (validateInputs(false) && mode.equals("edit")) {
+            if (validateInputs(false) && !mode.equals("view")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ActivityDetails.this);
                 builder.setTitle("Discard Changes?");
                 builder.setMessage("Are you sure you want to discard your changes?");
@@ -108,7 +124,7 @@ public class ActivityDetails extends AppCompatActivity {
         });
         newCategoryBtn.setOnClickListener(v -> {
             CategoryBottomSheet categoryBottomSheet = new CategoryBottomSheet();
-            categoryBottomSheet.show(getSupportFragmentManager(), "categoryBottomSheet");
+            categoryBottomSheet.show(getSupportFragmentManager(), CategoryBottomSheet.TAG);
         });
         editBtnActivity.setOnClickListener(v -> {
             mode = "edit";
@@ -119,8 +135,8 @@ public class ActivityDetails extends AppCompatActivity {
             builder.setTitle("Delete Activity?");
             builder.setMessage("Are you sure you want to delete this activity?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
-                db.collection("activities").document(activityId).delete().addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
+                Activity.deleteActivity(activity, task -> {
+                    if (task.isSuccessful()) {
                         Toast.makeText(ActivityDetails.this, "Activity Deleted", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
@@ -134,48 +150,62 @@ public class ActivityDetails extends AppCompatActivity {
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBtn.setOnClickListener(v -> saveActivity());
         cancelBtn.setOnClickListener(v -> finish());
-        updateCategoryAdapter();
     }
 
     public void updateInvitesAdapter() {
-        invitesList = new ArrayList<>();
-        ArrayList<Member> members = Member.getMembersByHomeId(member.getHomeId().getId());
-        for(Member m : members) {
-            if(!m.getReference().equals(memberRef)) {
-                invitesList.add(Member.getMemberByMemberId(m.getReference()));
+        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+            if (task.isSuccessful()) {
+                invitesList = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    invitesList.add(document.toObject(Member.class));
+                }
+                invitesAdapter = new MemberAdapter(ActivityDetails.this, R.layout.member_item, invitesList);
+                invitesAdapter.selectedMembers = new ArrayList<>();
+                invitesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                invitesAdapter.notifyDataSetChanged();
+                invitesSpinner.setAdapter(invitesAdapter);
+                invitesSpinner.setSelection(0);
+            } else {
+                Log.d("CreateEvent", "Error getting documents: ", task.getException());
             }
-        }
-        invitesAdapter = new MemberAdapter(this, invitesList);
-        invitesAdapter.setDropDownViewResource(R.layout.member_item);
-        invitesSpinner.setAdapter(invitesAdapter);
+        });
     }
 
     public void updateCategoryAdapter() {
-        db.collection("categories").whereEqualTo("createdBy", memberRef).get().addOnCompleteListener(task -> {
+        Category.getCategoryCreatedByMeByType(memberRef, "activity", task -> {
             if (task.isSuccessful()) {
-                for (DocumentSnapshot doc : task.getResult()) {
-                    Category cat = doc.toObject(Category.class);
-                    if (!CategoryAdapter.categories.contains(cat)) {
-                        CategoryAdapter.categories.add(cat);
-                    }
+                categoryList = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    categoryList.add(document.toObject(Category.class));
                 }
-                // remove duplicates
-                CategoryAdapter.categories = new ArrayList<>(new HashSet<>(CategoryAdapter.categories));
-                categoryAdapter = new CategoryAdapter(ActivityDetails.this, R.layout.category_array_item, CategoryAdapter.categories);
+//              CategoryAdapter.categories = new ArrayList<>(new HashSet<>(CategoryAdapter.categories));
+                categoryAdapter = new CategoryAdapter(ActivityDetails.this, R.layout.category_array_item, categoryList);
                 categoryAdapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
                 categorySpinner.setAdapter(categoryAdapter);
+                if (mode.equals("add")) {
+                    categorySpinner.setSelection(0);
+                } else {
+                    for (int i = 0; i < categoryList.size(); i++) {
+                        if (categoryList.get(i).getReference().equals(activity.getCategory())) {
+                            categorySpinner.setSelection(i);
+                            break;
+                        }
+                    }
+                }
             } else {
-                Log.d("CreateActivity", "Error getting categories", task.getException());
+                Log.d("ActivityDetails", "Error getting categories: ", task.getException());
             }
         });
-        Log.d("CreateActivity", CategoryAdapter.categories.toString());
     }
 
     public void showDatePickerDialog(View v) {
-        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
-        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selection);
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Select a date");
+        MaterialDatePicker<Long> materialDatePicker = builder.build();
+        materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+        materialDatePicker.addOnPositiveButtonClickListener(selection -> {
+            Date date = new Date((Long) selection);
+            dateString = date.toString();
             dateInput.setText(dateString);
         });
     }
@@ -203,7 +233,6 @@ public class ActivityDetails extends AppCompatActivity {
                 if (document.exists()) {
                     Category cat = document.toObject(Category.class);
 //                    categorySpinner.setSelection(categoryAdapter.getPosition(cat));
-                    Log.d("ActivityDetails", "Position: " + categoryAdapter.getPosition(cat));
                     categorySpinner.setSelection(categoryAdapter.getPosition(cat));
                     Log.d("ActivityDetails", "DocumentSnapshot data: " + document.getData());
                 } else {
@@ -267,11 +296,22 @@ public class ActivityDetails extends AppCompatActivity {
 
     public void saveActivity() {
         if (validateInputs(true)) {
-            Activity activity = new Activity();
+            if (activity.getActivityId() == null) {
+                activity.setActivityId(randomUUID().toString());
+            }
             activity.setName(nameInput.getText().toString());
-            activity.setActivityDate(new Date(dateInput.getText().toString()));
+            try {
+                activity.setActivityDate(sd.parse(dateInput.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             // get spinner selected item
-            activity.setCategory(categoryList.get(categorySpinner.getSelectedItemPosition()).getReference());
+            if (categorySpinner.getSelectedItem() != null && categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()) != null) {
+                Log.d("ActivityDetails", categorySpinner.getSelectedItem().toString());
+                DocumentReference catRef = db.collection(Category.collection).document(categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()).getCategoryId());
+                activity.setCategory(catRef);
+            }
+//            activity.setCategory(categoryList.get(categorySpinner.getSelectedItemPosition()).getReference());
             activity.setNotes(notesInput.getText().toString());
             activity.setCreatedBy(memberRef);
             activity.setCreatedAt(new Date());
@@ -287,14 +327,18 @@ public class ActivityDetails extends AppCompatActivity {
                 notificationTypes.add("email");
             }
             activity.setNotificationMethod(notificationTypes);
-            activity.setInvites(invitesAdapter.selectedMembers);
-            db.collection("activities").add(activity).addOnSuccessListener(documentReference -> {
-                Toast.makeText(ActivityDetails.this, "Activity saved successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }).addOnFailureListener(e -> {
-                Toast.makeText(ActivityDetails.this, "Error saving activity", Toast.LENGTH_SHORT).show();
+            if (invitesAdapter != null && invitesAdapter.selectedMembers != null) {
+                activity.setInvites(invitesAdapter.selectedMembers);
+            }
+            Activity.updateActivity(activity, task -> {
+                if (task.isSuccessful()) {
+                    Log.d("CreateActivity", "Activity updated");
+                    Toast.makeText(ActivityDetails.this, "Activity updated", Toast.LENGTH_SHORT).show();
+                    switchMode("view");
+                } else {
+                    Log.d("CreateActivity", "Error updating activity", task.getException());
+                }
             });
-            Activity.updateActivity(activityId, activity);
         }
     }
 

@@ -134,6 +134,7 @@
     <string name="add_bill">Add Bill</string>
     <string name="edit_bill">Edit Bill</string>
     <string name="bill_details">Bill Details</string>
+    <string name="default_pic">https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Android_logo_2019.png/800px-Android_logo_2019.png</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

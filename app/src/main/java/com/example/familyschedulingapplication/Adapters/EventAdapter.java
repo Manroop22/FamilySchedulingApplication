@@ -93,6 +93,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                     eventBundle.putString("name",eventList.get(getAdapterPosition()).getName());
                     eventBundle.putString("date",eventList.get(getAdapterPosition()).getEventDate().toString());
                     eventBundle.putString("eventId", eventList.get(getAdapterPosition()).getEventId());
+                    Log.d(TAG, "onBindViewHolder: " + eventList.get(getAdapterPosition()).getEventId());
                     // print reference
                     Class<?> destination = null;
                     switch (position){

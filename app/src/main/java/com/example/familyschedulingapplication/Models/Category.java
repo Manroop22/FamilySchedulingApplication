@@ -105,37 +105,36 @@ public class Category {
     }
 
     public DocumentReference getReference() {
-        final DocumentReference[] docRef = new DocumentReference[1];
-        db.collection(collection).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot query = task.getResult();
-                for (DocumentSnapshot dSnap : query) {
-                    if (Objects.equals(dSnap.getDocumentReference("createdBy"), this.getCreatedBy()) && Objects.equals(dSnap.getString("name"), this.getName())) {
-                        docRef[0] = dSnap.getReference();
-                        break;
-                    }
-                }
-            }
-        });
-        return docRef[0];
+        return db.collection(collection).document(categoryId);
     }
 
-    public static QuerySnapshot getCategories() {
-        QuerySnapshot categories = null;
-        try {
-            categories = db.collection(collection).get().getResult();
-        } catch (Exception e) {
-            Log.d(TAG, "getCategories: " + e.getMessage());
-        }
-        return categories;
+    public static void addCategory(Category category, OnCompleteListener<Void> onCompleteListener) {
+        // Category.getCategoryId() and add new Category to Category collection
+        db.collection(collection).document(category.getCategoryId()).set(category).addOnCompleteListener(onCompleteListener);
     }
 
-    public static Category getCategory(DocumentSnapshot cat) {
-        Category category = null;
+    public static void updateCategory(Category category, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(category.getCategoryId()).set(category).addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void deleteCategory(Category category, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(category.getCategoryId()).delete().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getCategoryCreatedByMe(DocumentReference memberRef, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("createdBy", memberRef).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getCategoryCreatedByMeByType(DocumentReference memberRef, String type, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("createdBy", memberRef).whereEqualTo("createdForType", type).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static Category getCategory(String CategoryId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        Category category = new Category();
         try {
-            category = cat.toObject(Category.class);
+            db.collection(collection).document(CategoryId).get().addOnCompleteListener(onCompleteListener);
         } catch (Exception e) {
-            Log.d(TAG, "getCategory: " + e.getMessage());
+            e.printStackTrace();
         }
         return category;
     }
@@ -158,59 +157,6 @@ public class Category {
             Log.d(TAG, "getCategoryByReference: " + e.getMessage());
         }
         return category;
-    }
-
-    public static void addCategory(Category cat) {
-        try {
-            db.collection(collection).add(cat).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "addCategory: Category added successfully");
-                } else {
-                    Log.d(TAG, "addCategory: " + task.getException().getMessage());
-                }
-            });
-        } catch (Exception e) {
-            Log.d(TAG, "addCategory: " + e.getMessage());
-        }
-    }
-
-    public static void updateCategory(Category cat) {
-        try {
-            db.collection(collection).document(cat.getName()).set(cat).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "updateCategory: " + cat.getName() + " updated successfully");
-                } else {
-                    Log.d(TAG, "updateCategory: " + cat.getName() + " failed to update");
-                }
-            });
-        } catch (Exception e) {
-            Log.d(TAG, "updateCategory: " + e.getMessage());
-        }
-    }
-
-    public static void deleteCategory(Category cat) {
-        try {
-            db.collection(collection).document(cat.getName()).delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "deleteCategory: Category deleted successfully");
-                } else {
-                    Log.d(TAG, "deleteCategory: " + task.getException().getMessage());
-                }
-            });
-        } catch (Exception e) {
-            Log.d(TAG, "deleteCategory: " + e.getMessage());
-        }
-    }
-
-    public static void deleteCategoryByUser(DocumentReference memRef) {
-        try {
-            QuerySnapshot categories = getCategoriesByCreatedBy(memRef);
-            for (QueryDocumentSnapshot cat : categories) {
-                deleteCategory(cat.toObject(Category.class));
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "deleteCategoryByUser: " + e.getMessage());
-        }
     }
 
     public void setReference(DocumentReference reference) {

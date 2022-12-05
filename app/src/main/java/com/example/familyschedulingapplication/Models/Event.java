@@ -128,20 +128,8 @@ public class Event {
         this.eventDate = eventDate;
     }
 
-    public static void addEvent(Event event, OnCompleteListener<DocumentReference> onCompleteListener) {
-        db.collection(collection).add(event).addOnCompleteListener(onCompleteListener);
-    }
-
-    public static void addEvent(Event event) {
-        db.collection(collection).add(event);
-    }
-
-//    public static void deleteEvent(String id) {
-//        db.collection(collection).document(id).delete();
-//    }
-
-    public static void deleteEvent(Event event) {
-        db.collection(collection).document(event.getReference().getId()).delete();
+    public static void addEvent(Event event, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(event.getReference().getId()).set(event).addOnCompleteListener(onCompleteListener);
     }
 
     public void deleteEvent(OnCompleteListener<Void> onCompleteListener) {
@@ -153,119 +141,32 @@ public class Event {
         db.collection(collection).document(event.getReference().getId()).set(event).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void updateEvent(Event event) {
-        event.setUpdatedAt(new Date());
-        db.collection(collection).document(event.getReference().getId()).set(event).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(null, "Event updated successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(null, "Event update failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static void getEvent(DocumentReference evId, OnCompleteListener onCompleteListener) {
-        db.collection(collection).document(evId.getId()).get().addOnCompleteListener(onCompleteListener);
-    }
-    public static void getEvent(DocumentSnapshot evId, OnCompleteListener onCompleteListener) {
+    public static void getEvent(DocumentReference evId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(collection).document(evId.getId()).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Event GetEvent(DocumentReference evId) {
-        Event event = new Event();
-        db.collection(collection).document(evId.getId()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    event.setName(document.getString("name"));
-                    event.setCreatedAt(document.getDate("createdAt"));
-                    event.setCreatedBy(document.getDocumentReference("createdBy"));
-                    event.setDescription(document.getString("description"));
-                    event.setLocation(document.getString("location"));
-                    event.setNotes(document.getString("notes"));
-                    event.setParticipants((ArrayList<DocumentReference>) document.get("participants"));
-                    event.setUpdatedAt(document.getDate("updatedAt"));
-                    event.setEventDate(document.getDate("eventDate"));
-                    event.setReference(document.getReference());
-                }
-            }
-        });
-        return event;
+    public static void getEventByCreatedBy(DocumentReference createdBy, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("createdBy", createdBy).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Task<DocumentSnapshot> getEventByEventId(String evId) {
-        return db.collection(collection).document(evId).get();
+    public static void getEventByParticipant(DocumentReference participant, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereArrayContains("participants", participant).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getEventByEventId(String evId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(collection).document(evId).get().addOnCompleteListener(onCompleteListener);
     }
 
     public static Event getEvent(DocumentSnapshot evId) {
-        Event event = new Event();
-        event.setName(evId.getString("name"));
-        event.setCreatedAt(evId.getDate("createdAt"));
-        event.setCreatedBy(evId.getDocumentReference("createdBy"));
-        event.setDescription(evId.getString("description"));
-        event.setLocation(evId.getString("location"));
-        event.setNotes(evId.getString("notes"));
-        event.setParticipants((ArrayList<DocumentReference>) evId.get("participants"));
-        event.setUpdatedAt(evId.getDate("updatedAt"));
-        event.setEventDate(evId.getDate("eventDate"));
-        event.setReference(evId.getReference());
-        return event;
+        return evId.toObject(Event.class);
     }
 
     public static void getEvents(OnCompleteListener<QuerySnapshot> onCompleteListener) {
         db.collection(collection).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static ArrayList<Event> getEvents() {
-        final ArrayList<Event> events = new ArrayList<>();
-        db.collection(collection).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    events.add(document.toObject(Event.class));
-                }
-            } else {
-                System.out.println("Error getting documents: " + task.getException());
-            }
-        });
-        return events;
-    }
-
-    public static void getEventsByMember(DocumentReference memId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
-        // find events member is a participant in and events created by memId
-        db.collection(collection).whereArrayContains("participants", memId).whereEqualTo("createdBy", memId).get().addOnCompleteListener(onCompleteListener);
-    }
-
-    public static ArrayList<Event> getEventsByMember(DocumentReference memId) {
-        // find events member is a participant in and events created by memId
-        ArrayList<Event> events = new ArrayList<>();
-        db.collection(collection).whereArrayContains("participants", memId).whereEqualTo("createdBy", memId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    events.add(document.toObject(Event.class));
-                }
-            }
-        });
-        return events;
-    }
-
-    public static void getEventsByDate(Date date, OnCompleteListener<QuerySnapshot> onCompleteListener) {
-        db.collection(collection).whereEqualTo("eventDate", date).get().addOnCompleteListener(onCompleteListener);
-    }
-
-    public static void getEventsByLocation(String location, OnCompleteListener<QuerySnapshot> onCompleteListener) {
-        db.collection(collection).whereEqualTo("location", location).get().addOnCompleteListener(onCompleteListener);
-    }
-
-    public void Save() {
-        if (getReference() == null) {
-            addEvent(this);
-        } else {
-            updateEvent(this);
-        }
-    }
-
     public DocumentReference getReference() {
-        return reference;
+        return db.collection(collection).document(eventId);
     }
 
     public void setParticipants(ArrayList<DocumentReference> participants) {
@@ -275,10 +176,6 @@ public class Event {
     public void setReference(DocumentReference reference) {
         this.reference = reference;
     }
-
-//    public void setParticipants(ArrayList<Member> participants) {
-//        this.participants = participants;
-//    }
 
     public void addParticipant(Member member) {
         this.participants.add(member.getReference());

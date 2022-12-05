@@ -19,6 +19,8 @@ import com.example.familyschedulingapplication.Adapters.CategoryAdapter;
 import com.example.familyschedulingapplication.Models.Category;
 import com.example.familyschedulingapplication.Models.Member;
 import com.example.familyschedulingapplication.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +31,8 @@ import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorListener;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -39,8 +43,10 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
     private static final String MODE = "view";
     private Category category;
     public FirebaseFirestore db = FirebaseFirestore.getInstance();
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    public String cattype;
 
-    public static CategoryBottomSheet newInstance(String mode, Category category) {
+    public static CategoryBottomSheet newInstance(String mode, Category category, String type) {
         final CategoryBottomSheet fragment = new CategoryBottomSheet();
         final Bundle args = new Bundle();
 //        args.putInt(ARG_ITEM_COUNT, itemCount);
@@ -49,6 +55,9 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
         }
         if (category != null) {
             args.putSerializable("category", (Serializable) category);
+        }
+        if (type != null) {
+            args.putString("cattype", type);
         }
         fragment.setArguments(args);
 //        adapter = new CategoryAdapter(fragment.getContext(), R.layout.category_array_item, CategoryAdapter.categories);
@@ -88,8 +97,14 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
             colorInput.setBackgroundColor(color);
         });
         deleteBtn.setOnClickListener(v -> {
-            Category.deleteCategory(category);
-            dismiss();
+            Category.deleteCategory(category, task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Category deleted successfully");
+                    dismiss();
+                } else {
+                    Log.d(TAG, "Category delete failed");
+                }
+            });
         });
         editBtn.setOnClickListener(v -> switchMode("edit", view));
         saveBtn.setOnClickListener(v -> saveValues(view));
@@ -139,30 +154,40 @@ public class CategoryBottomSheet extends BottomSheetDialogFragment {
         assert user != null;
         DocumentReference memberRef = db.collection("members").document(user.getUid());
 //        Member member = Member.getMemberByMemberId(memberRef);
-        category.setCreatedBy(memberRef);
-        category.setCreatedAt(new Date());
         assert getArguments() != null;
         if (getArguments().getString(MODE).equals("add") || getArguments().getString(MODE).equals("create")) {
             // if activity is CreateActivity, set createdForType to "activity"
-            category.setCreatedForType("activity");
+            try {
+                category.setCreatedAt(sd.parse(new Date().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            category.setCreatedBy(memberRef);
+            category.setCreatedAt(new Date(System.currentTimeMillis()));
+            category.setCreatedForType(getArguments().getString("cattype"));
             category.setCategoryId(randomUUID().toString());
-            db.collection("categories").add(category).addOnCompleteListener(task -> {
+            Category.addCategory(category, task -> {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "DocumentSnapshot added with ID: " + task.getResult().getId());
-//                    category.setId(task.getResult().getId());
+                    Log.d(TAG, "Category added successfully");
                     CategoryAdapter.categories.add(category);
+                    dismiss();
                 } else {
-                    Log.w(TAG, "Error adding document", task.getException());
+                    Log.d(TAG, "Category add failed");
                 }
             });
         } else if (getArguments().getString(MODE).equals("edit")) {
-            Category.updateCategory(category);
-            // find category in list and update it
-            for (int i = 0; i < CategoryAdapter.categories.size(); i++) {
-                if (CategoryAdapter.categories.get(i).getReference().equals(category.getReference())) {
-                    CategoryAdapter.categories.set(i, category);
-                }
+            try {
+                category.setUpdatedAt(sd.parse(new Date().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+            Category.updateCategory(category, (OnCompleteListener<Void>) task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Category successfully updated!");
+                } else {
+                    Log.w(TAG, "Error updating category", task.getException());
+                }
+            });
         }
         dismiss();
     }

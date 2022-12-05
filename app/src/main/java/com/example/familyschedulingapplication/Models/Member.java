@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.Date;
 public class Member {
     private String name;
     private String userId;
+    private String profileUrl;
     private DocumentReference homeId;
     private String email;
     private String phone;
@@ -34,12 +36,11 @@ public class Member {
 
     public Member(String userId) {
         this.userId = userId;
-        // repopulate the member object from the database
-        getMemberByUserId(userId);
     }
-    public Member(String name, String userId, DocumentReference homeId, String email, String phone, boolean active, Date joinedAt) {
+    public Member(String name, String userId, String profileUrl, DocumentReference homeId, String email, String phone, boolean active, Date joinedAt) {
         this.name = name;
         this.userId = userId;
+        this.profileUrl = profileUrl;
         this.homeId = homeId;
         this.email = email;
         this.phone = phone;
@@ -61,6 +62,14 @@ public class Member {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
     }
 
     public DocumentReference getHomeId() {
@@ -103,130 +112,54 @@ public class Member {
         this.joinedAt = joinedAt;
     }
 
-    public static ArrayList<Member> getMembersByHomeId(String homeId) {
-        ArrayList<Member> members = new ArrayList<>();
-        db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    members.add(document.toObject(Member.class));
-                }
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
-        return members;
+    public static void getMembersByHomeId(String homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static ArrayList<Member> getMembersByHome(DocumentReference home) {
-        ArrayList<Member> members = new ArrayList<>();
-        db.collection(collection).whereEqualTo("homeId", home).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    members.add(document.toObject(Member.class));
-                }
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
-        return members;
+    public static void getMembersByHome(DocumentReference home, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("homeId", home).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Member getMemberByUserId(String userId) {
-        final Member[] member = {new Member()};
-        // either member.userId = userId or member's collection reference = userId
-        db.collection(collection).whereEqualTo("userId", userId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    member[0] = document.toObject(Member.class);
-                }
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
-        return member[0];
+    public static void getMember(String userId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(collection).document(userId).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Member getMemberByMemberId(DocumentReference memberReference) {
-        Member member = new Member();
-        memberReference.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                member.setName(document.getString("name"));
-                member.setUserId(document.getString("userId"));
-                member.setHomeId(document.getDocumentReference("homeId"));
-                member.setEmail(document.getString("email"));
-                member.setPhone(document.getString("phone"));
-                member.setActive(Boolean.TRUE.equals(document.getBoolean("active")));
-                member.setJoinedAt(document.getDate("joinedAt"));
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
-        return member;
+    public static Member getMemberByMemberId(DocumentSnapshot memberSnap) {
+        return memberSnap.toObject(Member.class);
     }
 
-    public static void addMember(Member member, OnCompleteListener<DocumentReference> onCompleteListener) {
-        // if member with userId already exists, update it
-        db.collection(collection).whereEqualTo("userId", member.getUserId()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult().size() > 0) {
-                    updateMember(member);
-                } else {
-                    db.collection(collection).add(member).addOnCompleteListener(onCompleteListener);
-                }
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
-    }
-
-    public static void addMember(Member member) {
-        // if member with userId already exists, update it
-        db.collection(collection).whereEqualTo("userId", member.getUserId()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult().size() > 0) {
-                    updateMember(member);
-                } else {
-                    db.collection(collection).add(member).addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
-                            Log.d("Member", "Member added with ID: " + task1.getResult().getId());
-                        } else {
-                            Log.w("Member", "Error adding document", task1.getException());
-                        }
-                    });
-                }
-            } else {
-                Log.d("Member", "Error getting documents: ", task.getException());
-            }
-        });
+    public static void addMember(Member member, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(member.getUserId()).set(member).addOnCompleteListener(onCompleteListener);
     }
 
     public static void updateMember(Member member, OnCompleteListener<Void> onCompleteListener) {
-        db.collection(collection).document(member.getReference().getId()).set(member).addOnCompleteListener(onCompleteListener);
-    }
-
-    public static void updateMember(Member member) {
-        db.collection(collection).document(member.getReference().getId()).set(member);
+        db.collection(collection).document(member.getUserId()).set(member).addOnCompleteListener(onCompleteListener);
     }
 
     public static void deleteMember(Member member, OnCompleteListener<Void> onCompleteListener) {
-        db.collection(collection).document(member.getReference().getId()).delete().addOnCompleteListener(onCompleteListener);
+        db.collection(collection).document(member.getUserId()).delete().addOnCompleteListener(onCompleteListener);
     }
 
-    public void Save(OnCompleteListener<DocumentReference> onCompleteListener) {
-        if (getReference() == null) {
-            addMember(this, onCompleteListener);
-        } else {
-            updateMember(this);
-        }
-    }
-
-    public void Save() {
-        if (getReference() == null) {
-            addMember(this);
-        } else {
-            updateMember(this);
-        }
+    public static void joinHome(DocumentReference homeId, Member member, String accCode, OnCompleteListener<Void> onCompleteListener) {
+        member.setHomeId(homeId);
+        Home.getHomeById(homeId, task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot homeSnap = task.getResult();
+                if (homeSnap.exists()) {
+                    Home home = Home.getHome(homeSnap);
+                    assert home != null;
+                    if (home.getAccessCode().equals(accCode)) {
+                        db.collection(collection).document(member.getUserId()).set(member).addOnCompleteListener(onCompleteListener);
+                    } else {
+                        Log.d("Member", "joinHome: incorrect access code");
+                    }
+                } else {
+                    Log.d("Member", "joinHome: home does not exist");
+                }
+            } else {
+                Log.d("Member", "joinHome: home does not exist");
+            }
+        });
     }
 
     public DocumentReference getReference() {
@@ -234,14 +167,5 @@ public class Member {
             return null;
         }
         return db.collection(collection).document(userId);
-    }
-
-    public String toString() {
-        // build a string with all the member's info
-        return "Name: " + name + "\n" +
-                "Email: " + email + "\n" +
-                "Phone: " + phone + "\n" +
-                "Active: " + active + "\n" +
-                "Joined At: " + joinedAt + "\n";
     }
 }

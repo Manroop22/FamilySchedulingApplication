@@ -6,6 +6,7 @@ package com.example.familyschedulingapplication.Models;
  */
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -128,55 +129,32 @@ public class Home {
         return db;
     }
 
-    public static void addHome(Home home) {
-        db.collection(collection).add(home);
+    public static void addHome(Home home, OnCompleteListener<DocumentReference> onCompleteListener) {
+        db.collection(collection).add(home).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void updateHome(Home home) {
-        db.collection(collection).document(home.getReference().getId()).set(home);
+    public static void updateHome(Home home, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(home.getHomeId()).set(home).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void deleteHome(Home home) {
-        db.collection(collection).document(home.getReference().getId()).delete();
+    public static void deleteHome(Home home, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(home.getHomeId()).delete().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Home getHome(String homeId) {
-        DocumentSnapshot documentSnapshot = db.collection(collection).document(homeId).get().getResult();
-        return documentSnapshot.toObject(Home.class);
+    public static void getHomes(OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static ArrayList<Home> getHomes() {
-        ArrayList<Home> homes = new ArrayList<>();
-        db.collection(collection).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    homes.add(document.toObject(Home.class));
-                }
-            } else {
-                Log.d("Home", "Error getting documents: ", task.getException());
-            }
-        });
-        return homes;
+    public static void getHomeByAccessCode(String accessCode, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("accessCode", accessCode).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Home getHomeById(DocumentReference homeId) {
-        // if document reference is equal to the homeId, return the home object
-        Home[] home = new Home[1];
-        db.collection(collection).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    if (document.getReference().equals(homeId)) {
-                        home[0] = document.toObject(Home.class);
-                    }
-                }
-            } else {
-                Log.d("Home", "Error getting documents: ", task.getException());
-            }
-        });
-        return home[0];
+    public static Home getHomeById(DocumentReference homeId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(collection).document(homeId.getId()).get().addOnCompleteListener(onCompleteListener);
+        return null;
     }
 
-    public static Home getHomeById(DocumentSnapshot snap) {
+    public static Home getHome(DocumentSnapshot snap) {
         if (snap == null) {
             return null;
         } else {
@@ -193,29 +171,20 @@ public class Home {
         }
     }
 
-    public static ArrayList<Home> getHomesByMember(String memberId) {
-        ArrayList<Home> homes = new ArrayList<>();
-        QuerySnapshot querySnapshot = db.collection(collection).whereEqualTo("createdBy", memberId).get().getResult();
-        for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
-            homes.add(documentSnapshot.toObject(Home.class));
-        }
-        return homes;
-    }
-
     public DocumentReference getReference() {
-        return db.collection(collection).document();
+        return db.collection(collection).document(getHomeId());
     }
 
-    public static Home getHomeByReference(DocumentReference reference) {
-        DocumentSnapshot documentSnapshot = reference.get().getResult();
-        return documentSnapshot.toObject(Home.class);
-    }
-
-    public void Save() {
-        if (getReference() == null) {
-            addHome(this);
-        } else {
-            updateHome(this);
+    public static String createAccessCode() {
+        StringBuilder accCode = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int rand = (int) (Math.random() * 36);
+            if (rand < 10) {
+                accCode.append(rand);
+            } else {
+                accCode.append((char) (rand + 55));
+            }
         }
+        return accCode.toString();
     }
 }

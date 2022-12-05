@@ -46,7 +46,7 @@ public class BillMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bill_main);
         user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
-        member = Member.getMemberByUserId(user.getUid());
+//        member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection(Member.collection).document(user.getUid());
         rv = (RecyclerView) findViewById(R.id.recyclerView);
         noOfBills = (TextView) findViewById(R.id.billAlert);

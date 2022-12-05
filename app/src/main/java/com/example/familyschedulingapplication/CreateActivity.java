@@ -2,6 +2,7 @@ package com.example.familyschedulingapplication;
 
 import static java.util.UUID.randomUUID;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -9,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -21,14 +23,21 @@ import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.CategoryBottomSheet;
 import com.example.familyschedulingapplication.Models.Activity;
 import com.example.familyschedulingapplication.Models.Category;
+import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.net.HttpCookie;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +55,7 @@ public class CreateActivity extends AppCompatActivity {
     MemberAdapter invitesAdapter;
     ArrayList<Category> categoryList;
     ArrayList<Member> invitesList;
+    ArrayList<DocumentReference> invites= new ArrayList<>();
     DatePickerDialog datePickerDialog;
     Calendar calendar = Calendar.getInstance();
     String dateString;
@@ -56,13 +66,14 @@ public class CreateActivity extends AppCompatActivity {
     int year;
     int month;
     int day;
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
         user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
-        member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
         nameInput = findViewById(R.id.billNameInput);
         dateInput = findViewById(R.id.dateInput);
@@ -76,9 +87,15 @@ public class CreateActivity extends AppCompatActivity {
         smsCheckbox = findViewById(R.id.notifySMS);
         pushCheckbox = findViewById(R.id.notifyPush);
         emailCheckbox = findViewById(R.id.notifyEmail);
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
+        Member.getMember(user.getUid(), task -> {
+            member = Member.getMemberByMemberId(task.getResult());
+            init();
+        });
+    }
+
+    public void init() {
+        updateCategoryAdapter();
+        spinnerAdapter();
         backBtn.setOnClickListener(v -> {
             if (validateInputs(false)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateActivity.this);
@@ -91,32 +108,51 @@ public class CreateActivity extends AppCompatActivity {
                 finish();
             }
         });
-        updateCategoryAdapter();
+        invitesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Member.getMember(invitesList.get(position).getUserId(), task -> {
+                    if (task.isSuccessful()) {
+                        invites.add(task.getResult().getReference());
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         newCategoryBtn.setOnClickListener(v -> {
             Log.d("CreateActivity", CategoryAdapter.categories.toString());
-            CategoryBottomSheet.newInstance("add", null).show(getSupportFragmentManager(), "CreateCategory");
+            CategoryBottomSheet.newInstance("add", null, "activity").show(getSupportFragmentManager(), "CreateCategory");
         });
         dateInput.setOnClickListener(this::showDatePickerDialog);
         saveBtn.setOnClickListener(v -> saveActivity());
         cancelBtn.setOnClickListener(v -> finish());
-//        updateInvitesAdapter();
     }
 
-    public void updateInvitesAdapter() {
-        invitesList = new ArrayList<>();
-        ArrayList<Member> members = Member.getMembersByHomeId(member.getHomeId().getId());
-        for(Member m : members) {
-            if(!m.getReference().equals(memberRef)) {
-                invitesList.add(Member.getMemberByMemberId(m.getReference()));
+    public void spinnerAdapter() {
+        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+            if (task.isSuccessful()) {
+                invitesList = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    invitesList.add(document.toObject(Member.class));
+                }
+                invitesAdapter = new MemberAdapter(CreateActivity.this, R.layout.member_item, invitesList);
+                invitesAdapter.selectedMembers = new ArrayList<>();
+                invitesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                invitesAdapter.notifyDataSetChanged();
+                invitesSpinner.setAdapter(invitesAdapter);
+                invitesSpinner.setSelection(0);
+            } else {
+                Log.d("CreateEvent", "Error getting documents: ", task.getException());
             }
-        }
-        invitesAdapter = new MemberAdapter(this, invitesList);
-        invitesAdapter.setDropDownViewResource(R.layout.member_item);
-        invitesSpinner.setAdapter(invitesAdapter);
+        });
     }
 
     public void updateCategoryAdapter() {
-        db.collection("categories").whereEqualTo("createdBy", memberRef).get().addOnCompleteListener(task -> {
+        db.collection(Category.collection).whereEqualTo("createdBy", memberRef).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot doc : task.getResult()) {
                     Category cat = doc.toObject(Category.class);
@@ -155,10 +191,13 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void showDatePickerDialog(View v) {
-        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
-        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selection);
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Select a date");
+        MaterialDatePicker<Long> materialDatePicker = builder.build();
+        materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+        materialDatePicker.addOnPositiveButtonClickListener(selection -> {
+            Date date = new Date((Long) selection);
+            dateString = date.toString();
             dateInput.setText(dateString);
         });
     }
@@ -167,10 +206,14 @@ public class CreateActivity extends AppCompatActivity {
         if (validateInputs(true)) {
             Activity activity = new Activity();
             activity.setName(nameInput.getText().toString());
-            activity.setActivityDate(new Date(dateInput.getText().toString()));
+            try {
+                activity.setActivityDate(sd.parse(dateInput.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             // get spinner selected item
             Log.d("CreateActivity", categorySpinner.getSelectedItem().toString());
-            DocumentReference catRef = db.collection("categories").document(categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()).getCategoryId());
+            DocumentReference catRef = db.collection(Category.collection).document(categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()).getCategoryId());
             activity.setCategory(catRef);
             activity.setNotes(notesInput.getText().toString());
             activity.setCreatedBy(memberRef);
@@ -188,12 +231,12 @@ public class CreateActivity extends AppCompatActivity {
             }
             activity.setNotificationMethod(notificationTypes);
             activity.setActivityId(randomUUID().toString());
-            db.collection("activities").document(activity.getActivityId()).set(activity).addOnCompleteListener(task -> {
+            Activity.addActivity(activity, task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(this, "Activity created successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateActivity.this, "Activity created successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Log.d("CreateActivity", "Error creating activity", task.getException());
+                    Toast.makeText(CreateActivity.this, "Error creating activity", Toast.LENGTH_SHORT).show();
                 }
             });
         }

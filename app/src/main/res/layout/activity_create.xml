@@ -50,9 +50,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/nameText"
@@ -68,15 +66,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/allround"
                 android:hint="@string/activity_name"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:minHeight="48dp"
-                android:padding="4dp"
-                android:textColor="#242124"
-                android:textColorHint="#555555"
-                android:textSize="14sp"
+                android:textColorHint="#78909C"
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
 
@@ -86,9 +80,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/categoryText"
@@ -104,9 +96,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/allround"
                 android:contentDescription="@string/select_a_category"
-                android:padding="4dp"
+                android:spinnerMode="dialog"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
             <ImageButton
@@ -126,9 +117,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/dateText"
@@ -144,15 +133,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/allround"
                 android:hint="@string/select_a_date"
                 android:importantForAutofill="no"
                 android:inputType="date"
                 android:minHeight="48dp"
-                android:padding="4dp"
-                android:textColor="#242124"
-                android:textColorHint="#555555"
-                android:textSize="14sp"
+                android:textColorHint="#78909C"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
         </LinearLayout>
@@ -163,9 +148,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/inviteText"
@@ -182,9 +165,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/allround"
                 android:contentDescription="@string/invite_activity_members"
-                android:padding="4dp"
+                android:spinnerMode="dialog"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
         </LinearLayout>
@@ -210,16 +192,13 @@
                 android:id="@+id/noteInput"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@drawable/allround"
                 android:ems="10"
                 android:gravity="top"
                 android:hint="@string/write_your_notes_here"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
-                android:padding="4dp"
-                android:textColor="#242124"
-                android:textColorHint="#555555"
-                android:textSize="14sp" />
+                android:padding="8dp"
+                android:textColorHint="#78909C" />
 
         </LinearLayout>
 

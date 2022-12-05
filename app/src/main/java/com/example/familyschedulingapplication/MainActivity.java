@@ -1,5 +1,6 @@
 package com.example.familyschedulingapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -37,28 +40,25 @@ public class MainActivity extends AppCompatActivity {
         checkCurrentUser();
     }
 
-    public void homeInit() {
+    public void homeInit(Home hom) {
         // toggle Home Views
         // if member has homeId, show home views
         if (member.getHomeId() != null) {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("homes").get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    QuerySnapshot querySnapshot = task.getResult();
-                    if (querySnapshot != null) {
-                        // for items in querySnapshot, check if homeId matches member's homeId
-                        for (DocumentSnapshot dSnap : querySnapshot.getDocuments()) {
-                            if (member.getHomeId().equals(dSnap.getId())) {
-                                // if homeId matches, set home to that home
-                                home = Home.getHomeById(dSnap);
-                                buildHome(home);
-                            }
-                        }
-                    }
+            if (hom != null) {
+                home = hom;
+                // homeName to first upper
+                String homeName = home.getName();
+                if (homeName == null) {
+                    homeName = "Your Home";
                 } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    String firstLetter = homeName.substring(0, 1).toUpperCase();
+                    String restOfName = homeName.substring(1);
+                    homeName = firstLetter + restOfName;
                 }
-            });
+                welcomeTitle.setText(homeName);
+            } else {
+                Toast.makeText(this, "Error: Home not found", Toast.LENGTH_SHORT).show();
+            }
         } else {
             welcomeTitle.setText("Welcome");
         }
@@ -85,34 +85,50 @@ public class MainActivity extends AppCompatActivity {
             // if member has no homeId, go to NoHomeActivity
             // if member has homeId, stay here
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("members").document(user.getUid()).get().addOnCompleteListener(task -> {
+            Member.getMember(user.getUid(), task -> {
                 if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        Log.d(TAG, "checkCurrentUser: member exists");
-                        member = task.getResult().toObject(Member.class);
-                    } else {
-                        Log.d(TAG, "checkCurrentUser: member does not exist");
-                        member = new Member(user.getUid());
-                        member.Save();
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        member = null;
+                        if (document.exists()) {
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            member = document.toObject(Member.class);
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                        if (member == null) {
+                            Log.d(TAG, "checkCurrentUser: member is null");
+                            member = new Member();
+                            member.setUserId(user.getUid());
+                            member.setProfileUrl(user.getPhotoUrl().toString());
+                            member.setName(user.getDisplayName());
+                            member.setEmail(user.getEmail());
+                            member.setHomeId(null);
+                        }
+                        if (member.getHomeId() == null) {
+                            Log.d(TAG, "checkCurrentUser: member has no homeId");
+                            Intent intent = new Intent(MainActivity.this, NoHomeActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.d(TAG, "checkCurrentUser: member has homeId");
+                            Home.getHomeById(member.getHomeId(), task1 -> {
+                                if (task1.isSuccessful()) {
+                                    DocumentSnapshot document1 = task1.getResult();
+                                    if (document1 != null) {
+                                        home = Home.getHome(document1);
+                                        homeInit(home);
+                                    }
+                                } else {
+                                    Log.d(TAG, "get failed with ", task1.getException());
+                                }
+                            });
+                        }
                     }
                 } else {
-                    Log.d(TAG, "checkCurrentUser: member does not exist");
-                    member = new Member(user.getUid());
-                    member.Save();
-                    homeInit();
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
-                if (member.getHomeId() == null) {
-                    Log.d(TAG, "checkCurrentUser: member has no home");
-                    Intent intent = new Intent(this, NoHomeActivity.class);
-                    startActivity(intent);
-                } else {
-                    Log.d(TAG, "checkCurrentUser: member has home");
-                    home = Home.getHomeById(member.getHomeId());
-                }
-                homeInit();
-                getUserProfile();
             });
-
         } else {
             // No user is signed in
             Intent intent = new Intent(this, LoginActivity.class);

@@ -64,6 +64,18 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         if (billList.get(position).getDueDate().before(new Date()) && !billList.get(position).getPaid()) {
             holder.amountView.setBackgroundColor(Color.parseColor("#FFCDD2"));
         }
+        // if bill is past due, change text color to gray
+        if (billList.get(position).getDueDate().before(new Date()) && billList.get(position).getPaid()) {
+            holder.amountView.setTextColor(Color.parseColor("#9E9E9E"));
+        }
+        // if bill is upcoming and not paid, change background color to yellow
+        if (billList.get(position).getDueDate().after(new Date()) && !billList.get(position).getPaid()) {
+            holder.amountView.setBackgroundColor(Color.parseColor("#FFF9C4"));
+        }
+        // if bill is paid
+        if (billList.get(position).getPaid()) {
+            holder.amountView.setBackgroundColor(Color.parseColor("#C8E6C9"));
+        }
     }
 
     @Override

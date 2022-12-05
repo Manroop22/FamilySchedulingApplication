@@ -111,7 +111,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription="@string/select_a_category" />
+                android:contentDescription="@string/select_a_category"
+                android:spinnerMode="dialog" />
 
             <ImageButton
                 android:id="@+id/newCategoryButton"

@@ -48,7 +48,7 @@ public class ListAndActivityMainScreen extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         assert user != null;
-        member = Member.getMemberByUserId(user.getUid());
+//        member = Member.getMemberByUserId(user.getUid());
         memberRef = db.collection("members").document(user.getUid());
         tabLayout = findViewById(R.id.tabLayout);
         tab = tabLayout.getTabAt(0);

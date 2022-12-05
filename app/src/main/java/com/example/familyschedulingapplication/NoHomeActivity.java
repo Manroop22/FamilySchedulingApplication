@@ -1,7 +1,9 @@
 package com.example.familyschedulingapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -12,10 +14,13 @@ import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -28,10 +33,6 @@ public class NoHomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_no_home);
         ImageButton backBtn = findViewById(R.id.backBtn);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user == null) {
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-//        }
         assert user != null;
         Member member = new Member(user.getUid());
         Button createHomeBtn = findViewById(R.id.createHomeBtn);
@@ -57,18 +58,22 @@ public class NoHomeActivity extends AppCompatActivity {
                     // if home exists, find home that has accessCode = code, then set homeInvites's accepted to true where invitedMember = member and homeId = homeId
                     // then set member's homeId to home document reference
                     // if home doesn't exist, show error message
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("homes").whereEqualTo("accessCode", code).get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Home home = document.toObject(Home.class);
-                                assert home != null;
-                                member.setHomeId(home.getReference());
-                                member.Save();
-                                finish();
-                            }
-                        } else {
-                            Toast.makeText(this, "Home not found", Toast.LENGTH_SHORT).show();
+                    Home.getHomeByAccessCode(code, task -> {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        Home home = null;
+                        for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                            home = documentSnapshot.toObject(Home.class);
+                            break;
+                        }
+                        if (home != null) {
+                            Member.joinHome(home.getReference(), member, code, task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Toast.makeText(NoHomeActivity.this, "Successfully joined home", Toast.LENGTH_SHORT).show();
+                                    goHome();
+                                } else {
+                                    Toast.makeText(NoHomeActivity.this, "Error joining home", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     });
                 });
@@ -83,61 +88,59 @@ public class NoHomeActivity extends AppCompatActivity {
                     String homeName = createHomeName.getText().toString();
                     // create home with name = homeName, accessCode = random 8 digit alphanumeric string
                     // then set member's homeId to home document reference
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
                     // random 8 digit alphanumeric string, search through all homes, if access code exists then regenerate
-                    StringBuilder accCode = new StringBuilder();
-                    ArrayList<Home> homes = Home.getHomes();
-                    boolean exists = true;
-                    while (exists) {
-                        for (int i = 0; i < 8; i++) {
-                            int rand = (int) (Math.random() * 36);
-                            if (rand < 10) {
-                                accCode.append(rand);
-                            } else {
-                                accCode.append((char) (rand + 55));
+                    Home.getHomes(task -> {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot homeSnap = task.getResult();
+                            ArrayList<Home> homes = new ArrayList<>();
+                            for (DocumentSnapshot document : homeSnap) {
+                                Home home = document.toObject(Home.class);
+                                assert home != null;
+                                homes.add(home);
                             }
-                        }
-                        exists = false;
-                        for (Home home : homes) {
-                            if (home.getAccessCode().equals(accCode.toString())) {
-                                exists = true;
-                                break;
+                            boolean notExists = true;
+                            String accCode = "";
+                            while (notExists) {
+                                accCode = Home.createAccessCode();
+                                for (Home home : homes) {
+                                    if (home.getAccessCode().equals(accCode)) {
+                                        notExists = false;
+                                        break;
+                                    }
+                                }
                             }
+                            Log.d("accCode", accCode);
+                            Home home = new Home(homeName, accCode);
+                            home.setActive(true);
+                            home.setCreatedAt(new Date(System.currentTimeMillis()));
+                            home.setCreatedBy(member.getReference());
+                            Home.addHome(home, task1 -> {
+                                if (task1.isSuccessful()) {
+                                    member.setHomeId(home.getReference());
+                                    Member.updateMember(member, task2 -> {
+                                        if (task2.isSuccessful()) {
+                                            Toast.makeText(NoHomeActivity.this, "Successfully created home", Toast.LENGTH_SHORT).show();
+                                            goHome();
+                                        } else {
+                                            Toast.makeText(NoHomeActivity.this, "Error creating home", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(NoHomeActivity.this, "Error creating home", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(NoHomeActivity.this, "Error creating home", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    Log.d("accCode", accCode.toString());
-                    Home home = new Home(homeName, accCode.toString());
-                    home.setActive(true);
-                    home.setCreatedAt(new Date(System.currentTimeMillis()));
-                    home.setCreatedBy(member.getReference());
-                    home.Save();
-                    member.setHomeId(home.getReference());
-                    member.Save();
-                    Toast.makeText(this, "Home created successfully", Toast.LENGTH_SHORT).show();
-                    // TODO: go to main activity
-                    finish();
+                    });
                 });
             }
         });
-//        String uid = user.getUid();
-        // find if a user is in the member collection, if not, create a new member document
-        // if they are, check if they are in a home, if not, display the no home activity
-        // if they are, navigate to the main activity
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        db.collection("members").document(uid).get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                DocumentSnapshot document = task.getResult();
-//                if (document.exists()) {
-//                    member.setHomeId(document.getString("homeId"));
-//                    if (member.getHomeId() != null || !member.getHomeId().equals("")) {
-//                        finish();
-//                    }
-//                } else {
-//                    member.Save();
-//                }
-//            } else {
-//                member.Save();
-//            }
-//        });
+    }
+
+    public void goHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

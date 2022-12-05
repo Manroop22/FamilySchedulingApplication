@@ -2,6 +2,7 @@ package com.example.familyschedulingapplication;
 
 import static java.util.UUID.randomUUID;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -17,13 +18,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +49,7 @@ public class CreateEvent extends AppCompatActivity {
     Spinner membersSpinner;
     Date dateRes;
     ArrayList<Member> members;
-    ArrayAdapter<Member> adapter;
+    MemberAdapter adapter;
     ArrayList<DocumentReference> memberList = new ArrayList<>();
 
     @SuppressLint("MissingInflatedId")
@@ -54,8 +61,6 @@ public class CreateEvent extends AppCompatActivity {
         // if member is in members collection get the reference
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         assert user != null;
-        DocumentReference memberRef = db.collection("members").document(user.getUid());
-        member = Member.getMemberByMemberId(memberRef);
         nameInput=findViewById(R.id.nameInputText);
         descriptionInput=findViewById(R.id.descriptionInputText);
         dateInput=findViewById(R.id.dateInputText);
@@ -67,24 +72,34 @@ public class CreateEvent extends AppCompatActivity {
         backBtn=findViewById(R.id.backBtnDetails);
         backBtn.setOnClickListener(this::onBack);
         membersSpinner = findViewById(R.id.membersSpinner);
+        Member.getMember(user.getUid(), task -> {
+            member = Member.getMemberByMemberId(task.getResult());
+            initEvent();
+        });
+
+    }
+
+    public void initEvent() {
         spinnerAdapter();
         // The code below is used to implement the date picker for the date field.
-        Calendar calendar = Calendar.getInstance ();
-        int year = calendar.get (Calendar.YEAR);
-        int month = calendar.get (Calendar.MONTH);
-        int day = calendar.get (Calendar.DAY_OF_MONTH);
         dateInput.setOnClickListener(v -> {
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
-            datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                dateInput.setText(datePicker.getHeaderText());
-                dateRes = new Date(selection);
+            MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+            builder.setTitleText("Select a date");
+            MaterialDatePicker<Long> materialDatePicker = builder.build();
+            materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+            materialDatePicker.addOnPositiveButtonClickListener(selection -> {
+                dateRes = new Date((Long) selection);
+                dateInput.setText(dateRes.toString());
             });
         });
         membersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                memberList.add(Member.getMembersByHomeId(member.getHomeId().getId()).get(position).getReference());
+                Member.getMember(members.get(position).getUserId(), task -> {
+                    if (task.isSuccessful()) {
+                        memberList.add(task.getResult().getReference());
+                    }
+                });
             }
 
             @Override
@@ -93,13 +108,25 @@ public class CreateEvent extends AppCompatActivity {
             }
         });
     }
+
     public void spinnerAdapter() {
-        members = Member.getMembersByHome(member.getHomeId());
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, members);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        membersSpinner.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+            if (task.isSuccessful()) {
+                members = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    members.add(document.toObject(Member.class));
+                }
+                adapter = new MemberAdapter(CreateEvent.this, R.layout.member_item, members);
+                adapter.selectedMembers = new ArrayList<>();
+                adapter.notifyDataSetChanged();
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                membersSpinner.setAdapter(adapter);
+            } else {
+                Log.d("CreateEvent", "Error getting documents: ", task.getException());
+            }
+        });
     }
+
     public void onCancel(View view){
         finish(); // goes back to mainEventScreen.
     }
@@ -118,13 +145,12 @@ public class CreateEvent extends AppCompatActivity {
             event.setParticipants(memberList);
             event.setCreatedBy(member.getReference());
             event.setEventId(randomUUID().toString());
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("events").document(event.getEventId()).set(event).addOnCompleteListener(task -> {
+            Event.addEvent(event, task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(CreateEvent.this, "Event Created", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEvent.this, "Event created successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(CreateEvent.this, "Event Creation Failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEvent.this, "Event creation failed", Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -64,9 +64,7 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerLayout">
@@ -74,12 +72,11 @@
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minWidth="120dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
             android:text="@string/name"
             android:textStyle="bold" />
 
@@ -88,14 +85,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:background="@drawable/allround"
             android:hint="@string/event_name"
             android:importantForAutofill="no"
             android:inputType="textPersonName"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:textColor="#242124"
-            android:textColorHint="#555555" />
+            android:textColorHint="#78909C" />
     </LinearLayout>
 
     <LinearLayout
@@ -103,9 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/msgTitleLayout">
@@ -113,12 +106,11 @@
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minWidth="120dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
             android:text="@string/description"
             android:textStyle="bold" />
 
@@ -127,14 +119,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:background="@drawable/allround"
             android:hint="@string/event_description"
             android:importantForAutofill="no"
             android:inputType="textPersonName"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:textColor="#242124"
-            android:textColorHint="#555555" />
+            android:textColorHint="#78909C" />
     </LinearLayout>
 
     <LinearLayout
@@ -143,9 +133,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descriptionLayout">
@@ -153,12 +141,11 @@
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minWidth="120dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
             android:text="@string/date"
             android:textStyle="bold" />
 
@@ -172,14 +159,12 @@
                 android:id="@+id/dateInputText"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/allround"
                 android:hint="@string/select_a_date"
                 android:importantForAutofill="no"
                 android:inputType="date|datetime"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:textColor="#242124"
-                android:textColorHint="#555555" />
+                android:textColorHint="#78909C" />
 
         </LinearLayout>
 
@@ -191,9 +176,7 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateLayout">
@@ -201,12 +184,11 @@
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minWidth="120dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
             android:text="@string/members"
             android:textStyle="bold" />
 
@@ -215,7 +197,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:background="@drawable/allround"
             android:contentDescription="@string/members_list"
             android:spinnerMode="dialog" />
     </LinearLayout>
@@ -232,7 +213,7 @@
         app:layout_constraintTop_toBottomOf="@+id/membersLayout">
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/nevNoteText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -247,16 +228,12 @@
             android:layout_width="match_parent"
             android:layout_height="228dp"
             android:layout_margin="8dp"
-            android:background="@drawable/allround"
             android:gravity="start|top"
             android:hint="@string/write_your_notes_here"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textColor="#242124"
-            android:textColorHint="#555555"
-            android:textSize="14sp" />
+            android:textColorHint="#78909C"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <Button

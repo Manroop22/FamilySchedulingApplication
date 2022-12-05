@@ -124,171 +124,33 @@ public class List {
         return db.collection(collection).document(taskId);
     }
 
-    public static List getList(String taskId) {
-        DocumentSnapshot documentSnapshot = db.collection(collection).document(taskId).get().getResult();
-        if (documentSnapshot.exists()) {
-            return documentSnapshot.toObject(List.class);
-        } else {
-            Log.d(TAG, "No such document");
-            return null;
-        }
+    public static void getLists(OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static ArrayList<List> getLists() {
-        ArrayList<List> lists = new ArrayList<>();
-        QuerySnapshot querySnapshot = db.collection(collection).get().getResult();
-        for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
-            lists.add(documentSnapshot.toObject(List.class));
-        }
-        return lists;
+    public static void addList(List list, OnCompleteListener<Void> onCompleteListener) {
+        // List.getListId() and add new List to Lists collection
+        db.collection(collection).document(list.getTaskId()).set(list).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void addList(List list) {
-        // generate a random unique uuid
-        list.setTaskId(randomUUID().toString());
-        db.collection(collection).document(list.getTaskId()).set(list).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "DocumentSnapshot successfully written!");
-            } else {
-                Log.w(TAG, "Error writing document", task.getException());
-            }
-        });
+    public static void updateList(List list, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(list.getTaskId()).set(list).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void updateList(List list) {
-        list.setUpdatedAt(new Date());
-        db.collection(collection).document(list.getTaskId()).set(list).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "DocumentSnapshot successfully updated!");
-            } else {
-                Log.d(TAG, "Error updating document", task.getException());
-            }
-        });
+    public static void deleteList(List list, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(list.getTaskId()).delete().addOnCompleteListener(onCompleteListener);
     }
 
-    public static void deleteList(List list) {
-        db.collection(collection).document(list.getTaskId()).delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-            } else {
-                Log.d(TAG, "Error deleting document", task.getException());
-            }
-        });
-    }
-
-    public static void deleteList(String taskId) {
-        db.collection(collection).document(taskId).delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-            } else {
-                Log.d(TAG, "Error deleting document", task.getException());
-            }
-        });
-    }
-
-    public static void deleteLists(ArrayList<List> lists) {
-        for (List list : lists) {
-            db.collection(collection).document(list.getTaskId()).delete();
-        }
-    }
-
-    public static void deleteLists() {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            db.collection(collection).document(list.getTaskId()).delete();
-        }
-    }
-
-    public static void deleteListsByCategory(DocumentReference category) {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            if (list.getCategory().equals(category)) {
-                db.collection(collection).document(list.getTaskId()).delete();
-            }
-        }
-    }
-
-    public static void deleteListsByCategory(String categoryId) {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            if (list.getCategory().getId().equals(categoryId)) {
-                db.collection(collection).document(list.getTaskId()).delete();
-            }
-        }
-    }
-
-    public static void deleteListsByMember(DocumentReference member) {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            if (list.getCreatedBy().equals(member)) {
-                db.collection(collection).document(list.getTaskId()).delete();
-            }
-        }
-    }
-
-    public static void deleteListsByMember(String memberId) {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            if (list.getCreatedBy().getId().equals(memberId)) {
-                db.collection(collection).document(list.getTaskId()).delete();
-            }
-        }
-    }
-
-    public static void deleteListsByMemberAndCategory(DocumentReference member, DocumentReference category) {
-        ArrayList<List> lists = getLists();
-        for (List list : lists) {
-            if (list.getCreatedBy().equals(member) && list.getCategory().equals(category)) {
-                db.collection(collection).document(list.getTaskId()).delete();
-            }
-        }
-    }
-
-    public static void save(List list) {
-        if (list.getTaskId() == null) {
-            addList(list);
-        } else {
-            updateList(list);
-        }
-    }
-
-    public void save() {
-        if (this.getTaskId() == null) {
-            addList(this);
-        } else {
-            updateList(this);
+    public static void getList(String listId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        try {
+            db.collection(collection).document(listId).get().addOnCompleteListener(onCompleteListener);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void setReference(DocumentReference reference) {
         this.reference = reference;
-    }
-
-    public static List getListByTaskId(String taskId) {
-        AtomicReference<List> list = new AtomicReference<>(new List());
-        db.collection(collection).whereEqualTo("taskId", taskId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    list.get().setTaskId(document.getString("taskId"));
-                    list.get().setName(document.getString("name"));
-                    list.get().setCreatedAt(document.getDate("createdAt"));
-                    list.get().setUpdatedAt(document.getDate("updatedAt"));
-                    list.get().setCreatedBy(document.getDocumentReference("createdBy"));
-                    list.get().setNotes(document.getString("notes"));
-                    list.get().setType(document.getString("type"));
-//                    list.get().setListItems((ArrayList<ListItem>) document.get("listItems"));
-                    ArrayList<ListItem> listItems = new ArrayList<>();
-                    for (Map<String, Object> listItem : (ArrayList<Map<String, Object>>) document.get("listItems")) {
-                        listItems.add(new ListItem(listItem));
-                    }
-                    list.get().setListItems(listItems);
-                    list.get().setCategory(document.getDocumentReference("category"));
-                }
-            } else {
-                Log.d(TAG, "Error getting documents: ", task.getException());
-            }
-        });
-        return list.get();
     }
 
     public static void getListByListId(String listId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {

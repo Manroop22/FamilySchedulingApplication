@@ -36,6 +36,7 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
     public static ArrayList<Category> categories = new ArrayList<>();
     public ArrayList<Category> cats;
     public static final String TAG = "CategoryAdapter";
+    public String type;
     int count=0;
     public CategoryAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Category> objects) {
         super(context, resource, objects);
@@ -52,7 +53,6 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_array_item, parent, false);
         }
         return myView(position, convertView, parent);
-//        return view;
     }
 
     public View myView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -62,6 +62,7 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
 //        Category category = getItem(position);
         Category cat = cats.get(position);
         TextView nameView = convertView.findViewById(R.id.categoryName);
+        type = cat.getCreatedForType();
         nameView.setText(cat.getName());
         nameView.setBackgroundColor(cat.getColor());
 //        ImageButton options = convertView.findViewById(R.id.categoryOptions);
@@ -136,11 +137,5 @@ public class CategoryAdapter extends ArrayAdapter<Category> implements SpinnerAd
     @Override
     public Category getItem(int position) {
         return cats.get(position);
-    }
-
-    @Override
-    public int getPosition(@Nullable Category item) {
-//        return super.getPosition(item);
-        return cats.indexOf(item);
     }
 }

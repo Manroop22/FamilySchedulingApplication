@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication.Models;
 
+import android.util.Log;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -161,37 +163,31 @@ public class Activity implements Serializable {
         return act;
     }
 
-    public static void addActivity(Activity act) {
-        db.collection(collection).add(act);
+    public static void addActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
+        // Activity.getActivityId() and add new Activity to Activitys collection
+        db.collection(collection).document(activity.getActivityId()).set(activity).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void updateActivity(String actId, Activity act) {
-        act.setUpdatedAt(new Date());
-        db.collection(collection).document(actId).set(act);
+    public static void updateActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(activity.getActivityId()).set(activity).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void deleteActivity(String actId) {
-        db.collection(collection).document(actId).delete();
+    public static void deleteActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(activity.getActivityId()).delete().addOnCompleteListener(onCompleteListener);
     }
 
-    public void save() {
-        if (this.createdAt == null) {
-            addActivity(this);
-        } else {
-            updateActivity(this.getReference().getId(), this);
+    public static Activity getActivity(String activityId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        Activity Activity = new Activity();
+        try {
+            db.collection(collection).document(activityId).get().addOnCompleteListener(onCompleteListener);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return Activity;
     }
 
     public DocumentReference getReference() {
-        final DocumentReference[] docRef = new DocumentReference[1];
-        db.collection(collection).whereEqualTo("name", this.name).whereEqualTo("category", this.category).whereEqualTo("notes", this.notes).whereEqualTo("invites", this.invites).whereEqualTo("notificationMethod", this.notificationMethod).whereEqualTo("createdBy", this.createdBy).whereEqualTo("createdAt", this.createdAt).whereEqualTo("updatedAt", this.updatedAt).whereEqualTo("activityDate", this.activityDate).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    docRef[0] = document.getReference();
-                }
-            }
-        });
-        return docRef[0];
+        return db.collection(collection).document(this.activityId);
     }
 
     public void setReference(DocumentReference docRef) {

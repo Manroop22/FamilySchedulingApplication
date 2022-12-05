@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.familyschedulingapplication.Adapters.EventAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
 import com.example.familyschedulingapplication.Models.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,44 +89,35 @@ public class EventMainScreen extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // get user's events
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        assert user != null;
         DocumentReference memRef = db.collection("members").document(user.getUid());
-        db.collection("events").get().addOnCompleteListener(task -> {
+        Event.getEventByCreatedBy(memRef, task -> {
             if (task.isSuccessful()) {
-                QuerySnapshot document = task.getResult();
                 ArrayList<Event> eventList = new ArrayList<>();
-                for(DocumentSnapshot doc : Objects.requireNonNull(document).getDocuments()) {
-                    // if doc's createdBy is current user, add to list
-                    // if doc's partcipants contains memRef, add to list
-                    ArrayList<DocumentReference> people = new ArrayList<>();
-                    for (String s : Objects.requireNonNull(doc.get("participants")).toString().split(",")) {
-                        people.add(db.collection("participants").document(s));
-                    }
-                    if (Objects.equals(doc.get("createdBy"), memRef) || Objects.requireNonNull(people).contains(memRef)) {
-                        Event currEvent = Event.getEvent(doc);
-                        switch(tab) {
-                            case "upcoming":
-                                if (Objects.requireNonNull(doc.getDate("eventDate")).after(new Date())) {
-                                    eventList.add(currEvent);
-                                }
-                                break;
-                            case "past":
-                                if (Objects.requireNonNull(doc.getDate("eventDate")).before(new Date())) {
-                                    eventList.add(currEvent);
-                                }
-                                break;
-                            case "all":
-                                eventList.add(currEvent);
-                                break;
-                        }
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Event event = document.toObject(Event.class);
+                    if (event != null && !eventList.contains(event)) {
+                        eventList.add(event);
                     }
                 }
-                Log.d(TAG, String.valueOf(eventList.size()));
-                adapter = new EventAdapter(eventList, R.layout.event_item);
-                eventRecyclerView.setAdapter(adapter);
-                eventRecyclerView.setLayoutManager(new LinearLayoutManager(EventMainScreen.this));
-//                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration( this, DividerItemDecoration. VERTICAL);
-//                eventRecyclerView.addItemDecoration(dividerItemDecoration);
-                Objects.requireNonNull(eventRecyclerView.getLayoutManager()).onRestoreInstanceState(eventRecyclerView.getLayoutManager().onSaveInstanceState());
+                Event.getEventByParticipant(memRef, task1 -> {
+                    if (task1.isSuccessful()) {
+                        for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
+                            Event event = document.toObject(Event.class);
+                            if (event != null && !eventList.contains(event)) {
+                                eventList.add(event);
+                            }
+                        }
+                        if (tab.equals("upcoming")) {
+                            eventList.removeIf(event -> event.getEventDate().before(new Date()));
+                        } else if (tab.equals("past")) {
+                            eventList.removeIf(event -> event.getEventDate().after(new Date()));
+                        }
+                        adapter = new EventAdapter(eventList, R.layout.event_item);
+                        eventRecyclerView.setAdapter(adapter);
+                        eventRecyclerView.setLayoutManager(new LinearLayoutManager(EventMainScreen.this));
+                    }
+                });
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());
             }

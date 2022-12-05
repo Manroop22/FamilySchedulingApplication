@@ -1,5 +1,6 @@
 package com.example.familyschedulingapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -13,14 +14,19 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +47,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     DocumentReference eventRef;
     String dateString;
     ArrayList<Member> members;
-    ArrayAdapter<String> adapter;
+    MemberAdapter adapter;
     String eventId;
     FirebaseFirestore db;
     ArrayList<DocumentReference> participants = new ArrayList<>();
@@ -51,15 +57,11 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
         eventId = getIntent().getExtras().getString("eventId");
-        if (eventId == null) {
-            eventId = getIntent().getExtras().getString("eventRefId");
-        }
+        Log.d("EventDetailsActivity", "eventId: " + eventId);
         mode = getIntent().getExtras().getString("mode");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
         assert user != null;
-        DocumentReference memberRef = db.collection("members").document(user.getUid());
-        member = Member.getMemberByMemberId(memberRef);
         backBtn=findViewById(R.id.backBtnDetails);
         editBtn=findViewById(R.id.editBtn);
         deleteBtn=findViewById(R.id.deleteBtn);
@@ -70,15 +72,23 @@ public class EventDetailsActivity extends AppCompatActivity {
         notesInput=findViewById(R.id.notesMultiText);
         dateInput=findViewById(R.id.dateInputText);
         membersSpinner=findViewById(R.id.membersSpinner);
+        Member.getMember(user.getUid(), task -> {
+            if (task.isSuccessful()) {
+                member = Member.getMemberByMemberId(task.getResult());
+                Event.getEventByEventId(eventId, task1 -> {
+                    event = task1.getResult().toObject(Event.class);
+                    Log.d("EventDetailsActivity", "onCreate: " + eventId);
+                    init();
+                });
+            } else {
+                Log.d("EventDetailsActivity", "onCreate: " + task.getException());
+                finish();
+            }
+        });
+    }
+
+    public void init() {
         switchMode(mode);
-        Log.d("EventDetailsActivity", "onCreate: " + eventId);
-        // if eventRef from intent is not null get the event
-//        String ref = getIntent().getExtras().getString("eventRef");
-//        if (ref != null) {
-//            eventRef = db.document(ref);
-//        } else {
-//            eventRef = db.collection("events").document(eventId);
-//        }
         dateInput.setOnClickListener(v -> {
             MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
             builder.setTitleText("Select a date");
@@ -98,13 +108,22 @@ public class EventDetailsActivity extends AppCompatActivity {
         }));
         cancelBtn.setOnClickListener(v -> switchMode("view"));
         saveBtn.setOnClickListener(v -> saveDetails());
-        spinnerAdapter(null);
+        if (event.getParticipants().size() > 0) {
+            spinnerAdapter(event.getParticipants());
+        } else {
+            spinnerAdapter(new ArrayList<>());
+        }
         membersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String memberName = membersSpinner.getSelectedItem().toString();
-                DocumentReference memberRef1 = Member.getMemberByUserId(memberName).getReference();
-                participants.add(memberRef1);
+                Member memb = adapter.getItem(position);
+                if (memb != null && memb.getReference() != null && adapter.selectedMembers.size() > 0) {
+                    if (adapter.inSelect(memb.getReference())) {
+                        adapter.selectedMembers.remove(memb.getReference());
+                    } else {
+                        adapter.selectedMembers.add(memb.getReference());
+                    }
+                }
             }
 
             @Override
@@ -115,11 +134,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void setValues(){
-        db.collection("events").document(eventId).get().addOnCompleteListener(task -> {
+        db.collection(Event.collection).document(eventId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     event = (task.getResult().toObject(Event.class));
+                    assert event != null;
                     nameInput.setText(event.getName());
                     descriptionInput.setText(event.getDescription());
                     notesInput.setText(event.getNotes());
@@ -156,28 +176,21 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void spinnerAdapter(ArrayList<DocumentReference> participants) {
-        members = null;
-        if (participants == null) {
-            members = Member.getMembersByHome(member.getHomeId());
-        } else {
-            if (participants.size() > 0) {
-                for (DocumentReference participant : participants) {
-                    Member member = Member.getMemberByMemberId(participant);
-                    members.add(member);
+        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+            if (task.isSuccessful()) {
+                members = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    members.add(document.toObject(Member.class));
                 }
+                adapter = new MemberAdapter(EventDetailsActivity.this, R.layout.member_item, members);
+                adapter.selectedMembers = participants;
+                adapter.notifyDataSetChanged();
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                membersSpinner.setAdapter(adapter);
             } else {
-                members = Member.getMembersByHome(member.getHomeId());
+                Log.d("EventDetailsActivity", "Error getting documents: ", task.getException());
             }
-        }
-        ArrayList<String> memberNames = new ArrayList<>();
-        for (Member member : members) {
-            memberNames.add(member.getName());
-        }
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, memberNames);
-//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, members);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        membersSpinner.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        });
     }
 
     public void saveDetails() {
@@ -189,8 +202,14 @@ public class EventDetailsActivity extends AppCompatActivity {
                 event.setEventDate(new Date(dateInput.getText().toString()));
                 event.setParticipants(participants);
                 event.setUpdatedAt(new Date());
-                Event.updateEvent(event);
-                switchMode("view");
+                Event.updateEvent(event, task1 -> {
+                    if (task1.isSuccessful()) {
+                        Toast.makeText(EventDetailsActivity.this, "Event updated", Toast.LENGTH_SHORT).show();
+                        switchMode("view");
+                    } else {
+                        Toast.makeText(EventDetailsActivity.this, "Error updating event", Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         }
 

@@ -44,7 +44,7 @@ public class CreateMessage extends AppCompatActivity {
         setContentView(R.layout.activity_new_message);
         user = FirebaseAuth.getInstance().getCurrentUser();
         memberRef = db.collection("members").document(user.getUid());
-        member = Member.getMemberByUserId(user.getUid());
+//        member = Member.getMemberByUserId(user.getUid());
         cancelMsgBtn=findViewById(R.id.cancelMsgBtn);
         saveMsgBtn=findViewById(R.id.saveMsgBtn);
         menuBtn=findViewById(R.id.exitBillBtn);

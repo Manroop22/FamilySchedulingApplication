@@ -84,7 +84,6 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                     powerMenu.dismiss();
                     Bundle listBundle = new Bundle();
                     listBundle.putString("name", myLists.get(getAdapterPosition()).getName());
-                    listBundle.putString("taskId", myLists.get(getAdapterPosition()).getReference().getId());
                     listBundle.putString("listId", myLists.get(getAdapterPosition()).getTaskId());
                     // print reference
                     Class<?> destination = null;
@@ -102,14 +101,14 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
                             builder.setTitle("Delete List");
                             builder.setMessage("Are you sure you want to delete this list?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                String taskId = myLists.get(getAdapterPosition()).getReference().getId();
-                                db.collection("tasks").document(taskId).delete().addOnCompleteListener(task -> {
+                                List mlist = myLists.get(getAdapterPosition());
+                                List.deleteList(mlist, task -> {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(itemView.getContext(), "List deleted successfully", Toast.LENGTH_SHORT).show();
                                         myLists.remove(getAdapterPosition());
                                         notifyItemRemoved(getAdapterPosition());
                                     } else {
-                                        Toast.makeText(itemView.getContext(), "Error deleting list", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(itemView.getContext(), "List deletion failed", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             });
