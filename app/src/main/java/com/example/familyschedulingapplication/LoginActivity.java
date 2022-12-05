@@ -67,8 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
+                        signIn(email, password);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -106,7 +105,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     Member member = Member.getMemberByMemberId(document);
-                    member.setProfileUrl(getString(R.string.default_pic));
+//                    member.setProfileUrl(getString(R.string.default_pic));
+                    member.setProfileUrl("https://google.com");
                     member.setEmail(user.getEmail());
                     member.setPhone(user.getPhoneNumber());
                     member.setActive(true);

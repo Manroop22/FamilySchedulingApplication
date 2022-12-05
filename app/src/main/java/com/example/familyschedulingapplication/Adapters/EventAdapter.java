@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.familyschedulingapplication.EventDetailsActivity;
+import com.example.familyschedulingapplication.EventDetails;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.R;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -99,11 +99,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                     switch (position){
                         case 0:
                             eventBundle.putString("mode", "view");
-                            destination = EventDetailsActivity.class;
+                            destination = EventDetails.class;
                             break;
                         case 1:
                             eventBundle.putString("mode", "edit");
-                            destination = EventDetailsActivity.class;
+                            destination = EventDetails.class;
                             break;
                         case 2:
                             AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());

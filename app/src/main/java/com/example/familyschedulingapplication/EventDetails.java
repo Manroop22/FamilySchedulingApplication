@@ -1,6 +1,5 @@
 package com.example.familyschedulingapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,7 +17,6 @@ import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,7 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class EventDetailsActivity extends AppCompatActivity {
+public class EventDetails extends AppCompatActivity {
     ImageButton backBtn;
     ImageButton editBtn;
     ImageButton deleteBtn;
@@ -104,7 +101,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         backBtn.setOnClickListener(v -> finish());
         editBtn.setOnClickListener(v -> switchMode("edit"));
         deleteBtn.setOnClickListener(v -> db.collection("events").document(eventId).delete().addOnSuccessListener(aVoid -> {
-            Toast.makeText(EventDetailsActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EventDetails.this, "Event deleted", Toast.LENGTH_SHORT).show();
             goBack();
         }));
         cancelBtn.setOnClickListener(v -> switchMode("view"));
@@ -135,7 +132,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void goBack() {
-        Intent intent = new Intent(EventDetailsActivity.this, EventMainScreen.class);
+        Intent intent = new Intent(EventDetails.this, EventMainScreen.class);
         startActivity(intent);
         finish();
     }
@@ -183,13 +180,13 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void spinnerAdapter(ArrayList<DocumentReference> participants) {
-        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+        Member.getMembersByHome(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
                 members = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     members.add(document.toObject(Member.class));
                 }
-                adapter = new MemberAdapter(EventDetailsActivity.this, R.layout.member_item, members);
+                adapter = new MemberAdapter(EventDetails.this, R.layout.member_item, members);
                 adapter.selectedMembers = participants;
                 adapter.notifyDataSetChanged();
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -214,10 +211,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
                 Event.updateEvent(event, task1 -> {
                     if (task1.isSuccessful()) {
-                        Toast.makeText(EventDetailsActivity.this, "Event updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EventDetails.this, "Event updated", Toast.LENGTH_SHORT).show();
                         switchMode("view");
                     } else {
-                        Toast.makeText(EventDetailsActivity.this, "Error updating event", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EventDetails.this, "Error updating event", Toast.LENGTH_SHORT).show();
                     }
                 });
             });

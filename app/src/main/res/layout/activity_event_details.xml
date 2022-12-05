@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EventDetailsActivity">
+    tools:context=".EventDetails">
 
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -141,7 +141,7 @@
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:gravity="center_vertical"
             android:minWidth="120dp"
             android:paddingStart="8dp"
@@ -165,6 +165,17 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textColorHint="#78909C" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <Button
+                    android:id="@+id/checkConflictButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Check Conflicts" />
+            </LinearLayout>
 
         </LinearLayout>
 

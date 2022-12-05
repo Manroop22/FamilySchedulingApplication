@@ -139,11 +139,15 @@ public class Event {
     }
 
     public static void addEvent(Event event, OnCompleteListener<Void> onCompleteListener) {
-        db.collection(collection).document(event.getReference().getId()).set(event).addOnCompleteListener(onCompleteListener);
+        db.collection(collection).document(event.getEventId()).set(event).addOnCompleteListener(onCompleteListener);
     }
 
     public void deleteEvent(OnCompleteListener<Void> onCompleteListener) {
-        db.collection(collection).document(this.getReference().getId()).delete().addOnCompleteListener(onCompleteListener);
+        db.collection(collection).document(this.getEventId()).delete().addOnCompleteListener(onCompleteListener);
+    }
+
+    public void saveEvent(OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(this.getEventId()).set(this).addOnCompleteListener(onCompleteListener);
     }
 
     public static void updateEvent(Event event, OnCompleteListener<Void> onCompleteListener) {

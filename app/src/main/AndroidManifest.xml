@@ -20,6 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ConflictsActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".BillDetails"
             android:exported="false">
             <meta-data
@@ -104,7 +111,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".EventDetails"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

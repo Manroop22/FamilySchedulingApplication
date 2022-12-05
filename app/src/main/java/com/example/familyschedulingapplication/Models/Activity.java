@@ -24,12 +24,13 @@ public class Activity implements Serializable {
     private Date createdAt;
     private Date updatedAt;
     private Date activityDate;
+    private DocumentReference homeId;
     private static final String TAG = "Activity";
     public static final String collection = "activities";
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     public Activity() {}
 
-    public Activity(String name, DocumentReference category, String notes, ArrayList<DocumentReference> invites, ArrayList<String> notificationMethod, DocumentReference createdBy, Date createdAt, Date updatedAt, Date activityDate) {
+    public Activity(String name, DocumentReference category, String notes, ArrayList<DocumentReference> invites, ArrayList<String> notificationMethod, DocumentReference createdBy, Date createdAt, Date updatedAt, Date activityDate, DocumentReference homeId) {
         this.name = name;
         this.category = category;
         this.notes = notes;
@@ -39,6 +40,7 @@ public class Activity implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.activityDate = activityDate;
+        this.homeId = homeId;
     }
 
     public String getName() {
@@ -129,6 +131,14 @@ public class Activity implements Serializable {
         this.activityDate = activityDate;
     }
 
+    public DocumentReference getHomeId() {
+        return homeId;
+    }
+
+    public void setHomeId(DocumentReference homeId) {
+        this.homeId = homeId;
+    }
+
     public static Activity getActivity(DocumentSnapshot document) {
         Activity activity = document.toObject(Activity.class);
         assert activity != null;
@@ -163,6 +173,14 @@ public class Activity implements Serializable {
         return act;
     }
 
+    public void saveActivity(OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(this.activityId).set(this).addOnCompleteListener(onCompleteListener);
+    }
+
+    public void deleteActivity(OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(this.activityId).delete().addOnCompleteListener(onCompleteListener);
+    }
+
     public static void addActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
         // Activity.getActivityId() and add new Activity to Activitys collection
         db.collection(collection).document(activity.getActivityId()).set(activity).addOnCompleteListener(onCompleteListener);
@@ -174,6 +192,10 @@ public class Activity implements Serializable {
 
     public static void deleteActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
         db.collection(collection).document(activity.getActivityId()).delete().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getActivityByHomeId(DocumentReference homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(onCompleteListener);
     }
 
     public static Activity getActivity(String activityId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
