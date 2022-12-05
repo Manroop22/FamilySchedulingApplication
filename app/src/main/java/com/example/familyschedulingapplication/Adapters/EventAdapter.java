@@ -20,7 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.familyschedulingapplication.EventDetails;
 import com.example.familyschedulingapplication.Models.Event;
+import com.example.familyschedulingapplication.Models.Member;
 import com.example.familyschedulingapplication.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
@@ -72,8 +76,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
             moreView.setOnClickListener(view -> {
                 ArrayList<PowerMenuItem> list=new ArrayList<>();
                 list.add(new PowerMenuItem("View",false));
-                list.add(new PowerMenuItem("Edit",false));
-                list.add(new PowerMenuItem("Delete",false));
+//                list.add(new PowerMenuItem("Delete",false));
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                assert user != null;
+                DocumentReference memRef = db.collection(Member.collection).document(user.getUid());
+                if (eventList.get(getAbsoluteAdapterPosition()).getCreatedBy().equals(memRef)) {
+                    list.add(new PowerMenuItem("Edit",false));
+                    list.add(new PowerMenuItem("Delete", false));
+                }
                 PowerMenu powerMenu = new PowerMenu.Builder(itemView.getContext())
                         .addItemList(list) // list has "Novel", "Poetry", "Art"
                         .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).

@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".EventMainScreen">
 
+    <ImageButton
+        android:id="@+id/syncEvents"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/sync_conflicts"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_sync_24" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="0dp"

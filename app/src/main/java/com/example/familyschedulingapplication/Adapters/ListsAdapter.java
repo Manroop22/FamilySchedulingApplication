@@ -34,7 +34,6 @@ public class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.ViewHolder>{
     public static final String TAG = "ListsAdapter";
     public final ArrayList<List> myLists;
     int count=0;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public ListsAdapter(ArrayList<List> myLists) {
         this.myLists = myLists;

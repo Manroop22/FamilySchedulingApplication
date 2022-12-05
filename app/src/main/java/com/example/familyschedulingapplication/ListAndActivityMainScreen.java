@@ -40,6 +40,7 @@ public class ListAndActivityMainScreen extends AppCompatActivity {
     ActivitiesAdapter activitiesAdapter;
     ListsAdapter listsAdapter;
     FirebaseFirestore db;
+    ImageButton sync;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,8 @@ public class ListAndActivityMainScreen extends AppCompatActivity {
         Objects.requireNonNull(tab).select();
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         lacRecycler = findViewById(R.id.lacRecycler);
+        sync = findViewById(R.id.syncLac);
+        sync.setOnClickListener(v -> updateRecycler(currentTab));
         updateRecycler(currentTab.toLowerCase(Locale.ROOT));
         ImageButton menuBtn = findViewById(R.id.menuBtnActivity);
         ImageButton addBtn = findViewById(R.id.addActivityBtn);
@@ -117,7 +120,6 @@ public class ListAndActivityMainScreen extends AppCompatActivity {
 //                    lacRecycler.swapAdapter(listsAdapter, true);
                     lacRecycler.setAdapter(listsAdapter);
                     lacRecycler.setLayoutManager(new LinearLayoutManager(ListAndActivityMainScreen.this));
-                    Objects.requireNonNull(lacRecycler.getLayoutManager()).onRestoreInstanceState(lacRecycler.getLayoutManager().onSaveInstanceState());
                 } else {
                     Log.d("TAG", "Error getting documents: ", task.getException());
                 }

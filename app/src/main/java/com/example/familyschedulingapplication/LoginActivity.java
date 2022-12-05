@@ -105,10 +105,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     Member member = Member.getMemberByMemberId(document);
+                    if (member.getName() == null) {
 //                    member.setProfileUrl(getString(R.string.default_pic));
-                    member.setProfileUrl("https://google.com");
-                    member.setEmail(user.getEmail());
-                    member.setPhone(user.getPhoneNumber());
+                        member.setProfileUrl("https://google.com");
+                        member.setEmail(user.getEmail());
+//                        member.setPhone(user.getPhoneNumber());
+                    }
                     member.setActive(true);
                     if (member.getUserId() == null) {
                         member.setUserId(user.getUid());

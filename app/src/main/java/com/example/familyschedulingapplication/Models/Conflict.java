@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication.Models;
 
+import static java.util.UUID.randomUUID;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -207,31 +209,6 @@ public class Conflict {
 					}
 				});
 			}
-//			else if (conflict.getActivityId() != null) {
-//				Activity.getActivity(conflict.getActivityId().getId(), new OnCompleteListener<DocumentSnapshot>() {
-//					@Override
-//					public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//						if (task.isSuccessful()) {
-//							Activity activity = task.getResult().toObject(Activity.class);
-//							assert activity != null;
-//							activity.setActivityDate(conflict.getProposedDate());
-//							activity.saveActivity(new OnCompleteListener<Void>() {
-//								@Override
-//								public void onComplete(@NonNull Task<Void> task) {
-//									if (task.isSuccessful()) {
-//										// delete the conflict
-//										conflict.deleteConflict(onCompleteListener);
-//									} else {
-//										Log.e(TAG, "Error updating activity date", task.getException());
-//									}
-//								}
-//							});
-//						} else {
-//							Log.e(TAG, "Error getting activity", task.getException());
-//						}
-//					}
-//				});
-//			}
 		} else {
 			// tell the user to wait for the other party to accept
 			Log.e(TAG, "Error: both parties must accept the new date");
@@ -243,32 +220,29 @@ public class Conflict {
 		// get all events with homeId, check if any of them overlap with the eventDate, if so, create a conflict
 		// check if the proposedDate overlaps with any of the above, if so, create a conflict
 		// get all activities with homeId
-		Activity.getActivitiesByHomeId(homeId, task -> {
+		db.collection(Activity.collection).whereEqualTo("homeId", homeId).whereEqualTo("activityDate", eventDate).get().addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
-				ArrayList<Boolean> hasConflict = new ArrayList<>();
 				for (QueryDocumentSnapshot document : task.getResult()) {
+					// create a conflict
 					Activity activity = document.toObject(Activity.class);
-					// check if any of them overlap with the eventDate
-					if (activity.getActivityDate().after(eventDate) && activity.getActivityDate().before(proposedDate)) {
-						hasConflict.add(true);
-						// create a conflict
-						Conflict conflict = new Conflict();
-						conflict.setHomeId(homeId);
-						conflict.setActivityId(document.getReference());
-						conflict.setProposer(userId);
-						conflict.setProposedDate(proposedDate);
-						conflict.setOriginalDate(eventDate);
-						conflict.saveConflict(task1 -> {
-							if (task1.isSuccessful()) {
-								Log.d(TAG, "Conflict created");
-							} else {
-								Log.e(TAG, "Error creating conflict", task1.getException());
-							}
-						});
-					}
-				}
-				if (hasConflict.isEmpty()) {
-					Log.d(TAG, "No conflicts found");
+					Conflict conflict = new Conflict();
+					conflict.setHomeId(homeId);
+					conflict.setConflictId(randomUUID().toString());
+					conflict.setActivityId(document.getReference());
+					conflict.setProposer(userId);
+					conflict.setProposedDate(proposedDate);
+					conflict.setConflictDate(activity.getCreatedAt());
+					conflict.setConflictee(activity.getCreatedBy());
+					conflict.setOriginalDate(eventDate);
+					conflict.setActivityId(activity.getReference());
+					conflict.setResolved(false);
+					conflict.saveConflict(task1 -> {
+						if (task1.isSuccessful()) {
+							Log.d(TAG, "Conflict created");
+						} else {
+							Log.e(TAG, "Error creating conflict", task1.getException());
+						}
+					});
 				}
 			} else {
 				Log.e(TAG, "Error getting activities", task.getException());

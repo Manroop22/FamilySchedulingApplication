@@ -140,6 +140,12 @@
                 android:inputType="date|datetime"
                 android:textColorHint="#757575" />
 
+            <Button
+                android:id="@+id/checkConflictBtnNE"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/check_conflicts" />
+
         </LinearLayout>
 
     </LinearLayout>

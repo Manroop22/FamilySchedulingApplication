@@ -30,23 +30,17 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class EventDetails extends AppCompatActivity {
-    ImageButton backBtn;
-    ImageButton editBtn;
-    ImageButton deleteBtn;
-    Button cancelBtn;
-    Button saveBtn;
-    EditText nameInput;
-    EditText descriptionInput;
-    EditText notesInput;
-    EditText dateInput;
+    ImageButton backBtn, editBtn, deleteBtn;
+    Button cancelBtn, saveBtn;
+    EditText nameInput, descriptionInput, notesInput, dateInput;
     Spinner membersSpinner;
     Event event;
     Member member;
     DocumentReference eventRef;
-    String dateString;
+    String dateString, eventId;
     ArrayList<Member> members;
     MemberAdapter adapter;
-    String eventId;
+    Date dateRes;
     FirebaseFirestore db;
     ArrayList<DocumentReference> participants = new ArrayList<>();
     public String mode;
@@ -75,6 +69,12 @@ public class EventDetails extends AppCompatActivity {
                 member = Member.getMemberByMemberId(task.getResult());
                 Event.getEventByEventId(eventId, task1 -> {
                     event = task1.getResult().toObject(Event.class);
+                    assert event != null;
+                    if (!event.getCreatedBy().equals(member.getReference())) {
+                        mode = "view";
+                        editBtn.setVisibility(View.GONE);
+                        deleteBtn.setVisibility(View.GONE);
+                    }
                     Log.d("EventDetailsActivity", "onCreate: " + eventId);
                     init();
                 });
@@ -93,9 +93,14 @@ public class EventDetails extends AppCompatActivity {
             MaterialDatePicker<Long> materialDatePicker = builder.build();
             materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
             materialDatePicker.addOnPositiveButtonClickListener(selection -> {
-                Date date = new Date((Long) selection);
-                dateString = date.toString();
-                dateInput.setText(dateString);
+                Date date = new Date(selection);
+                // add 1 day to date, because it is 1 day behind and set time to currentMillis()
+                dateRes = new Date(date.getTime() + 86400000);
+                // set just the current time to the selected date
+                dateRes.setHours(new Date(System.currentTimeMillis()).getHours());
+                dateRes.setMinutes(new Date(System.currentTimeMillis()).getMinutes());
+                dateRes.setSeconds(new Date(System.currentTimeMillis()).getSeconds());
+                dateInput.setText(dateRes.toString());
             });
         });
         backBtn.setOnClickListener(v -> finish());
@@ -203,7 +208,7 @@ public class EventDetails extends AppCompatActivity {
                 event.setName(nameInput.getText().toString());
                 event.setDescription(descriptionInput.getText().toString());
                 event.setNotes(notesInput.getText().toString());
-                event.setEventDate(new Date(dateInput.getText().toString()));
+                event.setEventDate(dateRes);
                 event.setParticipants(participants);
                 event.setUpdatedAt(new Date());
                 if (event.getHomeId() == null) {

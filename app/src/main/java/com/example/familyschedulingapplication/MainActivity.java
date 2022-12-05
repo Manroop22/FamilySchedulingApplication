@@ -1,6 +1,5 @@
 package com.example.familyschedulingapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +13,10 @@ import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Adapters.HomeMemberAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
+import com.example.familyschedulingapplication.ModalBottomSheets.ProfileBottomSheet;
 import com.example.familyschedulingapplication.ModalBottomSheets.ShareBottomSheet;
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -45,12 +43,12 @@ public class MainActivity extends AppCompatActivity {
         HomeMemberRV=findViewById(R.id.homeMembersRecyclerView);
         welcomeTitle = findViewById(R.id.welcomeTitle);
         hacCode = findViewById(R.id.homeAccessCodeText);
-        MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         inviteBtn = findViewById(R.id.inviteBtn);
-        menuBtn = findViewById(R.id.menuBtn);
-        menuBtn.setVisibility(ImageButton.INVISIBLE);
+        menuBtn = findViewById(R.id.profileBtn);
+//        menuBtn.setVisibility(ImageButton.INVISIBLE);
         inviteBtn.setVisibility(ImageButton.INVISIBLE);
-        menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
+//        MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
+//        menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
         checkCurrentUser();
         listeners();
     }
@@ -147,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
+            user.reload();
             Log.d(TAG, "checkCurrentUser: user is signed in");
             // user.getUid() == member.getUid()
             // if member with uid does not exist, create member
@@ -193,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                                         inviteBtn.setVisibility(ImageButton.VISIBLE);
                                         Log.d(TAG, "buildHome: " + home.getAccessCode());
                                         inviteBtn.setOnClickListener(v -> ShareBottomSheet.newInstance(task1.getResult().getReference(), home.getAccessCode()).show(getSupportFragmentManager(), ShareBottomSheet.TAG));
+                                        menuBtn.setOnClickListener(v -> {
+                                            ProfileBottomSheet.newInstance(home, member).show(getSupportFragmentManager(), ProfileBottomSheet.TAG);
+                                        });
                                         homeInit(home);
                                     }
                                 } else {

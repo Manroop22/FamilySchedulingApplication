@@ -171,10 +171,10 @@
                 android:layout_height="50dp">
 
                 <Button
-                    android:id="@+id/checkConflictButton"
+                    android:id="@+id/checkConflictBtn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Check Conflicts" />
+                    android:text="@string/check_conflicts" />
             </LinearLayout>
 
         </LinearLayout>

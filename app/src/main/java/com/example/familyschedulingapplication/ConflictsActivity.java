@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,6 +17,7 @@ import com.example.familyschedulingapplication.Models.Conflict;
 import com.example.familyschedulingapplication.Models.Member;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +34,7 @@ public class ConflictsActivity extends AppCompatActivity {
 	ImageButton backBtn, syncBtn;
 	TextView conflictNotice, conflictMessage;
 	EditText conflictDate, proposedDate;
-	Button donBtn;
+	Button doneBtn;
 	RecyclerView conflictsRecycler;
 	ConflictAdapter conflictAdapter;
 	ArrayList<Conflict> conflictList;
@@ -48,24 +50,21 @@ public class ConflictsActivity extends AppCompatActivity {
 		conflictMessage = findViewById(R.id.conflictMessage);
 		conflictDate = findViewById(R.id.conflictDate);
 		proposedDate = findViewById(R.id.proposedDate);
-		donBtn = findViewById(R.id.conflictsDone);
+		doneBtn = findViewById(R.id.conflictsDone);
 		conflictsRecycler = findViewById(R.id.conflictRecycler);
-		eventDate = (Date) getIntent().getSerializableExtra("eventDate");
-		activityId = getIntent().getStringExtra("activityId");
-		conflictId = getIntent().getStringExtra("conflictId");
+		eventDate = new Date(getIntent().getLongExtra("eventDate", 0));
+//		activityId = getIntent().getStringExtra("activityId");
 		homeId = getIntent().getStringExtra("homeId");
 		userId = getIntent().getStringExtra("userId");
-		sync();
-
+		init();
 	}
 
 	void init() {
 		conflictDate.setText(eventDate.toString());
 		conflictsByEvent = new ArrayList<>();
-		sync();
 		syncBtn.setOnClickListener(v -> sync());
 		backBtn.setOnClickListener(v -> finish());
-		donBtn.setOnClickListener(v -> {
+		doneBtn.setOnClickListener(v -> {
 			ArrayList<Boolean> resolved = new ArrayList<>();
 			for (Conflict conflict : conflictsByEvent) {
 				if(conflict.getResolved()) {
@@ -82,6 +81,7 @@ public class ConflictsActivity extends AppCompatActivity {
 			}
 		});
 		proposedDate.setOnClickListener(v -> toggleMaterialDatePicker());
+		sync();
 	}
 
 	void toggleMaterialDatePicker() {
@@ -114,11 +114,19 @@ public class ConflictsActivity extends AppCompatActivity {
 	void updateAdapter() {
 		Conflict.getConflictByOriginalDate(homeRef, eventDate, task -> {
 			if (task.isSuccessful()) {
-				conflicts = (ArrayList<Conflict>) task.getResult().toObjects(Conflict.class);
+				conflictList = new ArrayList<>();
+				for (QueryDocumentSnapshot conflictSnap : task.getResult()) {
+					Conflict conflict = conflictSnap.toObject(Conflict.class);
+					conflictList.add(conflict);
+				}
+				if (conflictList.isEmpty()) {
+					conflictNotice.setText("There are no conflicts for this event");
+				} else {
+					conflictNotice.setText(String.format("There are %d conflicts for this event", conflictList.size()));
+				}
 				conflictAdapter = new ConflictAdapter(conflictList, R.layout.conflict_item);
 				conflictsRecycler.setAdapter(conflictAdapter);
 				conflictsRecycler.setLayoutManager(new LinearLayoutManager(ConflictsActivity.this));
-
 			}
 		});
 	}

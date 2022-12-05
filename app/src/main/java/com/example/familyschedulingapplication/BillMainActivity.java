@@ -38,6 +38,7 @@ public class BillMainActivity extends AppCompatActivity {
     DocumentReference memberRef;
     FloatingActionButton addBillBtn;
     BillAdapter billAdapter;
+    ImageButton sync;
     ArrayList<Bill> billsList;
     private static final String TAG = "BillMainActivity";
     @Override
@@ -51,11 +52,12 @@ public class BillMainActivity extends AppCompatActivity {
         rv = (RecyclerView) findViewById(R.id.recyclerView);
         noOfBills = (TextView) findViewById(R.id.billAlert);
         addBillBtn = findViewById(R.id.billAddBtn);
+        sync = findViewById(R.id.syncBills);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         ImageButton menuBtn = findViewById(R.id.billMenuBtn);
         TabLayout.Tab tab = tabLayout.getTabAt(0);
-       if (tab != null) {
+        if (tab != null) {
             tab.select();
             currentTab = Objects.requireNonNull(tab.getText()).toString().toLowerCase(Locale.ROOT);
         } else {
@@ -91,6 +93,7 @@ public class BillMainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
+        sync.setOnClickListener(v -> updateBillList(currentTab));
     }
     public void updateBillList(String tab) {
         Bill.getBillsByMember(memberRef, task -> {
@@ -101,17 +104,17 @@ public class BillMainActivity extends AppCompatActivity {
                     Bill bill = document.toObject(Bill.class);
                     assert bill != null;
                     if (tab.equals("upcoming")) {
-                        if (bill.getDueDate().after(new Date()) && !bill.getPaid()) {
+                        if (bill.getDueDate().after(new Date(System.currentTimeMillis())) && !bill.getPaid()) {
                             billsList.add(bill);
                         }
                     } else if (tab.equals("past")) {
-                        if (bill.getDueDate().before(new Date())) {
+                        if (bill.getDueDate().before(new Date(System.currentTimeMillis()))) {
                             billsList.add(bill);
                         }
                     } else if (tab.equals("all")) {
                         billsList.add(bill);
                     } else if (tab.equals("overdue")) {
-                        if (bill.getDueDate().before(new Date()) && !bill.getPaid()) {
+                        if (bill.getDueDate().before(new Date(System.currentTimeMillis())) && !bill.getPaid()) {
                             billsList.add(bill);
                             overdueCount[0]++;
                         }

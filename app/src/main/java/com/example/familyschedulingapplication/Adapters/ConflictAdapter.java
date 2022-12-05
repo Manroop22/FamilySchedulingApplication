@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +21,9 @@ import java.util.ArrayList;
 
 public class ConflictAdapter extends RecyclerView.Adapter<ConflictAdapter.ViewHolder> {
 	public static final String TAG = "ConflictAdapter";
-	public final ArrayList<Conflict> conflictList;
+	public ArrayList<Conflict> conflictList;
 	public int layoutId;
 	int count=0;
-	FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 	public ConflictAdapter(ArrayList<Conflict> conflictList, int layout) {
 		this.conflictList = conflictList;
@@ -36,7 +36,7 @@ public class ConflictAdapter extends RecyclerView.Adapter<ConflictAdapter.ViewHo
 		Log.i (TAG,  "onCreateViewHolder: "+ count++);
 		LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext ());
 		View view = layoutInflater.inflate (layoutId, parent, false);
-		return new ViewHolder (view);
+		return new ConflictAdapter.ViewHolder(view);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ConflictAdapter extends RecyclerView.Adapter<ConflictAdapter.ViewHo
 		return conflictList.size();
 	}
 
-	public class ViewHolder extends RecyclerView.ViewHolder {
+	public static class ViewHolder extends RecyclerView.ViewHolder {
 		public EditText conflictDate, conflictName;
 		Button sendChange;
 		ImageButton acceptButton, rejectButton;
@@ -65,6 +65,12 @@ public class ConflictAdapter extends RecyclerView.Adapter<ConflictAdapter.ViewHo
 			super(itemView);
 			conflictName = itemView.findViewById(R.id.conflictName);
 			conflictDate = itemView.findViewById(R.id.conflictDate);
+			sendChange = itemView.findViewById(R.id.sendChanges);
+//			acceptButton = itemView.findViewById(R.id.acceptButton);
+//			rejectButton = itemView.findViewById(R.id.rejectButton);
+			sendChange.setOnClickListener(v -> {
+				Toast.makeText(v.getContext(), "Changes sent. This does nothing for now!", Toast.LENGTH_SHORT).show();
+			});
 		}
 	}
 }

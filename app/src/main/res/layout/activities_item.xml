@@ -4,34 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activityItemLayout"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     android:background="#FFFFFF">
 
     <TextView
-        android:id="@+id/listName"
+        android:id="@+id/activityName"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:text="@string/activity_name"
         android:textColor="#242124"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/listOptions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/activityDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FEFEFE"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="4dp"
+        android:text="@string/activity_date"
+        android:textColor="#757575"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activityName" />
+
     <ImageButton
         android:id="@+id/listOptions"
-        tools:ignore="ImageContrastCheck"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:background="#00FFFFFF"
         android:contentDescription="@string/view_cateogory_bottom_sheet"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/listName"
+        app:layout_constraintStart_toEndOf="@+id/activityName"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_more_horiz_24" />
+        app:srcCompat="@drawable/ic_baseline_more_horiz_24"
+        tools:ignore="ImageContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

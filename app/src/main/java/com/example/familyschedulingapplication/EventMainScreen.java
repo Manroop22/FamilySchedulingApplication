@@ -35,6 +35,7 @@ public class EventMainScreen extends AppCompatActivity {
     TabLayout.Tab tab;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     Member member;
+    ImageButton sync;
     static ArrayList<Event> events = new ArrayList<>();
 
     @Override
@@ -42,6 +43,7 @@ public class EventMainScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_main_screen);
         eventRecyclerView = findViewById(R.id.recyclerView);
+        sync = findViewById(R.id.syncEvents);
         tabLayout = findViewById(R.id.tabLayout);
         tab = tabLayout.getTabAt(0);
         if (tab != null) {
@@ -82,18 +84,11 @@ public class EventMainScreen extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+        sync.setOnClickListener(v -> updateEventList(currentTab));
     }
 
     public void updateEventList(String tab) {
-        // list events, sort by upcoming, past, and all, return list of events
-        // update event list and notify adapter
-        // get current user
         EventMainScreen.events = new ArrayList<>();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // get user's events
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        assert user != null;
-        DocumentReference memRef = db.collection("members").document(user.getUid());
         Event.getEventsByHomeId(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -117,30 +112,5 @@ public class EventMainScreen extends AppCompatActivity {
                 Log.d(TAG, "Error getting documents: ", task.getException());
             }
         });
-//        Event.getEventByCreatedBy(memRef, task -> {
-//            if (task.isSuccessful()) {
-////                ArrayList<Event> eventList = new ArrayList<>();
-//                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-//                    Event event = document.toObject(Event.class);
-//                    if (event != null && !EventMainScreen.events.contains(event)) {
-//                        EventMainScreen.events.add(event);
-//                    }
-//                }
-//                if (tab.equals("upcoming")) {
-//                    EventMainScreen.events.removeIf(event -> event.getEventDate().before(new Date()));
-//                } else if (tab.equals("past")) {
-//                    EventMainScreen.events.removeIf(event -> event.getEventDate().after(new Date()));
-//                }
-//                adapter = new EventAdapter(EventMainScreen.events, R.layout.event_item);
-//                eventRecyclerView.setAdapter(adapter);
-//                eventRecyclerView.setLayoutManager(new LinearLayoutManager(EventMainScreen.this));
-//            } else {
-//                Log.d(TAG, "Error getting documents: ", task.getException());
-//            }
-//        });
     }
-
-//    public void updateEventRecyclerView(){
-//        updateEventList(currentTab);
-//    }
 }

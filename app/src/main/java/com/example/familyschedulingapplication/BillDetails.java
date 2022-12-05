@@ -44,6 +44,7 @@ public class BillDetails extends AppCompatActivity {
     String mode, billId, dateString;
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Bill bill;
+    Date dateRes;
     DocumentReference memRef;
     static final String TAG = "IndividualBillActivity";
 
@@ -291,9 +292,14 @@ public class BillDetails extends AppCompatActivity {
         MaterialDatePicker<Long> materialDatePicker = builder.build();
         materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
         materialDatePicker.addOnPositiveButtonClickListener(selection -> {
-            Date date = new Date((Long) selection);
-            dateString = sd.format(date);
-            dateInput.setText(dateString);
+            Date date = new Date(selection);
+            // add 1 day to date, because it is 1 day behind and set time to currentMillis()
+            dateRes = new Date(date.getTime() + 86400000);
+            // set just the current time to the selected date
+            dateRes.setHours(new Date(System.currentTimeMillis()).getHours());
+            dateRes.setMinutes(new Date(System.currentTimeMillis()).getMinutes());
+            dateRes.setSeconds(new Date(System.currentTimeMillis()).getSeconds());
+            dateInput.setText(dateRes.toString());
         });
     }
 
@@ -386,13 +392,7 @@ public class BillDetails extends AppCompatActivity {
                     }
                     bill.setName(billName.getText().toString());
                     bill.setAmount(Double.parseDouble(billAmount.getText().toString()));
-//                    bill.setDueDate(new Date(dateInput.getText().toString()));
-                    // use simple date format to convert string to date
-                    try {
-                        bill.setDueDate(sd.parse(dateInput.getText().toString()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    bill.setDueDate(dateRes);
                     bill.setLink(linkInput.getText().toString());
                     bill.setNote(noteInput.getText().toString());
                     ArrayList<String> notify2 = new ArrayList<>();
@@ -422,12 +422,7 @@ public class BillDetails extends AppCompatActivity {
                     Bill bill = new Bill();
                     bill.setBillId(randomUUID().toString());
                     bill.setName(billName.getText().toString());
-//                    bill.setDueDate(new Date(dateInput.getText().toString()));
-                    try {
-                        bill.setDueDate(sd.parse(dateInput.getText().toString()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    bill.setDueDate(dateRes);
                     bill.setCreatedAt(new Date());
                     bill.setCreatedBy(memRef);
                     bill.setAmount(Double.parseDouble(billAmount.getText().toString()));

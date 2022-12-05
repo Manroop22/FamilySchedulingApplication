@@ -165,6 +165,23 @@
     <string name="new_date">New Date</string>
     <string name="propose_a_date">Propose a Date:</string>
     <string name="conflicting_date">Conflicting Date:</string>
+    <string name="check_conflicts">Check Conflicts</string>
+    <string name="activity_date">Activity Date</string>
+    <string name="email_colon">Email:</string>
+    <string name="name_text">Name</string>
+    <string name="phone">Phone:</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="email_text">Email</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="edit_your_profile">Edit Your Profile</string>
+    <string name="password">Password:</string>
+    <string name="password_text">Password</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="address">Address:</string>
+    <string name="description_colon">Description:</string>
+    <string name="home_information">Home Information</string>
+    <string name="description_text">Description</string>
+    <string name="home_address">Home Address</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

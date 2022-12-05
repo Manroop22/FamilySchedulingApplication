@@ -2,16 +2,11 @@ package com.example.familyschedulingapplication;
 
 import static java.util.UUID.randomUUID;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,22 +14,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.familyschedulingapplication.Adapters.MemberAdapter;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class CreateEvent extends AppCompatActivity {
@@ -42,8 +33,7 @@ public class CreateEvent extends AppCompatActivity {
     EditText descriptionInput;
     EditText notesInput;
     TextView dateInput;
-    Button cancelBtn;
-    Button saveBtn;
+    Button cancelBtn, saveBtn, conflictBtn;
     ImageButton backBtn;
     Event event = new Event();
     Member member;
@@ -58,8 +48,6 @@ public class CreateEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // if member is in members collection get the reference
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         assert user != null;
         nameInput=findViewById(R.id.nameInputText);
         descriptionInput=findViewById(R.id.descriptionInputText);
@@ -70,6 +58,7 @@ public class CreateEvent extends AppCompatActivity {
         saveBtn.setOnClickListener(this::onSave);
         cancelBtn.setOnClickListener(this::onCancel);
         backBtn=findViewById(R.id.backBtnDetails);
+        conflictBtn=findViewById(R.id.checkConflictBtnNE);
         backBtn.setOnClickListener(this::onBack);
         membersSpinner = findViewById(R.id.membersSpinner);
         Member.getMember(user.getUid(), task -> {
@@ -85,10 +74,17 @@ public class CreateEvent extends AppCompatActivity {
         dateInput.setOnClickListener(v -> {
             MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
             builder.setTitleText("Select a date");
+            builder.setSelection(MaterialDatePicker.todayInUtcMilliseconds());
             MaterialDatePicker<Long> materialDatePicker = builder.build();
             materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
             materialDatePicker.addOnPositiveButtonClickListener(selection -> {
-                dateRes = new Date((Long) selection);
+                Date date = new Date(selection);
+                // add 1 day to date, because it is 1 day behind and set time to currentMillis()
+                dateRes = new Date(date.getTime() + 86400000);
+                // set just the current time to the selected date
+                dateRes.setHours(new Date(System.currentTimeMillis()).getHours());
+                dateRes.setMinutes(new Date(System.currentTimeMillis()).getMinutes());
+                dateRes.setSeconds(new Date(System.currentTimeMillis()).getSeconds());
                 dateInput.setText(dateRes.toString());
             });
         });
@@ -107,10 +103,23 @@ public class CreateEvent extends AppCompatActivity {
 
             }
         });
+        conflictBtn.setOnClickListener(v -> {
+            if (dateInput.getText().toString().isEmpty()) {
+                Toast.makeText(CreateEvent.this, "Please select a date", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(CreateEvent.this, ConflictsActivity.class);
+                Bundle eventBundle = new Bundle();
+                eventBundle.putLong("eventDate", dateRes.getTime());
+                eventBundle.putString("homeId", member.getReference().toString());
+                eventBundle.putString("userId", member.getUserId());
+                intent.putExtras(eventBundle);
+                startActivity(intent);
+            }
+        });
     }
 
     public void spinnerAdapter() {
-        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+        Member.getMembersByHome(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
                 members = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {

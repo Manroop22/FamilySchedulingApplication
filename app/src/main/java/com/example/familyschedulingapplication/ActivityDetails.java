@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -57,8 +58,8 @@ public class ActivityDetails extends AppCompatActivity {
     DocumentReference memberRef;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Member member;
+    Date dateRes;
     Activity activity;
-    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +111,8 @@ public class ActivityDetails extends AppCompatActivity {
         updateCategoryAdapter();
         updateInvitesAdapter();
         switchMode(mode);
+        categoryList = new ArrayList<>();
+        categoryAdapter = new CategoryAdapter(ActivityDetails.this, R.layout.category_array_item, categoryList);
         backBtn.setOnClickListener(v -> {
             if (validateInputs(false) && !mode.equals("view")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ActivityDetails.this);
@@ -153,7 +156,7 @@ public class ActivityDetails extends AppCompatActivity {
     }
 
     public void updateInvitesAdapter() {
-        Member.getMembersByHome(member.getHomeId(), (OnCompleteListener<QuerySnapshot>) task -> {
+        Member.getMembersByHome(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
                 invitesList = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -204,8 +207,14 @@ public class ActivityDetails extends AppCompatActivity {
         MaterialDatePicker<Long> materialDatePicker = builder.build();
         materialDatePicker.show(getSupportFragmentManager(), "DATE_PICKER");
         materialDatePicker.addOnPositiveButtonClickListener(selection -> {
-            Date date = new Date((Long) selection);
-            dateString = date.toString();
+            Date date = new Date(selection);
+            // add 1 day to date, because it is 1 day behind and set time to currentMillis()
+            dateRes = new Date(date.getTime() + 86400000);
+            // set just the current time to the selected date
+            dateRes.setHours(new Date(System.currentTimeMillis()).getHours());
+            dateRes.setMinutes(new Date(System.currentTimeMillis()).getMinutes());
+            dateRes.setSeconds(new Date(System.currentTimeMillis()).getSeconds());
+            dateString = dateRes.toString();
             dateInput.setText(dateString);
         });
     }
@@ -300,11 +309,7 @@ public class ActivityDetails extends AppCompatActivity {
                 activity.setActivityId(randomUUID().toString());
             }
             activity.setName(nameInput.getText().toString());
-            try {
-                activity.setActivityDate(sd.parse(dateInput.getText().toString()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            activity.setActivityDate(dateRes);
             // get spinner selected item
             if (categorySpinner.getSelectedItem() != null && categoryAdapter.getItem(categorySpinner.getSelectedItemPosition()) != null) {
                 Log.d("ActivityDetails", categorySpinner.getSelectedItem().toString());

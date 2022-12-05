@@ -54,6 +54,12 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ActivitiesAdapter.ViewHolder holder, int position) {
         holder.listName.setText(activityList.get(position).getName());
+        if (activityList.get(position).getActivityDate() != null) {
+            holder.activityDate.setText(activityList.get(position).getActivityDate().toString());
+        } else {
+            holder.activityDate.setText("No Date");
+        }
+
         Category.getCategoryByReference(activityList.get(position).getCategory(), task -> {
             if (task.isSuccessful()) {
                 Category mcat = task.getResult().toObject(Category.class);
@@ -67,13 +73,14 @@ public class ActivitiesAdapter extends RecyclerView.Adapter<ActivitiesAdapter.Vi
         return activityList.size();
     }
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView listName;
+        TextView listName, activityDate;
         ImageButton listOptions;
         ConstraintLayout activityItemLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            listName=itemView.findViewById(R.id.listName);
+            listName=itemView.findViewById(R.id.activityName);
             listOptions=itemView.findViewById(R.id.listOptions);
+            activityDate=itemView.findViewById(R.id.activityDate);
             activityItemLayout=itemView.findViewById(R.id.activityItemLayout);
 //            nameView.setOnClickListener(this);
             listOptions.setOnClickListener(view -> {
