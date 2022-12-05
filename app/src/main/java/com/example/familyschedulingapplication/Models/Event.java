@@ -1,13 +1,9 @@
 package com.example.familyschedulingapplication.Models;
 
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -171,7 +167,7 @@ public class Event {
         db.collection(collection).document(evId).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static void getEventByHomeId(DocumentReference homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+    public static void getEventsByHomeId(DocumentReference homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
         db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(onCompleteListener);
     }
 

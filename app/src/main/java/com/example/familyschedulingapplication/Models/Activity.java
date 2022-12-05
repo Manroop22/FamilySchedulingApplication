@@ -181,6 +181,10 @@ public class Activity implements Serializable {
         db.collection(collection).document(this.activityId).delete().addOnCompleteListener(onCompleteListener);
     }
 
+    public static void getActivitiesByHomeId(DocumentReference homeId, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+        db.collection(collection).whereEqualTo("homeId", homeId).get().addOnCompleteListener(onCompleteListener);
+    }
+
     public static void addActivity(Activity activity, OnCompleteListener<Void> onCompleteListener) {
         // Activity.getActivityId() and add new Activity to Activitys collection
         db.collection(collection).document(activity.getActivityId()).set(activity).addOnCompleteListener(onCompleteListener);

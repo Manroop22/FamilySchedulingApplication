@@ -1,7 +1,6 @@
 package com.example.familyschedulingapplication;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,8 +16,6 @@ import com.example.familyschedulingapplication.Models.Bill;
 import com.example.familyschedulingapplication.Models.Event;
 import com.example.familyschedulingapplication.Models.Member;
 import com.example.familyschedulingapplication.Models.Message;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -145,7 +142,7 @@ public class MessageBoard extends AppCompatActivity {
     }
 
     public void initEvents() {
-        Event.getEventByHomeId(member.getHomeId(), task -> {
+        Event.getEventsByHomeId(member.getHomeId(), task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
                     Event event = document.toObject(Event.class);

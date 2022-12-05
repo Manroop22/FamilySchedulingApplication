@@ -16,27 +16,29 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/exitConflicts"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
+            android:contentDescription="@string/go_back_to_event"
             app:srcCompat="@drawable/ic_baseline_arrow_back_ios_new_24" />
 
         <TextView
             android:id="@+id/conflictsTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Conflicts"
+            android:text="@string/conflicts"
             android:textAlignment="center"
             android:textSize="28sp" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/syncConflicts"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
+            android:contentDescription="@string/sync_conflicts"
             app:srcCompat="@drawable/ic_baseline_sync_24" />
     </LinearLayout>
 
@@ -45,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="There are no conflicts currently"
+        android:text="@string/there_are_no_conflicts_currently"
         android:textAlignment="center"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,13 +55,110 @@
         app:layout_constraintTop_toBottomOf="@+id/conflictHeaderLayout" />
 
     <LinearLayout
+        android:id="@+id/viewConflicts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/conflcitActions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/conflictNotice">
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:id="@+id/conflictDateText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:minWidth="120dp"
+                android:text="@string/conflicting_date" />
+
+            <EditText
+                android:id="@+id/conflictDate"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/new_date"
+                android:importantForAutofill="no"
+                android:inputType="date" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:id="@+id/proposedDateText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:minWidth="120dp"
+                android:text="@string/propose_a_date" />
+
+            <EditText
+                android:id="@+id/proposedDate"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/new_date"
+                android:importantForAutofill="no"
+                android:inputType="date" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/conflictRecycler"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"></LinearLayout>
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp" />
+
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conflcitActions"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/conflictsDone"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="@string/done"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/conflictMessage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/everyone_must_accept_the_changes"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/conflictsDone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

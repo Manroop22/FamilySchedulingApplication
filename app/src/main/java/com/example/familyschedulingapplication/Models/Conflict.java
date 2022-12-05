@@ -1,16 +1,21 @@
 package com.example.familyschedulingapplication.Models;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.familyschedulingapplication.ConflictsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Conflict {
@@ -233,6 +238,82 @@ public class Conflict {
 		}
 	}
 
+	public static void checkForActivityConflicts(DocumentReference homeId, DocumentReference userId, Date eventDate, Date proposedDate) {
+		// get all activities with homeId, check if any of them overlap with the eventDate, if so, create a conflict
+		// get all events with homeId, check if any of them overlap with the eventDate, if so, create a conflict
+		// check if the proposedDate overlaps with any of the above, if so, create a conflict
+		// get all activities with homeId
+		Activity.getActivitiesByHomeId(homeId, task -> {
+			if (task.isSuccessful()) {
+				ArrayList<Boolean> hasConflict = new ArrayList<>();
+				for (QueryDocumentSnapshot document : task.getResult()) {
+					Activity activity = document.toObject(Activity.class);
+					// check if any of them overlap with the eventDate
+					if (activity.getActivityDate().after(eventDate) && activity.getActivityDate().before(proposedDate)) {
+						hasConflict.add(true);
+						// create a conflict
+						Conflict conflict = new Conflict();
+						conflict.setHomeId(homeId);
+						conflict.setActivityId(document.getReference());
+						conflict.setProposer(userId);
+						conflict.setProposedDate(proposedDate);
+						conflict.setOriginalDate(eventDate);
+						conflict.saveConflict(task1 -> {
+							if (task1.isSuccessful()) {
+								Log.d(TAG, "Conflict created");
+							} else {
+								Log.e(TAG, "Error creating conflict", task1.getException());
+							}
+						});
+					}
+				}
+				if (hasConflict.isEmpty()) {
+					Log.d(TAG, "No conflicts found");
+				}
+			} else {
+				Log.e(TAG, "Error getting activities", task.getException());
+			}
+		});
+	}
+
+	public static void getConflictByOriginalDate(DocumentReference homeId, Date originalDate, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+		db.collection(collection).whereEqualTo("homeId", homeId).whereEqualTo("originalDate", originalDate).get().addOnCompleteListener(onCompleteListener);
+	}
+
+	public static void checkForEventConflicts(DocumentReference homeId, DocumentReference userId, Date eventDate, Date proposedDate) {
+		// get all events with homeId
+		Event.getEventsByHomeId(homeId, task -> {
+			if (task.isSuccessful()) {
+				ArrayList<Boolean> hasConflict = new ArrayList<>();
+				for (QueryDocumentSnapshot document : task.getResult()) {
+					Event event = document.toObject(Event.class);
+					// check if any of them overlap with the eventDate
+					if (event.getEventDate().after(eventDate) && event.getEventDate().before(proposedDate)) {
+						hasConflict.add(true);
+						// create a conflict
+						Conflict conflict = new Conflict();
+						conflict.setHomeId(homeId);
+						conflict.setEventId(document.getReference());
+						conflict.setProposer(userId);
+						conflict.setProposedDate(proposedDate);
+						conflict.setOriginalDate(eventDate);
+						conflict.saveConflict(task1 -> {
+							if (task1.isSuccessful()) {
+								Log.d(TAG, "Conflict created");
+							} else {
+								Log.e(TAG, "Error creating conflict", task1.getException());
+							}
+						});
+					}
+				}
+				if (hasConflict.isEmpty()) {
+					Log.d(TAG, "No conflicts found");
+				}
+			} else {
+				Log.e(TAG, "Error getting events", task.getException());
+			}
+		});
+	}
 
 
 }

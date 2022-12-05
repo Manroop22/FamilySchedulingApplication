@@ -153,6 +153,18 @@
     <string name="i_have_paid_this_bill">I HAVE PAID THIS BILL</string>
     <string name="sign_in">Sign In</string>
     <string name="register">Register</string>
+    <string name="conflict_date">Conflict Date</string>
+    <string name="conflictee">Conflictee</string>
+    <string name="send_changes">Send Changes</string>
+    <string name="there_are_no_conflicts_currently">There are no conflicts currently</string>
+    <string name="conflicts">Conflicts</string>
+    <string name="done">Done</string>
+    <string name="everyone_must_accept_the_changes">Everyone must accept the changes</string>
+    <string name="go_back_to_event">Go back to event</string>
+    <string name="sync_conflicts">Sync Conflicts</string>
+    <string name="new_date">New Date</string>
+    <string name="propose_a_date">Propose a Date:</string>
+    <string name="conflicting_date">Conflicting Date:</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>
