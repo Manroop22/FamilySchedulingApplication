@@ -135,6 +135,15 @@
     <string name="edit_bill">Edit Bill</string>
     <string name="bill_details">Bill Details</string>
     <string name="default_pic">https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Android_logo_2019.png/800px-Android_logo_2019.png</string>
+    <string name="invited_you">Invited you</string>
+    <string name="accept_invite">Accept Invite</string>
+    <string name="decline_invite">Decline Invite</string>
+    <string name="member_email">Member Email</string>
+    <string name="member_full_name">Member Full Name</string>
+    <string name="member_profile_picture">Member Profile Picture</string>
+    <string name="home_members">Home Members</string>
+    <string name="invite_member">Invite Member</string>
+    <string name="your_home_access_code">Access Code:</string>
     <string-array name="notificationType">
         <item>Email</item>
         <item>Push</item>

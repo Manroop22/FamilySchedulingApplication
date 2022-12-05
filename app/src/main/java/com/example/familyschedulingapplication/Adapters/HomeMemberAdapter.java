@@ -1,6 +1,8 @@
 package com.example.familyschedulingapplication.Adapters;
 
+import android.net.Uri;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,7 @@ public class HomeMemberAdapter extends RecyclerView.Adapter<HomeMemberAdapter.Vi
     public HomeMemberAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i(TAG, "onCreateViewHolder: " + count++);
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.invite_item, parent, false);
+        View view = layoutInflater.inflate(R.layout.member_home_item, parent, false);
         return new HomeMemberAdapter.ViewHolder(view);
     }
 
@@ -41,7 +43,14 @@ public class HomeMemberAdapter extends RecyclerView.Adapter<HomeMemberAdapter.Vi
         holder.homeMemberName.setText(homeMemberList.get(position).getName());
         holder.homeMemberEmail.setText(homeMemberList.get(position).getEmail());
         // The image resource has to be set below.
-       // holder.homeMemberImage.setImageResource(homeMemberList.get(position).);
+//        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.homeMemberImage.getLayoutParams();
+////        params.setMargins(4, 4, 0, 0);
+//        int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, holder.homeMemberImage.getContext().getResources().getDisplayMetrics());
+//        params.setMargins(marginInDp, marginInDp, 0, 0);
+//        holder.homeMemberImage.setLayoutParams(params);
+//        holder.homeMemberImage.setImageURI(Uri.parse(homeMemberList.get(position).getProfileUrl()));
+        holder.homeMemberImage.setImageResource(R.drawable.profile_foreground);
+//        holder.homeMemberImage.setBackgroundResource(R.drawable.profile_background);
     }
 
     @Override

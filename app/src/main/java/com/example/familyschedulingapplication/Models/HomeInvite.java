@@ -150,6 +150,10 @@ public class HomeInvite {
 		db.collection(collection).whereEqualTo("invitedMemberEmail", memberEmail).whereEqualTo("accepted", false).get().addOnCompleteListener(onCompleteListener);
 	}
 
+	public static void getHomeInviteByHomeMemberAndAccessCode(DocumentReference homeId, DocumentReference memberId, String accessCode, OnCompleteListener<QuerySnapshot> onCompleteListener) {
+		db.collection(collection).whereEqualTo("homeId", homeId).whereEqualTo("invitedMember", memberId).whereEqualTo("accessCode", accessCode).get().addOnCompleteListener(onCompleteListener);
+	}
+
 	public static void updateHomeInvite(HomeInvite homeInvite, OnCompleteListener<Void> onCompleteListener) {
 		db.collection(collection).document(homeInvite.getHomeInviteId()).set(homeInvite).addOnCompleteListener(onCompleteListener);
 	}

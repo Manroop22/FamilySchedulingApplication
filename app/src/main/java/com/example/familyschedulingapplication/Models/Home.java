@@ -129,12 +129,16 @@ public class Home {
         return db;
     }
 
-    public static void addHome(Home home, OnCompleteListener<DocumentReference> onCompleteListener) {
-        db.collection(collection).add(home).addOnCompleteListener(onCompleteListener);
+    public static void addHome(Home home, OnCompleteListener<Void> onCompleteListener) {
+        db.collection(collection).document(home.getHomeId()).set(home).addOnCompleteListener(onCompleteListener);
     }
 
     public static void updateHome(Home home, OnCompleteListener<Void> onCompleteListener) {
         db.collection(collection).document(home.getHomeId()).set(home).addOnCompleteListener(onCompleteListener);
+    }
+
+    public void updateHome() {
+        db.collection(collection).document(this.getHomeId()).set(this);
     }
 
     public static void deleteHome(Home home, OnCompleteListener<Void> onCompleteListener) {
@@ -149,9 +153,8 @@ public class Home {
         db.collection(collection).whereEqualTo("accessCode", accessCode).get().addOnCompleteListener(onCompleteListener);
     }
 
-    public static Home getHomeById(DocumentReference homeId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+    public static void getHomeById(DocumentReference homeId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(collection).document(homeId.getId()).get().addOnCompleteListener(onCompleteListener);
-        return null;
     }
 
     public static Home getHome(DocumentSnapshot snap) {

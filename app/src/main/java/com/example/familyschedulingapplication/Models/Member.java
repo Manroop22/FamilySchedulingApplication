@@ -136,6 +136,10 @@ public class Member {
         db.collection(collection).document(member.getUserId()).set(member).addOnCompleteListener(onCompleteListener);
     }
 
+    public void updateMember() {
+        db.collection(collection).document(this.getUserId()).set(this);
+    }
+
     public static void deleteMember(Member member, OnCompleteListener<Void> onCompleteListener) {
         db.collection(collection).document(member.getUserId()).delete().addOnCompleteListener(onCompleteListener);
     }

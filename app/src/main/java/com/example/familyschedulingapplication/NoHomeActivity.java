@@ -1,5 +1,7 @@
 package com.example.familyschedulingapplication;
 
+import static java.util.UUID.randomUUID;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,32 +36,58 @@ public class NoHomeActivity extends AppCompatActivity {
     private ArrayList<HomeInvite> inviteList;
     private String mode = ""; // create or join
     private RecyclerView inviteRecyclerView;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     InviteAdapter adapter;
+    ImageButton backBtn;
+    Member member;
+    Button createHomeBtn;
+    Button joinHomebtn;
+    EditText accessCode;
+    EditText createHomeName;
+    ImageButton newHomeBtn;
+    ImageButton accessCodeBtn;
+    LinearLayout joinHomeLayout;
+    LinearLayout createHomeLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_no_home);
-        inviteRecyclerView=findViewById(R.id.rvHomeInvites);
-        ImageButton backBtn = findViewById(R.id.backBtn);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        adapter = new InviteAdapter(inviteList);
-        inviteRecyclerView.setAdapter(adapter);
-        inviteRecyclerView.setLayoutManager(new LinearLayoutManager(NoHomeActivity.this));
-//        if (user == null) {
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-//        }
         assert user != null;
-        Member member = new Member(user.getUid());
-        Button createHomeBtn = findViewById(R.id.createHomeBtn);
-        Button joinHomebtn = findViewById(R.id.joinHomeBtn);
-        EditText accessCode = findViewById(R.id.editTextAccessCode);
-        EditText createHomeName = findViewById(R.id.editTextCreateHome);
-        ImageButton newHomeBtn = findViewById(R.id.newHomeBtn);
-        ImageButton accessCodeBtn = findViewById(R.id.accessCodeBtn);
-        LinearLayout joinHomeLayout = findViewById(R.id.joinHomeLayout);
-        LinearLayout createHomeLayout = findViewById(R.id.createHomeLayout);
+        createHomeBtn = findViewById(R.id.createHomeBtn);
+        joinHomebtn = findViewById(R.id.joinHomeBtn);
+        accessCode = findViewById(R.id.editTextAccessCode);
+        createHomeName = findViewById(R.id.editTextCreateHome);
+        newHomeBtn = findViewById(R.id.newHomeBtn);
+        accessCodeBtn = findViewById(R.id.accessCodeBtn);
+        joinHomeLayout = findViewById(R.id.joinHomeLayout);
+        createHomeLayout = findViewById(R.id.createHomeLayout);
+        inviteRecyclerView=findViewById(R.id.rvHomeInvites);
+        backBtn = findViewById(R.id.backBtn);
+        Member.getMember(user.getUid(), task -> {
+            if (task.isSuccessful()) {
+                member = task.getResult().toObject(Member.class);
+                if (member == null) {
+                    member = new Member();
+                    member.setUserId(user.getUid());
+                    // use email before @ as name
+                    member.setName(user.getEmail().split("@")[0]);
+                    member.setEmail(user.getEmail());
+                    member.setProfileUrl(getString(R.string.default_pic));
+                    member.setJoinedAt(new Date(System.currentTimeMillis()));
+                    member.setActive(true);
+                    member.updateMember();
+                }
+                if (member.getName() == null || member.getName().equals("")) {
+                    member.setName(user.getEmail().split("@")[0]);
+                    member.updateMember();
+                }
+                init();
+            }
+        });
+    }
+
+    public void init() {
+        inviteRecycler();
         backBtn.setOnClickListener(v -> {
             finish();
         });
@@ -83,14 +111,21 @@ public class NoHomeActivity extends AppCompatActivity {
                             break;
                         }
                         if (home != null) {
-                            Member.joinHome(home.getReference(), member, code, task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Toast.makeText(NoHomeActivity.this, "Successfully joined home", Toast.LENGTH_SHORT).show();
-                                    goHome();
-                                } else {
-                                    Toast.makeText(NoHomeActivity.this, "Error joining home", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            if (member.getUserId() == null) {
+                                Intent intent = new Intent(NoHomeActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Log.d("NoHomeActivity", "homeId: " + home);
+                                Member.joinHome(home.getReference(), member, code, task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(NoHomeActivity.this, "Successfully joined home", Toast.LENGTH_SHORT).show();
+                                        goHome();
+                                    } else {
+                                        Toast.makeText(NoHomeActivity.this, "Error joining home", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         }
                     });
                 });
@@ -120,7 +155,7 @@ public class NoHomeActivity extends AppCompatActivity {
                             while (notExists) {
                                 accCode = Home.createAccessCode();
                                 for (Home home : homes) {
-                                    if (home.getAccessCode().equals(accCode)) {
+                                    if (!home.getAccessCode().equals(accCode)) {
                                         notExists = false;
                                         break;
                                     }
@@ -128,6 +163,7 @@ public class NoHomeActivity extends AppCompatActivity {
                             }
                             Log.d("accCode", accCode);
                             Home home = new Home(homeName, accCode);
+                            home.setHomeId(randomUUID().toString());
                             home.setActive(true);
                             home.setCreatedAt(new Date(System.currentTimeMillis()));
                             home.setCreatedBy(member.getReference());
@@ -159,5 +195,11 @@ public class NoHomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void inviteRecycler() {
+        inviteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new InviteAdapter(inviteList);
+        inviteRecyclerView.setAdapter(adapter);
     }
 }

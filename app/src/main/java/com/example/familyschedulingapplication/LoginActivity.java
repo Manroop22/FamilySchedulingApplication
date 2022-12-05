@@ -93,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
             findViewById(R.id.login).setVisibility(android.view.View.GONE);
             // check if member.findMember doesn't exist, if it doesn't, create it and go to main activity
             // if it does, update the member and go to main activity
-
             Member.getMember(user.getUid(), task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();

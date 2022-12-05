@@ -32,41 +32,74 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal|center_vertical"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/welcome_text"
             android:textSize="24sp" />
-    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHomeInvites"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:itemCount="0" />
+        <ImageButton
+            android:id="@+id/inviteMember"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/invite_member"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_share_24"
+            tools:ignore="RedundantDescriptionCheck,ImageContrastCheck,ImageContrastCheck" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvHomeInvites">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/homeAccessCodeText"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/your_home_access_code"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeAccessCodeText">
+
+            <TextView
+                android:id="@+id/homeMembersTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/home_members"
+                android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/HomeMemberRecyclerView"
+                android:id="@+id/homeMembersRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="322dp" />
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

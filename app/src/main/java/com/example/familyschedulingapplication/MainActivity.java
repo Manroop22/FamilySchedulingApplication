@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.familyschedulingapplication.Adapters.HomeMemberAdapter;
-import com.example.familyschedulingapplication.Adapters.InviteAdapter;
 import com.example.familyschedulingapplication.ModalBottomSheets.MenuBottomSheet;
 import com.example.familyschedulingapplication.Models.Home;
 import com.example.familyschedulingapplication.Models.Member;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public Member member;
     public Home home;
-    TextView welcomeTitle;
+    TextView welcomeTitle, hacCode;
     HomeMemberAdapter adapter;
     RecyclerView HomeMemberRV;
     ArrayList<Member> homeMemberList;
@@ -41,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        HomeMemberRV=findViewById(R.id.HomeMemberRecyclerView);
+        HomeMemberRV=findViewById(R.id.homeMembersRecyclerView);
         welcomeTitle = findViewById(R.id.welcomeTitle);
+        hacCode = findViewById(R.id.homeAccessCodeText);
         MenuBottomSheet menuBottomSheet = new MenuBottomSheet();
         ImageButton menuBtn = findViewById(R.id.menuBtn);
         menuBtn.setOnClickListener(v -> menuBottomSheet.show(getSupportFragmentManager(), MenuBottomSheet.TAG));
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     homeName = firstLetter + restOfName;
                 }
                 welcomeTitle.setText(homeName);
+                hacCode.setText(String.format("Access Code: %s", home.getAccessCode()));
+                buildHome(hom);
             } else {
                 Toast.makeText(this, "Error: Home not found", Toast.LENGTH_SHORT).show();
             }
@@ -76,15 +78,31 @@ public class MainActivity extends AppCompatActivity {
     public void buildHome(Home home) {
         if (home != null) {
             // adapter set.
-            adapter = new HomeMemberAdapter(homeMemberList);
-            HomeMemberRV.setAdapter(adapter);
-            HomeMemberRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             if (home.getName() != null) {
                 welcomeTitle.setText(String.format("%s", home.getName()));
             } else {
                 welcomeTitle.setText("Welcome Home");
             }
+            updateHomeMemberRecycler();
         }
+    }
+
+    public void updateHomeMemberRecycler() {
+        Member.getMembersByHome(member.getHomeId(), task -> {
+            QuerySnapshot querySnapshot = task.getResult();
+            homeMemberList = new ArrayList<>();
+            if (querySnapshot != null) {
+                for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                    Member member = documentSnapshot.toObject(Member.class);
+                    if (member != null) {
+                        homeMemberList.add(member);
+                    }
+                }
+                adapter = new HomeMemberAdapter(homeMemberList);
+                HomeMemberRV.setAdapter(adapter);
+                HomeMemberRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            }
+        });
     }
 
     public void checkCurrentUser() {
@@ -113,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "checkCurrentUser: member is null");
                             member = new Member();
                             member.setUserId(user.getUid());
-                            member.setProfileUrl(user.getPhotoUrl().toString());
+                            member.setProfileUrl(getString(R.string.default_pic));
                             member.setName(user.getDisplayName());
                             member.setEmail(user.getEmail());
                             member.setHomeId(null);
@@ -130,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
                                     DocumentSnapshot document1 = task1.getResult();
                                     if (document1 != null) {
                                         home = Home.getHome(document1);
+                                        if (home.getAccessCode() == null) {
+                                            home.setAccessCode(Home.createAccessCode());
+                                            home.updateHome();
+                                        }
                                         homeInit(home);
                                     }
                                 } else {
@@ -149,9 +171,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void signOut() {
+    public void signOut() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseAuth.getInstance().signOut();
+            MainActivity.this.finish();
         }
     }
 

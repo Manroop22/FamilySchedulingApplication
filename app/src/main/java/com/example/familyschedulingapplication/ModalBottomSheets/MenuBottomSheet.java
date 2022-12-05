@@ -13,6 +13,7 @@ import com.example.familyschedulingapplication.MainActivity;
 import com.example.familyschedulingapplication.MessageBoard;
 import com.example.familyschedulingapplication.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -65,8 +66,8 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
         homeBtnText.setOnClickListener(v -> goTo(MainActivity.class));
         boardBtn.setOnClickListener(v -> goTo(MessageBoard.class));
         boardBtnText.setOnClickListener(v -> goTo(MessageBoard.class));
-        logoutBtn.setOnClickListener(v -> MainActivity.signOut());
-        logoutBtnText.setOnClickListener(v -> MainActivity.signOut());
+        logoutBtn.setOnClickListener(v -> signOut());
+        logoutBtnText.setOnClickListener(v -> signOut());
         calendarBtn.setOnClickListener(v -> goTo(EventMainScreen.class));
         calendarBtnText.setOnClickListener(v -> goTo(EventMainScreen.class));
         listsBtn.setOnClickListener(v -> goTo(ListAndActivityMainScreen.class));
@@ -78,5 +79,12 @@ public class MenuBottomSheet extends BottomSheetDialogFragment {
     public void goTo(Class<? extends AppCompatActivity> activity) {
         Intent intent = new Intent(getActivity(), activity);
         startActivity(intent);
+    }
+
+    public void signOut() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            FirebaseAuth.getInstance().signOut();
+            getActivity().finish();
+        }
     }
 }
